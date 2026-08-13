@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}Budgets – Fintra{% endblock %}
+{% block content %}
+<header>
+  <div><a href="/?year={{year}}"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Übersicht</a><h1>Budgets · {{month_name}} {{year}}</h1><p class="muted">Monatsbudgets festlegen und Verbrauch verfolgen.</p></div>
+  <div class="yearnav"><a href="/budgets?year={{year-1}}&month={{month}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a><b>{{year}}</b><a href="/budgets?year={{year+1}}&month={{month}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a></div>
+</header>
+<div class="month-picker">
+  <a href="/budgets?year={{year if month>1 else year-1}}&month={{month-1 if month>1 else 12}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+  <b>{{month_name}}</b>
+  <a href="/budgets?year={{year if month<12 else year+1}}&month={{month+1 if month<12 else 1}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+</div>
+<section class="formbox">
+<form method="post" action="/budgets/{{year}}/{{month}}" data-budget-form>
+<input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+<div class="budget-grid">
+{% for c in cats %}
+  {% set p=progress[c.id] %}
+  <article class="budget-card">
+    <div class="budget-card-head"><strong>{{c.name}}</strong><span class="{{'budget-over' if p.pct>100 else ''}}">{{p.pct}} %</span></div>
+    <label>Monatsbudget
+      <input class="budget-money-input" name="budget_{{c.id}}" value="{{'%.2f' % (existing[c.id].amount_cents/100) if c.id in existing else ''}}" placeholder="0,00" inputmode="decimal">
+    </label>
+    <div class="budget-progress"><i style="width:{{100 if p.pct>100 else p.pct}}%" class="{{'over' if p.pct>100 else 'warn' if p.pct>=80 else ''}}"></i></div>
+    <div class="budget-meta">
+      <span>Ausgegeben <b>{{euros(p.spent)}}</b></span>
+      {% if p.budget %}<span>Verfügbar <b>{{euros(p.remaining)}}</b></span>{% else %}<span class="muted">Noch kein Budget</span>{% endif %}
+    </div>
+  </article>
+{% endfor %}
+</div>
+<button type="submit">Budgets speichern</button>
+</form>
+</section>
+
+<div class="modal-backdrop" id="budgetErrorModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="budgetErrorTitle">
+    <div class="modal-icon">!</div>
+    <h2 id="budgetErrorTitle">Budget prüfen</h2>
+    <p id="budgetErrorText">Bitte gib einen gültigen Geldbetrag ein.</p>
+    <button type="button" id="budgetErrorClose">Okay</button>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+(function(){
+  const form = document.querySelector('[data-budget-form]');
+  const modal = document.getElementById('budgetErrorModal');
+  const modalText = document.getElementById('budgetErrorText');
+  const modalClose = document.getElementById('budgetErrorClose');
+
+  function showBudgetError(message){
+    if(!modal) return;
+    modalText.textContent = message;
+    modal.hidden = false;
+    modalClose?.focus();
+  }
+
+  function closeBudgetError(){
+    if(modal) modal.hidden = true;
+  }
+
+  function validateMoney(value){
+    const raw = (value || '').trim().replace(/€/g,'').replace(/\s/g,'');
+
+    // Leere Budgetfelder sind erlaubt und entsprechen 0 €.
+    if(!raw){
+      return {ok:true};
+    }
+
+    let normalized = raw;
+
+    if(normalized.includes(',')){
+      normalized = normalized.replace(/\./g,'').replace(',','.');
+    }
+
+    if(!/^\d+(\.\d{1,2})?$/.test(normalized)){
+      return {
+        ok:false,
+        message:'Bitte gib einen gültigen Geldbetrag ein, zum Beispiel 150,00.'
+      };
+    }
+
+    const number = Number(normalized);
+
+    if(!Number.isFinite(number) || number < 0){
+      return {
+        ok:false,
+        message:'Ein Budget darf nicht negativ sein.'
+      };
+    }
+
+    if(number > 999999999.99){
+      return {
+        ok:false,
+        message:'Der eingegebene Budgetbetrag ist zu groß.'
+      };
+    }
+
+    return {ok:true};
+  }
+
+  form?.addEventListener('submit', function(event){
+    const inputs = form.querySelectorAll('.budget-money-input');
+
+    for(const input of inputs){
+      const check = validateMoney(input.value);
+
+      if(!check.ok){
+        event.preventDefault();
+        showBudgetError(check.message);
+        input.focus();
+        input.select();
+        return;
+      }
+    }
+  });
+
+  modalClose?.addEventListener('click', closeBudgetError);
+
+  modal?.addEventListener('click', function(event){
+    if(event.target === modal){
+      closeBudgetError();
+    }
+  });
+
+  document.addEventListener('keydown', function(event){
+    if(event.key === 'Escape' && modal && !modal.hidden){
+      closeBudgetError();
+    }
+  });
+
+  {% if error %}
+  showBudgetError({{ error|tojson }});
+  {% endif %}
+})();
+</script>
+{% endblock %}

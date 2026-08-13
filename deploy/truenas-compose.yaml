@@ -1,0 +1,12 @@
+services:
+  fintra:
+    image: ghcr.io/DEIN_GITHUB_BENUTZERNAME/fintra:latest
+    pull_policy: always
+    container_name: fintra
+    ports:
+      - "8080:8080"
+    environment:
+      FINTRA_HTTPS_ONLY: "0"
+    volumes:
+      - /mnt/DEIN_POOL/apps/fintra/data:/app/data
+    restart: unless-stopped

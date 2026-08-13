@@ -1,0 +1,18 @@
+services:
+  fintra:
+    build:
+      context: .
+      args:
+        FINTRA_VERSION: 9.6.0-beta.1
+    image: fintra:9.6.0-beta.1
+    container_name: fintra
+    environment:
+      FINTRA_HTTPS_ONLY: ${FINTRA_HTTPS_ONLY:-0}
+      # Optional: set a persistent secret in .env.
+      # If omitted, Fintra stores one in /app/data/.session_secret.
+      FINTRA_SECRET_KEY: ${FINTRA_SECRET_KEY:-}
+    ports:
+      - "${FINTRA_PORT:-8080}:8080"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

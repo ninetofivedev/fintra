@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Kategorien – Fintra{% endblock %}
+{% block content %}
+<header>
+  <div><a href="/"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Übersicht</a><h1>Kategorien</h1><p class="muted">Kategorien für Einnahmen und Ausgaben anlegen und verwalten.</p></div>
+</header>
+<section class="formbox">
+  <form method="post" action="/categories" class="inlineform">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+    <input class="category-input" name="name" placeholder="Neue Kategorie" required>
+    <select class="category-input" name="cat_type"><option value="expense">Ausgabe</option><option value="income">Einnahme</option></select>
+    <button type="submit">Hinzufügen</button>
+  </form>
+</section>
+<div class="twocol">
+{% for typ,title in [('income','Einnahmen'),('expense','Ausgaben')] %}
+<section>
+  <h2>{{title}}</h2>
+  <div class="category-list">
+  {% for c in cats if c.type==typ and c.active %}
+    <div class="catrow" data-category-row="{{c.id}}">
+      <div class="cat-display" id="cat-display-{{c.id}}">
+        <span class="cat-name">{{c.name}}</span>
+
+        <div class="cat-actions">
+          <button
+            type="button"
+            class="icon-button edit-button"
+            data-category-edit="{{c.id}}"
+            title="Kategorie bearbeiten"
+            aria-label="Kategorie bearbeiten"
+          >
+            <span class="local-icon icon-edit" aria-hidden="true"></span>
+          </button>
+
+          <form
+            method="post"
+            action="/categories/{{c.id}}/delete"
+            onsubmit="return confirm('Möchtest du die Kategorie „{{c.name|e}}“ wirklich löschen?');"
+          >
+            <input
+              type="hidden"
+              name="csrf_token"
+              value="{{ request.session.get('csrf_token','') }}"
+            >
+
+            <button
+              type="submit"
+              class="icon-button delete-button"
+              title="Kategorie löschen"
+              aria-label="Kategorie löschen"
+            >
+              <span class="local-icon icon-delete" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <form
+        method="post"
+        action="/categories/{{c.id}}/edit"
+        class="cat-edit-form"
+        id="cat-edit-{{c.id}}"
+        hidden
+      >
+        <input
+          type="hidden"
+          name="csrf_token"
+          value="{{ request.session.get('csrf_token','') }}"
+        >
+
+        <input
+          class="category-input"
+          name="name"
+          value="{{c.name}}"
+          required
+        >
+
+        <div class="cat-edit-actions">
+          <button type="submit">Speichern</button>
+
+          <button
+            type="button"
+            class="secondary-button"
+            data-category-cancel="{{c.id}}"
+          >
+            Abbrechen
+          </button>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <p class="muted empty-category">Keine Kategorien vorhanden.</p>
+  {% endfor %}
+  </div>
+</section>
+{% endfor %}
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+document.querySelectorAll('[data-category-edit]').forEach(button => {
+  button.addEventListener('click', () => {
+    const id = button.dataset.categoryEdit;
+    const display = document.getElementById('cat-display-' + id);
+    const form = document.getElementById('cat-edit-' + id);
+
+    if (!display || !form) return;
+
+    display.hidden = true;
+    form.hidden = false;
+
+    const input = form.querySelector('input[name="name"]');
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  });
+});
+
+document.querySelectorAll('[data-category-cancel]').forEach(button => {
+  button.addEventListener('click', () => {
+    const id = button.dataset.categoryCancel;
+    const display = document.getElementById('cat-display-' + id);
+    const form = document.getElementById('cat-edit-' + id);
+
+    if (!display || !form) return;
+
+    form.hidden = true;
+    display.hidden = false;
+  });
+});
+</script>
+{% endblock %}

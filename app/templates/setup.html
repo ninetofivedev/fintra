@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fintra einrichten</title>
+<script>(function(){try{const t=localStorage.getItem('fintra-theme');document.documentElement.dataset.theme=t|| (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}})();</script>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-page">
+<main class="auth-shell">
+  <section class="auth-card" aria-labelledby="setup-title">
+    <div class="auth-brand"><div class="auth-logo">F</div><div><strong>Fintra</strong><span>Ersteinrichtung</span></div></div>
+    <h1 id="setup-title">Fintra einrichten</h1>
+    <p class="muted">Lege den ersten Zugang für deine private Finanzanwendung an.</p>
+    {% if error %}<div class="auth-error" role="alert">{{ error }}</div>{% endif %}
+    <form method="post" action="/setup" class="auth-form">
+      <label>Benutzername<input name="username" autocomplete="username" minlength="3" maxlength="80" required autofocus></label>
+      <label>Passwort<input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
+      <label>Passwort wiederholen<input type="password" name="password_confirm" autocomplete="new-password" minlength="10" required></label>
+      <button class="auth-submit" type="submit">Zugang erstellen</button>
+    </form>
+    <p class="auth-footer">Das Passwort wird als sicherer Hash gespeichert, nicht im Klartext.</p>
+  </section>
+</main>
+
+<div class="modal-backdrop" id="inputErrorModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="inputErrorTitle">
+    <div class="modal-icon"><span class="local-icon icon-error" aria-hidden="true"></span></div>
+    <h2 id="inputErrorTitle">Eingabe prüfen</h2>
+    <p id="inputErrorText">Bitte überprüfe deine Eingabe.</p>
+    <button type="button" id="inputErrorClose">Okay</button>
+  </div>
+</div>
+<script>
+(() => {
+  const modal = document.getElementById('inputErrorModal');
+  const text = document.getElementById('inputErrorText');
+  const close = document.getElementById('inputErrorClose');
+  let target = null;
+
+  function message(input) {
+    if (input.validity.valueMissing) return 'Bitte fülle dieses Pflichtfeld aus.';
+    if (input.validity.typeMismatch) return 'Bitte gib einen gültigen Wert ein.';
+    if (input.validity.rangeUnderflow) return 'Der eingegebene Wert ist zu klein.';
+    if (input.validity.rangeOverflow) return 'Der eingegebene Wert ist zu groß.';
+    if (input.validity.patternMismatch) return 'Bitte überprüfe das Format deiner Eingabe.';
+    if (input.validity.badInput) return 'Bitte gib einen gültigen Wert ein.';
+    return input.validationMessage || 'Bitte überprüfe deine Eingabe.';
+  }
+
+  function hide() {
+    modal.hidden = true;
+    const focusTarget = target;
+    target = null;
+    focusTarget?.focus();
+  }
+
+  document.addEventListener('invalid', event => {
+    event.preventDefault();
+    if (!modal.hidden) return;
+    target = event.target;
+    text.textContent = message(event.target);
+    modal.hidden = false;
+    close.focus();
+  }, true);
+
+  close.addEventListener('click', hide);
+  modal.addEventListener('click', event => {
+    if (event.target === modal) hide();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !modal.hidden) hide();
+  });
+})();
+</script>
+
+</body>
+</html>

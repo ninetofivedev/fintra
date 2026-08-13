@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Algorithmen & Datenstrukturen – Fintra{% endblock %}
+{% block content %}
+<a href="/analysis"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Fintra Analytics</a>
+<h1>Algorithmen &amp; Datenstrukturen</h1>
+<p class="lead">Technische Dokumentation der Datenstrukturen und Algorithmen hinter Fintra.</p>
+
+<div class="algorithm-grid">
+  <article>
+    <span class="algo-label">Datenstruktur</span>
+    <h2>Hash Map</h2>
+    <p><code>category_id → [transaction_id, …]</code></p>
+    <p>Beim Aufbau des <code>TransactionIndex</code> werden Transaktionen nach Kategorie indiziert. Aufbau: <code>O(n)</code>, Lookup durchschnittlich <code>O(1)</code>.</p>
+  </article>
+
+  <article>
+    <span class="algo-label">Priority Queue</span>
+    <h2>Min-Heap</h2>
+    <p>Für Top-K hält Fintra nur die momentan besten <code>k</code> Kandidaten im Heap. Dadurch wird nicht der komplette Datenbestand sortiert.</p>
+    <p><code>O(n log k)</code> statt <code>O(n log n)</code>.</p>
+  </article>
+
+  <article>
+    <span class="algo-label">Sequenzalgorithmus</span>
+    <h2>Sliding Window</h2>
+    <p>Beim gleitenden Mittel wird der neu eintretende Monatswert addiert und der herausfallende entfernt.</p>
+    <p>Zeit: <code>O(n)</code>, zusätzlicher Speicher: <code>O(1)</code>.</p>
+  </article>
+
+  <article>
+    <span class="algo-label">Statistik</span>
+    <h2>Quartile &amp; IQR</h2>
+    <p>Ausgaben werden sortiert, anschließend Q1 und Q3 bestimmt. Werte oberhalb <code>Q3 + 1,5 × IQR</code> gelten als Ausreißer.</p>
+    <p>Dominanter Schritt: Sortierung mit <code>O(n log n)</code>.</p>
+  </article>
+
+  <article>
+    <span class="algo-label">Persistenz</span>
+    <h2>SQLite B-Tree-Indizes</h2>
+    <p>Fintra besitzt Indizes auf Transaktionsdatum und Kategorie. Diese beschleunigen Bereichs- und Schlüsselsuchen gegenüber einem vollständigen Table Scan.</p>
+    <p>Typischer Suchaufwand: <code>O(log n)</code>.</p>
+  </article>
+
+  <article>
+    <span class="algo-label">Experiment</span>
+    <h2>Synthetische Testdaten</h2>
+    <p>Die Analyse-Seite kann bis zu 100.000 künstliche Transaktionen im RAM erzeugen. Damit lassen sich Skalierung und Komplexitätsunterschiede demonstrieren, ohne echte Finanzdaten zu verändern.</p>
+    <p><a class="btn" href="/analysis?n=100000">Demo starten</a></p>
+  </article>
+</div>
+{% endblock %}

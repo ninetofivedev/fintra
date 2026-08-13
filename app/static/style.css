@@ -1,0 +1,1860 @@
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#222;background:#f5f6f8;color-scheme:light}html[data-theme="dark"]{color:#e8eaed;background:#111418;color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;max-width:100%;overflow-x:hidden}body{min-width:0;background:var(--bg);color:var(--text);--bg:#f5f6f8;--text:#222;--card:#fff;--muted:#70757d;--border:#e5e7eb;--input:#fff;--nav:#20242a;--shadow:#0001}html[data-theme="dark"] body{--bg:#111418;--text:#e8eaed;--card:#1b2027;--muted:#aab0b8;--border:#303741;--input:#15191f;--nav:#090b0e;--shadow:#0006}nav{background:var(--nav);color:white;padding:10px max(16px,calc((100% - 1400px)/2));display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.brand{color:white;text-decoration:none;display:flex;align-items:baseline;gap:9px}.brand strong{font-size:1.25rem}.brand span{font-size:.78rem;opacity:.72}nav a{color:white;text-decoration:none;font-weight:650}.theme-toggle{border:1px solid #ffffff33;background:#ffffff12;color:white;border-radius:9px;padding:7px 9px;cursor:pointer;font-size:1rem}main{width:min(2200px,100%);margin:28px auto;padding:0 16px;min-width:0}h1{margin:.2em 0}h2{margin-top:1.1em}.muted{color:var(--muted)}.lead{font-size:1.1rem;color:var(--muted)}header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}.yearnav{display:flex;gap:20px;align-items:center;font-size:1.2rem}.yearnav a{font-size:2rem;text-decoration:none;color:var(--text)}.month-heading{display:grid;grid-template-columns:52px 1fr 52px;align-items:center;max-width:720px;margin:12px auto 22px}.month-heading h1{text-align:center}.month-arrow{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--card);color:var(--text);text-decoration:none;font-size:2rem;box-shadow:0 1px 4px var(--shadow)}.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}.cards>div{min-width:0;background:var(--card);border-radius:12px;padding:18px;box-shadow:0 1px 4px var(--shadow)}.cards span{display:block;color:var(--muted);font-size:.9rem}.cards b{display:block;font-size:clamp(1rem,2vw,1.35rem);margin-top:8px;overflow-wrap:anywhere}.balance{border:2px solid currentColor}.btn,button{border:0;border-radius:9px;padding:11px 16px;background:#333;color:white;text-decoration:none;cursor:pointer;font-weight:650}.btn:hover,button:hover{filter:brightness(1.08)}html[data-theme="dark"] .btn,html[data-theme="dark"] button{background:#e8eaed;color:#15191f}.tablewrap{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 1px 4px var(--shadow);margin:18px 0;min-width:0}table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:clip}th:first-child,td:first-child{text-align:left}a{color:inherit}.tablewrap table th:first-child{width:15%;min-width:155px}.total{font-weight:800;border-top:2px solid currentColor}.forms{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formbox{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 1px 4px var(--shadow);margin:16px 0}.formbox form{display:grid;gap:12px}.formbox.income{border-top:4px solid #247a45}.formbox.expense{border-top:4px solid #b33}label{display:grid;gap:5px;font-weight:650}input,select{font:inherit;padding:10px;border:1px solid #ccd1d7;border-radius:8px;background:var(--input);color:var(--text);min-width:0;max-width:100%}.inlineform{display:flex!important;flex-wrap:wrap;align-items:center}.inlineform input{flex:1;min-width:180px}.money{width:100%;min-width:0;text-align:right;padding:7px 4px}.delete{background:transparent;color:#b33;padding:4px}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}.catrow{background:var(--card);padding:7px 10px;border-bottom:1px solid var(--border);display:flex;gap:5px;align-items:center}.icon-button{padding:5px 7px;border-radius:7px;line-height:1;font-size:1rem;background:transparent;border:0;cursor:pointer}.edit-button{color:#555}.delete-button{color:#b33}.inline-delete{display:inline-flex;margin:0;padding:0}.fixed-table{min-width:1600px;table-layout:auto}.fixed-table th,.fixed-table td{white-space:nowrap;overflow:visible;vertical-align:middle}.fixed-table th:first-child{width:240px;min-width:240px}.fixed-table th:not(:first-child):not(:last-child){min-width:105px}.fixed-table th:last-child{width:92px;min-width:92px;text-align:center}.fixed-name{font-weight:650}.fixed-actions{vertical-align:middle;text-align:center;white-space:nowrap}.fixed-actions form{display:inline-flex;align-items:center;justify-content:center;margin:0;padding:0;height:32px;vertical-align:middle}.fixed-actions .icon-button{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;margin:0;line-height:1;vertical-align:middle}.save-button{color:var(--text)}.fixed-table .money{width:100px}.fixed-tablewrap{overflow-x:auto}.year-overview-mobile{display:none}.algorithm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.algorithm-grid article{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 1px 4px var(--shadow)}code{background:var(--border);padding:2px 5px;border-radius:4px}.month-picker{display:flex;justify-content:center;gap:28px;align-items:center;font-size:1.2rem;margin:12px 0}.month-picker a{font-size:2rem;text-decoration:none}.formbox table input{width:140px}.formbox table{margin-bottom:16px}
+@media(max-width:1200px){main{margin-top:20px}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.tablewrap{padding:10px}.tablewrap table{font-size:.86rem}.tablewrap table th:first-child{width:20%}.algorithm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){main{padding:0 10px}.brand span{display:none}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.forms,.twocol{grid-template-columns:1fr}.year-overview-table{display:none}.year-overview-mobile{display:grid;grid-template-columns:1fr;gap:8px}.year-month-row{display:grid;grid-template-columns:minmax(0,1.25fr) repeat(3,minmax(0,1fr));gap:5px;align-items:center;background:var(--card);border-radius:9px;padding:10px;box-shadow:0 1px 3px var(--shadow);text-decoration:none;color:inherit}.year-month-row>*{min-width:0}.year-month-row .month-name{font-weight:750}.year-month-row .mobile-number{text-align:right;font-size:.82rem;overflow-wrap:anywhere}.year-month-row .mobile-number span{display:block;color:var(--muted);font-size:.68rem}.year-month-row .mobile-balance{font-weight:750}.fixed-table{min-width:1600px}.month-heading{grid-template-columns:44px 1fr 44px}.month-arrow{width:40px;height:40px}.algorithm-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.cards{grid-template-columns:1fr 1fr}.cards>div{padding:13px}.cards span{font-size:.78rem}.cards b{font-size:1rem}.year-month-row{grid-template-columns:minmax(0,1.1fr) repeat(3,minmax(0,1fr));padding:8px}.year-month-row .mobile-number{font-size:.76rem}.year-month-row .mobile-number span{font-size:.62rem}}
+@media(min-width:1201px){.year-overview-table table{font-size:clamp(.82rem,1vw,1rem)}.year-overview-table th:not(:first-child),.year-overview-table td:not(:first-child){min-width:105px}.year-overview-table th:first-child{width:220px}.year-overview-table td{white-space:nowrap}}
+.auth-page{min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at top,#dfe7f2 0,#f5f6f8 48%,#eef0f4 100%);padding:24px}.auth-shell{width:min(440px,100%)}.auth-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:34px;box-shadow:0 18px 60px #0002}.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}.auth-brand>div:last-child{display:grid;gap:2px}.auth-brand strong{font-size:1.45rem}.auth-brand span{font-size:.8rem;color:var(--muted)}.auth-logo{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--nav);color:white;font-weight:800;font-size:1.25rem}.auth-card h1{font-size:1.8rem}.auth-form{display:grid;gap:16px;margin-top:22px}.auth-form label{gap:7px}.auth-form input{width:100%;padding:12px 13px}.auth-submit{width:100%;padding:13px 16px;font-size:1rem}.auth-error{margin-top:16px;padding:11px 13px;border-radius:9px;background:#b33;color:white;font-weight:650}.auth-footer{margin:22px 0 0;font-size:.78rem;color:var(--muted);line-height:1.5}html[data-theme="dark"] .auth-page{background:radial-gradient(circle at top,#202a36 0,#111418 55%,#0d1014 100%)}
+
+
+.twocol .catrow input{border:1px solid var(--border);outline:none;background:var(--input);box-shadow:inset 0 1px 2px var(--shadow)}
+.twocol .catrow input:focus{border-color:#8b95a3;box-shadow:0 0 0 3px #8b95a322}
+
+
+/* =========================================================
+   FINTRA V9
+   ========================================================= */
+
+.nav-new-transaction{
+  background:#e8eaed;
+  color:#15191f!important;
+  padding:8px 11px;
+  border-radius:9px;
+}
+
+.amount-positive{color:#168a45!important;font-weight:800}
+.amount-negative{color:#c9362b!important;font-weight:800}
+html[data-theme="dark"] .amount-positive{color:#4ade80!important}
+html[data-theme="dark"] .amount-negative{color:#fb7185!important}
+
+
+.summary-strip{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr)) auto;
+  gap:12px;
+  align-items:center;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 16px;
+  margin:0 0 18px;
+  box-shadow:0 1px 4px var(--shadow)
+}
+.summary-strip>div:not(.summary-actions){display:grid;gap:4px}
+.summary-strip span{color:var(--muted);font-size:.82rem}
+.summary-strip strong{font-size:1.1rem}
+.summary-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+.dashboard-charts{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  margin:20px 0 32px
+}
+.chart-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 1px 4px var(--shadow)
+}
+.chart-title h2{margin:0}
+.chart-title p{margin:5px 0 0}
+.chart-container{height:320px;position:relative;margin-top:12px}
+
+.table-toolbar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  margin:0 0 14px
+}
+.table-toolbar h2{margin:0}
+.table-toolbar p{margin:5px 0 0}
+.transaction-filter{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap
+}
+.transaction-filter input{width:min(330px,60vw)}
+.transaction-filter select{width:auto;min-width:140px}
+
+.transactions-table th:last-child,
+.transactions-table td:last-child{width:110px;text-align:right}
+.transaction-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.transaction-actions form{margin:0}
+.transaction-edit-row td{background:color-mix(in srgb,var(--card) 88%,#4f46e5 12%)}
+.transaction-edit-form{
+  display:grid;
+  grid-template-columns:1fr 1.2fr 1fr 1.5fr auto;
+  gap:10px;
+  align-items:end;
+  padding:8px
+}
+.transaction-edit-form label{min-width:0}
+.edit-actions{display:flex;gap:6px;align-items:center}
+.secondary-button{
+  background:transparent!important;
+  color:var(--text)!important;
+  border:1px solid var(--border)!important
+}
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(15,23,42,.48);
+  backdrop-filter:blur(3px)
+}
+.modal-backdrop[hidden]{display:none}
+.modal-card{
+  width:min(390px,100%);
+  background:var(--card);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  text-align:center;
+  box-shadow:0 24px 70px rgba(0,0,0,.28);
+  animation:fintraModalIn .16s ease-out
+}
+@keyframes fintraModalIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.modal-icon{
+  width:44px;height:44px;margin:0 auto 12px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:#fff1f2;color:#be123c;
+  font-weight:900;font-size:1.2rem
+}
+html[data-theme="dark"] .modal-icon{background:#4c1725;color:#fda4af}
+.modal-card h2{margin:0 0 8px}
+.modal-card p{margin:0 0 18px;color:var(--muted)}
+.modal-card button{min-width:100px}
+
+.fixed-import-form{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(150px,1fr)) auto;
+  gap:10px;
+  align-items:end
+}
+.fixed-import-form button{
+  height:42px;
+  align-self:end
+}
+.fixed-edit-form{
+  display:flex!important;
+  align-items:center;
+  gap:6px
+}
+.fixed-edit-form[hidden]{display:none!important}
+.fixed-edit-form input{min-width:130px}
+.fixed-edit-form select{width:auto;min-width:105px}
+
+.category-list{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 1px 4px var(--shadow)
+}
+.category-list .catrow:last-child{border-bottom:0}
+.category-input{
+  border:1px solid var(--border)!important;
+  background:var(--input)!important;
+  color:var(--text)!important;
+  box-shadow:inset 0 1px 2px var(--shadow)
+}
+.category-input:focus{
+  border-color:#6366f1!important;
+  box-shadow:0 0 0 3px rgba(99,102,241,.14)!important;
+  outline:none
+}
+.empty-category{padding:12px 14px;margin:0}
+
+.budget-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-bottom:18px
+}
+.budget-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:15px;
+  box-shadow:0 1px 4px var(--shadow)
+}
+.budget-card-head{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  margin-bottom:12px
+}
+.budget-card-head span{font-size:.85rem;color:var(--muted);font-weight:700}
+.budget-card-head .budget-over{color:#c9362b}
+.budget-progress{
+  height:9px;
+  border-radius:99px;
+  background:var(--border);
+  overflow:hidden;
+  margin:12px 0 9px
+}
+.budget-progress i{
+  display:block;height:100%;
+  background:#16a34a;
+  border-radius:inherit;
+  transition:width .25s ease
+}
+.budget-progress i.warn{background:#f59e0b}
+.budget-progress i.over{background:#dc2626}
+.budget-meta{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  font-size:.78rem;color:var(--muted)
+}
+.budget-meta b{color:var(--text)}
+
+@media(max-width:1050px){
+  .fixed-import-form{grid-template-columns:repeat(2,minmax(160px,1fr))}
+  .fixed-import-form button{width:100%}
+  .budget-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .transaction-edit-form{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .edit-actions{grid-column:1/-1}
+}
+@media(max-width:800px){
+  .dashboard-charts{grid-template-columns:1fr}
+  .summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .summary-actions{grid-column:1/-1;justify-content:flex-start}
+  .table-toolbar{align-items:stretch;flex-direction:column}
+  .transaction-filter input{width:100%}
+}
+@media(max-width:600px){
+  .fixed-import-form{grid-template-columns:1fr}
+  .budget-grid{grid-template-columns:1fr}
+  .transaction-edit-form{grid-template-columns:1fr}
+  .summary-strip{grid-template-columns:1fr}
+}
+
+
+/* Fintra V9.1 – neutrale Monatsbeträge in der Jahresübersicht */
+.table-amount-neutral{
+  color:var(--text)!important;
+  font-weight:inherit;
+  background:transparent!important;
+  border:0!important;
+  text-decoration:none;
+}
+
+
+/* =========================================================
+   Fintra V9.2 – Fixkosten-Aktionen
+   Gleicher Abstand + identische Tabellenzeilenhöhe
+   ========================================================= */
+
+.fixed-table tbody tr{
+  height:49px;
+}
+
+.fixed-table tbody td{
+  height:49px;
+  box-sizing:border-box;
+  vertical-align:middle;
+}
+
+.fixed-table .fixed-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  height:49px !important;
+  min-height:49px !important;
+  padding-top:8px !important;
+  padding-bottom:8px !important;
+  box-sizing:border-box !important;
+  white-space:nowrap;
+}
+
+.fixed-table .fixed-actions > button,
+.fixed-table .fixed-actions > form{
+  flex:0 0 32px;
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+.fixed-table .fixed-actions > form{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.fixed-table .fixed-actions .icon-button{
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+}
+
+/* Das leere Update-Formular darf keinen zusätzlichen Abstand erzeugen.
+   Der Speichern-Button referenziert es weiterhin über form="update-…". */
+.fixed-table .fixed-actions > form[id^="update-"]{
+  display:none !important;
+  width:0 !important;
+  height:0 !important;
+  min-width:0 !important;
+  flex:0 0 0 !important;
+}
+
+
+/* =========================================================
+   Fintra V9.2.1 – Aktionszelle bleibt echte Tabellenzelle
+   ========================================================= */
+
+/* Wichtig: TD nicht als flex rendern. So übernimmt sie exakt die vom
+   Tabellenlayout ermittelte Höhe der restlichen Zellen derselben Zeile. */
+.fixed-table .fixed-actions{
+  display:table-cell !important;
+  height:auto !important;
+  min-height:0 !important;
+  padding:8px !important;
+  vertical-align:middle !important;
+  box-sizing:border-box !important;
+}
+
+.fixed-table .fixed-actions-inner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  width:100%;
+  min-height:32px;
+  margin:0;
+  padding:0;
+}
+
+.fixed-table .fixed-actions-inner > button,
+.fixed-table .fixed-actions-inner > form{
+  flex:0 0 32px;
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+.fixed-table .fixed-actions-inner > form{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.fixed-table .fixed-actions-inner > form[id^="update-"]{
+  display:none !important;
+  width:0 !important;
+  height:0 !important;
+  min-width:0 !important;
+  flex:0 0 0 !important;
+}
+
+.fixed-table .fixed-actions-inner .icon-button{
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+}
+
+
+/* =========================================================
+   Fintra V9.2.2 – einheitliche 32 × 32 px Aktionsbuttons
+   Kategorien + Monatsbuchungen
+   ========================================================= */
+
+/* Kategorien */
+.catrow .icon-button{
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+}
+
+/* Monatsseite / Transaktionen */
+.transactions-table .transaction-actions .icon-button{
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+}
+
+.transactions-table .transaction-actions{
+  gap:6px !important;
+}
+
+.transactions-table .transaction-actions form{
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+
+/* =========================================================
+   Fintra V9.2.4 – Kategorien erst nach Klick editierbar
+   Basis: V9.2.2
+   ========================================================= */
+
+.catrow{
+  display:block;
+  padding:0;
+}
+
+.cat-display{
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+}
+
+.cat-name{
+  flex:1;
+  min-width:0;
+  font-weight:650;
+}
+
+.cat-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-left:auto;
+}
+
+.cat-actions form{
+  width:32px;
+  height:32px;
+  margin:0;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.cat-edit-form{
+  display:flex !important;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  min-height:48px;
+}
+
+.cat-edit-form[hidden]{
+  display:none !important;
+}
+
+.cat-edit-form .category-input{
+  flex:1;
+  min-width:0;
+}
+
+.cat-edit-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.cat-edit-actions button{
+  height:40px;
+  white-space:nowrap;
+}
+
+@media(max-width:650px){
+  .cat-edit-form{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .cat-edit-actions{
+    justify-content:flex-start;
+  }
+}
+
+
+/* =========================================================
+   Fintra V9.3 – Analytics / A&D Dashboard
+   ========================================================= */
+
+.analysis-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin:0 0 18px;
+}
+.analysis-kpis>div{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 1px 4px var(--shadow);
+}
+.analysis-kpis span{
+  display:block;
+  color:var(--muted);
+  font-size:.78rem;
+  margin-bottom:6px;
+}
+.analysis-kpis strong{
+  font-size:1.45rem;
+}
+
+.analysis-hero-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  margin:16px 0;
+}
+
+.analysis-card{
+  min-width:0;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 1px 4px var(--shadow);
+}
+
+.analysis-wide{
+  margin:16px 0;
+}
+
+.analysis-card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.analysis-card-head h2{
+  margin:3px 0 0;
+}
+
+.algo-label{
+  display:inline-block;
+  color:#4f46e5;
+  font-size:.7rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+html[data-theme="dark"] .algo-label{
+  color:#a5b4fc;
+}
+
+.analysis-card-head>code,
+.comparison-box code,
+.complexity-line code{
+  white-space:nowrap;
+}
+
+.analysis-control-row{
+  display:flex;
+  gap:10px;
+  align-items:end;
+  margin-bottom:16px;
+}
+.analysis-control-row label{
+  min-width:200px;
+}
+.analysis-control-row select{
+  width:100%;
+}
+
+.comparison-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+}
+
+.comparison-box{
+  display:grid;
+  gap:5px;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--bg);
+}
+.comparison-box span,
+.comparison-box small{
+  color:var(--muted);
+}
+.comparison-box strong{
+  font-size:1.65rem;
+}
+.comparison-highlight{
+  border-color:#6366f1;
+  background:rgba(99,102,241,.06);
+}
+.comparison-arrow{
+  color:var(--muted);
+  font-size:1.4rem;
+}
+
+.analysis-result{
+  margin:16px 0 12px;
+}
+
+.check-badge,
+.error-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:.75rem;
+  font-weight:750;
+}
+.check-badge{
+  background:rgba(22,163,74,.12);
+  color:#15803d;
+}
+.error-badge{
+  background:rgba(220,38,38,.12);
+  color:#b91c1c;
+}
+html[data-theme="dark"] .check-badge{color:#4ade80}
+html[data-theme="dark"] .error-badge{color:#f87171}
+
+.index-visual{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+  padding:12px;
+  border-radius:10px;
+  background:var(--bg);
+  border:1px dashed var(--border);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.82rem;
+}
+.index-key{
+  color:#4f46e5;
+  font-weight:800;
+}
+.index-bucket{
+  color:var(--muted);
+}
+
+.top-k-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.top-k-list li{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  padding:9px 0;
+  border-bottom:1px solid var(--border);
+}
+.top-k-list li:last-child{border-bottom:0}
+.rank-number{
+  width:26px;
+  height:26px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--bg);
+  color:var(--muted);
+  font-size:.75rem;
+  font-weight:800;
+}
+
+.heap-demo{
+  margin:18px auto 10px;
+  display:grid;
+  justify-items:center;
+  gap:10px;
+}
+.heap-node{
+  max-width:180px;
+  padding:7px 10px;
+  border:1px solid #6366f1;
+  border-radius:9px;
+  background:rgba(99,102,241,.08);
+  text-align:center;
+  font-size:.78rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.heap-root{font-weight:800}
+.heap-children{
+  display:flex;
+  gap:18px;
+  position:relative;
+}
+.heap-children::before{
+  content:"";
+  position:absolute;
+  height:1px;
+  background:#6366f1;
+  left:20%;
+  right:20%;
+  top:-5px;
+}
+
+.sliding-layout{
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(260px,.8fr);
+  gap:20px;
+  align-items:center;
+}
+.analysis-chart{height:320px}
+.sliding-explainer{
+  display:grid;
+  gap:12px;
+}
+.window-example{
+  border:1px solid #6366f1;
+  background:rgba(99,102,241,.07);
+  border-radius:12px;
+  padding:15px;
+}
+.window-example span{display:block;color:var(--muted);font-size:.8rem}
+.window-example strong{font-size:1.3rem}
+.complexity-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:9px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.quartile-track{
+  display:flex;
+  align-items:center;
+  margin:22px 0 16px;
+}
+.quartile-point{
+  display:grid;
+  gap:2px;
+  min-width:74px;
+}
+.quartile-point span{font-size:.72rem;color:var(--muted)}
+.quartile-point b{font-size:.92rem}
+.quartile-point.danger b{color:#dc2626}
+.quartile-line{
+  height:5px;
+  flex:1;
+  min-width:20px;
+  border-radius:99px;
+  background:#6366f1;
+  margin:0 8px;
+}
+.warning-line{background:#f59e0b}
+
+.iqr-formula{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.outlier-list{
+  display:grid;
+  gap:8px;
+}
+.outlier-list>div{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:5px 12px;
+  padding:10px 12px;
+  border:1px solid rgba(220,38,38,.25);
+  background:rgba(220,38,38,.05);
+  border-radius:9px;
+}
+.outlier-list small{
+  grid-column:1/-1;
+  color:var(--muted);
+}
+
+.analysis-budget-list{
+  display:grid;
+  gap:13px;
+}
+.analysis-budget-list>div>div:first-child{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.analysis-budget-list small{color:var(--muted)}
+.mini-progress{
+  height:8px;
+  border-radius:99px;
+  background:var(--border);
+  overflow:hidden;
+  margin:6px 0;
+}
+.mini-progress i{
+  display:block;
+  height:100%;
+  background:#16a34a;
+  border-radius:inherit;
+}
+.mini-progress i.warn{background:#f59e0b}
+.mini-progress i.over{background:#dc2626}
+
+.synthetic-section{
+  border-top:3px solid #4f46e5;
+}
+.benchmark-controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+.benchmark-controls label{
+  min-width:250px;
+}
+
+.benchmark-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.benchmark-grid article{
+  display:grid;
+  align-content:start;
+  gap:6px;
+  min-width:0;
+  padding:15px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:11px;
+}
+.benchmark-grid h3{
+  margin:0 0 4px;
+  font-size:.92rem;
+}
+.benchmark-number{
+  font-size:clamp(1.3rem,2.2vw,2rem);
+  font-weight:850;
+  overflow-wrap:anywhere;
+}
+.benchmark-grid span,
+.benchmark-grid small{
+  color:var(--muted);
+  font-size:.76rem;
+}
+.benchmark-grid code{
+  width:max-content;
+}
+.benchmark-notes{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid var(--border);
+}
+
+.complexity-table-wrap{
+  overflow-x:auto;
+}
+.complexity-table{
+  min-width:760px;
+  table-layout:auto;
+}
+.complexity-table th,
+.complexity-table td{
+  text-align:left;
+  white-space:normal;
+}
+.complexity-table th:first-child,
+.complexity-table td:first-child{
+  width:auto;
+}
+
+@media(max-width:1100px){
+  .analysis-hero-grid{grid-template-columns:1fr}
+  .benchmark-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sliding-layout{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .analysis-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .comparison-grid{grid-template-columns:1fr}
+  .comparison-arrow{transform:rotate(90deg);text-align:center}
+  .benchmark-grid{grid-template-columns:1fr}
+  .analysis-card-head{flex-direction:column}
+  .quartile-track{align-items:flex-start}
+  .quartile-point{min-width:60px}
+}
+@media(max-width:480px){
+  .analysis-kpis{grid-template-columns:1fr 1fr}
+  .analysis-card{padding:14px}
+  .benchmark-controls label{min-width:0;width:100%}
+}
+
+
+/* =========================================================
+   Fintra V9.4 – kompakte Navigation mit Burger-Menü
+   ========================================================= */
+
+.topnav{
+  position:sticky;
+  top:0;
+  z-index:1000;
+
+  width:100%;
+
+  padding:0;
+
+  background:var(--nav);
+  color:#fff;
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.05),
+    0 4px 18px rgba(0,0,0,.12);
+}
+
+.topnav-inner{
+  width:min(1400px,100%);
+
+  min-height:62px;
+
+  margin:0 auto;
+
+  padding:9px 16px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:20px;
+}
+
+.topnav .brand{
+  flex:0 0 auto;
+}
+
+.topnav-actions{
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  min-width:0;
+}
+
+.topnav-overview{
+  display:inline-flex;
+  align-items:center;
+
+  min-height:38px;
+
+  padding:0 11px;
+
+  border-radius:9px;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  font-size:.9rem;
+  font-weight:650;
+
+  transition:
+    background .15s ease,
+    transform .15s ease;
+}
+
+.topnav-overview:hover{
+  background:rgba(255,255,255,.10);
+}
+
+
+/* Neue Transaktion bleibt als Hauptaktion sichtbar */
+
+.topnav .nav-new-transaction{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  min-height:38px;
+
+  padding:0 13px;
+
+  border-radius:9px;
+
+  background:#e8eaed;
+
+  color:#15191f !important;
+
+  font-size:.9rem;
+  font-weight:700;
+
+  white-space:nowrap;
+
+  box-shadow:
+    0 5px 13px rgba(79,70,229,.25);
+
+  transition:
+    background .15s ease,
+    transform .15s ease;
+}
+
+
+/* Theme */
+
+.topnav .theme-toggle{
+  width:38px;
+  height:38px;
+
+  flex:0 0 38px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:0;
+
+  border:1px solid rgba(255,255,255,.18);
+
+  border-radius:9px;
+
+  background:rgba(255,255,255,.07);
+
+  color:#fff;
+
+  font-size:1rem;
+
+  box-shadow:none;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+}
+
+.topnav .theme-toggle:hover{
+  background:rgba(255,255,255,.13);
+  border-color:rgba(255,255,255,.30);
+}
+
+
+/* =========================================================
+   Burger Button
+   ========================================================= */
+
+.burger-menu{
+  position:relative;
+
+  flex:0 0 auto;
+}
+
+.burger-toggle{
+  width:40px;
+  height:38px;
+
+  margin:0;
+  padding:0;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  gap:4px;
+
+  border:1px solid rgba(255,255,255,.18);
+
+  border-radius:9px;
+
+  background:rgba(255,255,255,.07) !important;
+
+  color:#fff !important;
+
+  box-shadow:none !important;
+
+  cursor:pointer;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+}
+
+.burger-toggle:hover,
+.burger-toggle.is-open{
+  background:rgba(255,255,255,.14) !important;
+  border-color:rgba(255,255,255,.30);
+}
+
+.burger-toggle span{
+  width:18px;
+  height:2px;
+
+  display:block;
+
+  border-radius:99px;
+
+  background:#fff;
+
+  transform-origin:center;
+
+  transition:
+    transform .18s ease,
+    opacity .18s ease;
+}
+
+.burger-toggle.is-open span:nth-child(1){
+  transform:
+    translateY(6px)
+    rotate(45deg);
+}
+
+.burger-toggle.is-open span:nth-child(2){
+  opacity:0;
+}
+
+.burger-toggle.is-open span:nth-child(3){
+  transform:
+    translateY(-6px)
+    rotate(-45deg);
+}
+
+
+/* =========================================================
+   Dropdown
+   ========================================================= */
+
+.burger-dropdown{
+  position:absolute;
+
+  top:calc(100% + 10px);
+  right:0;
+
+  width:min(310px,calc(100vw - 24px));
+
+  padding:8px;
+
+  border:1px solid var(--border);
+
+  border-radius:14px;
+
+  background:var(--card);
+  color:var(--text);
+
+  box-shadow:
+    0 20px 55px rgba(0,0,0,.20),
+    0 4px 14px rgba(0,0,0,.08);
+
+  overflow:hidden;
+
+  animation:
+    fintraBurgerOpen .14s ease-out;
+}
+
+.burger-dropdown[hidden]{
+  display:none !important;
+}
+
+@keyframes fintraBurgerOpen{
+  from{
+    opacity:0;
+    transform:
+      translateY(-6px)
+      scale(.985);
+  }
+
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+
+.burger-section{
+  display:grid;
+
+  gap:2px;
+}
+
+.burger-section-label{
+  display:block;
+
+  padding:7px 10px 5px;
+
+  color:var(--muted);
+
+  font-size:.67rem;
+  font-weight:800;
+
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+
+.burger-user{
+  padding:5px 2px;
+}
+
+.burger-user strong{
+  display:block;
+
+  padding:0 10px 7px;
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+}
+
+
+.burger-dropdown a,
+.burger-logout{
+  width:100%;
+
+  min-height:40px;
+
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  padding:8px 10px;
+
+  border:0;
+
+  border-radius:9px;
+
+  background:transparent !important;
+  color:var(--text) !important;
+
+  box-shadow:none !important;
+
+  text-align:left;
+
+  text-decoration:none;
+
+  font-size:.88rem;
+  font-weight:600;
+
+  transition:
+    background .12s ease,
+    color .12s ease;
+}
+
+.burger-dropdown a:hover,
+.burger-logout:hover{
+  background:var(--bg) !important;
+
+  filter:none;
+
+  transform:none;
+}
+
+
+.burger-icon{
+  width:24px;
+  height:24px;
+
+  flex:0 0 24px;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:7px;
+
+  background:var(--bg);
+
+  color:var(--muted);
+
+  font-size:.85rem;
+  font-weight:800;
+}
+
+
+.burger-divider{
+  height:1px;
+
+  margin:6px 4px;
+
+  background:var(--border);
+}
+
+
+.burger-logout-form{
+  margin:0;
+  padding:0;
+}
+
+.burger-logout{
+  cursor:pointer;
+}
+
+.burger-logout:hover{
+  color:#c9362b !important;
+}
+
+.burger-logout:hover .burger-icon{
+  color:#c9362b;
+  background:#c9362b;
+}
+
+
+/* =========================================================
+   Responsive Navigation
+   ========================================================= */
+
+@media(max-width:700px){
+
+  .topnav-inner{
+    min-height:58px;
+
+    padding:
+      8px 10px;
+
+    gap:10px;
+  }
+
+  .topnav-actions{
+    gap:7px;
+  }
+
+  .topnav-overview{
+    display:none;
+  }
+
+  .topnav .brand span{
+    display:none;
+  }
+
+  .topnav .nav-new-transaction{
+    min-height:36px;
+
+    padding:0 10px;
+
+    font-size:.8rem;
+  }
+
+  .topnav .theme-toggle,
+  .burger-toggle{
+    width:36px;
+    height:36px;
+
+    flex-basis:36px;
+  }
+
+  .burger-dropdown{
+    position:fixed;
+
+    top:66px;
+    right:10px;
+
+    width:min(320px,calc(100vw - 20px));
+
+    max-height:calc(100vh - 78px);
+
+    overflow-y:auto;
+  }
+
+}
+
+
+@media(max-width:420px){
+
+  .topnav .brand strong{
+    font-size:1.1rem;
+  }
+
+  .topnav .nav-new-transaction{
+    font-size:0;
+
+    width:36px;
+
+    padding:0;
+  }
+
+  .topnav .nav-new-transaction::before{
+    content:"+";
+
+    font-size:1.35rem;
+    line-height:1;
+  }
+
+}
+
+
+/* Fintra V9.4.3 – Versionshinweis im Burger-Menü */
+.burger-version{
+  margin:6px 4px 1px;
+  padding:8px 8px 4px;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-align:center;
+  opacity:.8;
+}
+
+
+
+
+/* =========================================================
+   Fintra V9.5.1 – lokale Offline-Icons
+   ========================================================= */
+
+.local-icon{
+  width:1em;
+  height:1em;
+  display:inline-block;
+  flex:0 0 auto;
+  background-color:currentColor;
+  vertical-align:-0.12em;
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  mask-position:center;
+  -webkit-mask-size:contain;
+  mask-size:contain;
+  pointer-events:none;
+}
+
+.icon-add{-webkit-mask-image:url("/static/icons/add.svg");mask-image:url("/static/icons/add.svg")}
+.icon-dark_mode{-webkit-mask-image:url("/static/icons/dark_mode.svg");mask-image:url("/static/icons/dark_mode.svg")}
+.icon-light_mode{-webkit-mask-image:url("/static/icons/light_mode.svg");mask-image:url("/static/icons/light_mode.svg")}
+.icon-edit{-webkit-mask-image:url("/static/icons/edit.svg");mask-image:url("/static/icons/edit.svg")}
+.icon-delete{-webkit-mask-image:url("/static/icons/delete.svg");mask-image:url("/static/icons/delete.svg")}
+.icon-save{-webkit-mask-image:url("/static/icons/save.svg");mask-image:url("/static/icons/save.svg")}
+.icon-arrow_back{-webkit-mask-image:url("/static/icons/arrow_back.svg");mask-image:url("/static/icons/arrow_back.svg")}
+.icon-arrow_forward{-webkit-mask-image:url("/static/icons/arrow_forward.svg");mask-image:url("/static/icons/arrow_forward.svg")}
+.icon-chevron_left{-webkit-mask-image:url("/static/icons/chevron_left.svg");mask-image:url("/static/icons/chevron_left.svg")}
+.icon-chevron_right{-webkit-mask-image:url("/static/icons/chevron_right.svg");mask-image:url("/static/icons/chevron_right.svg")}
+.icon-event_repeat{-webkit-mask-image:url("/static/icons/event_repeat.svg");mask-image:url("/static/icons/event_repeat.svg")}
+.icon-category{-webkit-mask-image:url("/static/icons/category.svg");mask-image:url("/static/icons/category.svg")}
+.icon-savings{-webkit-mask-image:url("/static/icons/savings.svg");mask-image:url("/static/icons/savings.svg")}
+.icon-monitoring{-webkit-mask-image:url("/static/icons/monitoring.svg");mask-image:url("/static/icons/monitoring.svg")}
+.icon-account_tree{-webkit-mask-image:url("/static/icons/account_tree.svg");mask-image:url("/static/icons/account_tree.svg")}
+.icon-download{-webkit-mask-image:url("/static/icons/download.svg");mask-image:url("/static/icons/download.svg")}
+.icon-backup{-webkit-mask-image:url("/static/icons/backup.svg");mask-image:url("/static/icons/backup.svg")}
+.icon-logout{-webkit-mask-image:url("/static/icons/logout.svg");mask-image:url("/static/icons/logout.svg")}
+.icon-warning{-webkit-mask-image:url("/static/icons/warning.svg");mask-image:url("/static/icons/warning.svg")}
+.icon-check_circle{-webkit-mask-image:url("/static/icons/check_circle.svg");mask-image:url("/static/icons/check_circle.svg")}
+.icon-error{-webkit-mask-image:url("/static/icons/error.svg");mask-image:url("/static/icons/error.svg")}
+.icon-close{-webkit-mask-image:url("/static/icons/close.svg");mask-image:url("/static/icons/close.svg")}
+.icon-remove_circle{-webkit-mask-image:url("/static/icons/remove_circle.svg");mask-image:url("/static/icons/remove_circle.svg")}
+.icon-add_circle{-webkit-mask-image:url("/static/icons/add_circle.svg");mask-image:url("/static/icons/add_circle.svg")}
+
+.inline-material-icon{
+  width:18px;
+  height:18px;
+  vertical-align:-4px;
+}
+
+.heading-with-icon{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.heading-with-icon .local-icon{
+  width:21px;
+  height:21px;
+}
+
+.icon-button .local-icon{
+  width:19px;
+  height:19px;
+}
+
+.fixed-actions .local-icon,
+.transaction-actions .local-icon,
+.cat-actions .local-icon{
+  width:19px;
+  height:19px;
+}
+
+.yearnav a,
+.month-arrow{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.yearnav a .local-icon,
+.month-arrow .local-icon{
+  width:30px;
+  height:30px;
+}
+
+.nav-action-icon{
+  width:19px;
+  height:19px;
+}
+
+.theme-toggle .local-icon{
+  width:20px;
+  height:20px;
+}
+
+.burger-icon.local-icon{
+  width:18px;
+  height:18px;
+  line-height:1;
+}
+
+.check-badge .local-icon,
+.error-badge .local-icon{
+  width:16px;
+  height:16px;
+}
+
+.comparison-arrow .local-icon{
+  width:24px;
+  height:24px;
+}
+
+.warning-material-icon{
+  color:#d97706;
+}
+
+@media(max-width:420px){
+  .topnav .nav-new-transaction::before{
+    content:none !important;
+  }
+
+  .topnav .nav-new-transaction{
+    font-size:inherit;
+  }
+
+  .topnav .nav-new-transaction .nav-action-label{
+    display:none;
+  }
+
+  .topnav .nav-new-transaction .nav-action-icon{
+    width:22px;
+    height:22px;
+  }
+}
+
+
+
+
+/* V9.5.6: Fixkosten erst nach Klick auf den Stift bearbeiten */
+.fixed-table .fixed-month-input[readonly]{
+  cursor:default;
+  opacity:1;
+  background:transparent;
+  border-color:transparent;
+  box-shadow:none;
+}
+
+.fixed-table .fixed-month-input:not([readonly]){
+  cursor:text;
+}
+
+.fixed-actions .save-button:disabled{
+  opacity:.42;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
+
+/* V9.5.7: Lange Buchungskommentare sauber umbrechen */
+.transaction-comment{
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  max-width:320px;
+  line-height:1.45;
+}
+
+
+/* V9.5.10: Lange Fixkosten-Bezeichnungen automatisch umbrechen */
+.fixed-description{
+  display:block;
+  max-width:100%;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  line-height:1.4;
+}
+
+
+/* =========================================================
+   Fintra V9.5.12 – Privacy-Modus
+   ========================================================= */
+
+.icon-visibility{
+  -webkit-mask-image:url("/static/icons/visibility.svg");
+  mask-image:url("/static/icons/visibility.svg");
+}
+
+.icon-visibility_off{
+  -webkit-mask-image:url("/static/icons/visibility_off.svg");
+  mask-image:url("/static/icons/visibility_off.svg");
+}
+
+.privacy-toggle{
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    box-shadow .15s ease;
+}
+
+.privacy-mode .privacy-toggle{
+  background:rgba(255,255,255,.14);
+  border-color:rgba(255,255,255,.30);
+}
+
+/*
+  Nur Finanzbeträge werden verschleiert. Kategorienamen, Prozentwerte,
+  Transaktionsdaten und die A&D-Benchmarkzahlen bleiben lesbar.
+*/
+.privacy-mode .amount-positive,
+.privacy-mode .amount-negative,
+.privacy-mode .table-amount-neutral,
+.privacy-mode .mobile-number,
+.privacy-mode input[name="amount"],
+.privacy-mode .fixed-month-input,
+.privacy-mode .budget-money-input,
+.privacy-mode .budget-meta b,
+.privacy-mode .top-k-list b,
+.privacy-mode .quartile-point b,
+.privacy-mode .iqr-formula code,
+.privacy-mode .outlier-list b,
+.privacy-mode .analysis-budget-list small{
+  filter:blur(6px);
+  user-select:none;
+  transition:filter .15s ease;
+}
+
+/* Finanzdiagramme würden sonst Beträge und Größenverhältnisse verraten. */
+.privacy-mode .dashboard-charts canvas,
+.privacy-mode #slidingChart{
+  filter:blur(8px);
+  transition:filter .15s ease;
+}
+
+
+
+
+
+/* =========================================================
+   Fintra V9.5.14 – Privacy-Layout ohne Positionsverschiebung
+   ========================================================= */
+
+/*
+  Wichtig: Der Privacy-Modus verändert ausschließlich Filter/Lesbarkeit.
+  Keine display-, position-, line-height- oder flex-Regeln werden überschrieben.
+*/
+.privacy-mode .amount-positive,
+.privacy-mode .amount-negative,
+.privacy-mode .table-amount-neutral,
+.privacy-mode .mobile-number,
+.privacy-mode input[name="amount"],
+.privacy-mode .fixed-month-input,
+.privacy-mode .budget-money-input,
+.privacy-mode .budget-meta b,
+.privacy-mode .top-k-list b,
+.privacy-mode .quartile-point b,
+.privacy-mode .iqr-formula code,
+.privacy-mode .outlier-list b,
+.privacy-mode .analysis-budget-list small{
+  filter:blur(6px);
+  user-select:none;
+}
+
+/* Die KPI-Beträge oben behalten exakt ihre vorhandene Baseline und Zeilenhöhe. */
+.privacy-mode .income-card b,
+.privacy-mode .expense-card b,
+.privacy-mode .balance b{
+  transform:none;
+  vertical-align:baseline;
+}
+
+/* Diagramme bleiben verborgen, ohne das umgebende Layout zu beeinflussen. */
+.privacy-mode .dashboard-charts canvas,
+.privacy-mode #slidingChart{
+  filter:blur(8px);
+}
+
+
+/* =========================================================
+   Fintra V9.5.15 – Profil
+   ========================================================= */
+
+.icon-account_circle{
+  -webkit-mask-image:url("/static/icons/account_circle.svg");
+  mask-image:url("/static/icons/account_circle.svg");
+}
+
+.icon-lock{
+  -webkit-mask-image:url("/static/icons/lock.svg");
+  mask-image:url("/static/icons/lock.svg");
+}
+
+.profile-layout{
+  width:min(760px,100%);
+  display:grid;
+  gap:16px;
+  margin-top:18px;
+}
+
+.profile-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 1px 4px var(--shadow);
+}
+
+.profile-summary{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.profile-summary h2{
+  margin:3px 0;
+}
+
+.profile-avatar{
+  width:58px;
+  height:58px;
+  flex:0 0 58px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--bg);
+  color:var(--muted);
+}
+
+.profile-avatar .local-icon{
+  width:38px;
+  height:38px;
+}
+
+.profile-card-head{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+  margin-bottom:18px;
+}
+
+.profile-card-head h2{
+  margin:0 0 5px;
+}
+
+.profile-card-head p{
+  margin:0;
+}
+
+.profile-section-icon{
+  width:26px;
+  height:26px;
+  color:var(--muted);
+}
+
+.profile-password-form{
+  display:grid;
+  gap:14px;
+}
+
+.profile-password-form label{
+  display:grid;
+  gap:6px;
+}
+
+.profile-password-form small{
+  color:var(--muted);
+}
+
+.profile-form-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:4px;
+}
+
+.profile-message{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:11px 12px;
+  margin-bottom:16px;
+  border-radius:10px;
+  font-size:.9rem;
+  font-weight:600;
+}
+
+.profile-message .local-icon{
+  width:19px;
+  height:19px;
+}
+
+.profile-message-error{
+  color:#b91c1c;
+  background:rgba(220,38,38,.08);
+  border:1px solid rgba(220,38,38,.2);
+}
+
+.profile-message-success{
+  color:#15803d;
+  background:rgba(22,163,74,.08);
+  border:1px solid rgba(22,163,74,.2);
+}
+
+html[data-theme="dark"] .profile-message-error{
+  color:#f87171;
+}
+
+html[data-theme="dark"] .profile-message-success{
+  color:#4ade80;
+}
+
+@media(max-width:600px){
+  .profile-card{
+    padding:16px;
+  }
+
+  .profile-form-actions{
+    justify-content:stretch;
+  }
+
+  .profile-form-actions button{
+    width:100%;
+  }
+}

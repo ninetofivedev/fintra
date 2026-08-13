@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Fintra – Track your finances{% endblock %}</title>
+
+<div class="modal-backdrop" id="inputErrorModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="inputErrorTitle">
+    <div class="modal-icon">
+      <span class="local-icon icon-error" aria-hidden="true"></span>
+    </div>
+    <h2 id="inputErrorTitle">Eingabe prüfen</h2>
+    <p id="inputErrorText">Bitte überprüfe deine Eingabe.</p>
+    <button type="button" id="inputErrorClose">Okay</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  try{
+    const t=localStorage.getItem('fintra-theme');
+    document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+
+    if(localStorage.getItem('fintra-privacy') === 'on'){
+      document.documentElement.classList.add('privacy-mode');
+    }
+  }catch(e){}
+})();
+</script>
+<link rel="stylesheet" href="/static/style.css">
+{% block head %}{% endblock %}
+</head>
+
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+
+    <a class="brand" href="/">
+      <strong>Fintra</strong>
+      <span>Track your finances</span>
+    </a>
+
+    <div class="topnav-actions">
+
+      <a class="topnav-overview" href="/">
+        Übersicht
+      </a>
+
+      <a class="nav-new-transaction" href="/new-transaction">
+        <span class="local-icon icon-add nav-action-icon" aria-hidden="true"></span>
+        <span class="nav-action-label">Neue Transaktion</span>
+      </a>
+
+      <button
+        id="themeToggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="Theme wechseln"
+        title="Theme wechseln"
+      >
+        <span class="local-icon icon-dark_mode" aria-hidden="true"></span>
+      </button>
+
+      <button
+        id="privacyToggle"
+        class="theme-toggle privacy-toggle"
+        type="button"
+        aria-label="Beträge ausblenden"
+        title="Beträge ausblenden"
+        aria-pressed="false"
+      >
+        <span class="local-icon icon-visibility" aria-hidden="true"></span>
+      </button>
+
+      <div class="burger-menu">
+
+        <button
+          id="burgerToggle"
+          class="burger-toggle"
+          type="button"
+          aria-label="Menü öffnen"
+          aria-expanded="false"
+          aria-controls="burgerDropdown"
+          title="Menü"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div
+          id="burgerDropdown"
+          class="burger-dropdown"
+          hidden
+        >
+
+          <div class="burger-section">
+            <span class="burger-section-label">Konto</span>
+
+            <a href="/profile" class="burger-profile-link">
+              <span class="local-icon icon-account_circle burger-icon" aria-hidden="true"></span>
+              <span>{{ request.session.get("username", "") }}</span>
+            </a>
+          </div>
+
+          <div class="burger-divider"></div>
+
+          <div class="burger-section">
+            <span class="burger-section-label">Finanzen</span>
+
+            <a href="/fixed">
+              <span class="local-icon icon-event_repeat burger-icon" aria-hidden="true"></span>
+              <span>Fixkosten</span>
+            </a>
+
+            <a href="/categories">
+              <span class="local-icon icon-category burger-icon" aria-hidden="true"></span>
+              <span>Kategorien</span>
+            </a>
+
+            <a href="/budgets">
+              <span class="local-icon icon-savings burger-icon" aria-hidden="true"></span>
+              <span>Budgets</span>
+            </a>
+          </div>
+
+          <div class="burger-divider"></div>
+
+          <div class="burger-section">
+            <span class="burger-section-label">Auswertung</span>
+
+            <a href="/analysis">
+              <span class="local-icon icon-monitoring burger-icon" aria-hidden="true"></span>
+              <span>Finanzanalyse</span>
+            </a>
+
+            <a href="/algorithm">
+              <span class="local-icon icon-account_tree burger-icon" aria-hidden="true"></span>
+              <span>Algorithmen &amp; Datenstrukturen</span>
+            </a>
+          </div>
+
+          <div class="burger-divider"></div>
+
+          <div class="burger-section">
+            <span class="burger-section-label">Daten</span>
+
+            <a href="/export/transactions.csv" title="Alle Transaktionen als CSV">
+              <span class="local-icon icon-download burger-icon" aria-hidden="true"></span>
+              <span>CSV exportieren</span>
+            </a>
+
+            <a href="/backup/database" title="SQLite-Backup herunterladen">
+              <span class="local-icon icon-backup burger-icon" aria-hidden="true"></span>
+              <span>Datenbank-Backup</span>
+            </a>
+          </div>
+
+          <div class="burger-divider"></div>
+
+          <form method="post" action="/logout" class="burger-logout-form">
+            <input
+              type="hidden"
+              name="csrf_token"
+              value="{{ request.session.get("csrf_token", "") }}"
+            >
+
+            <button class="burger-logout" type="submit">
+              <span class="local-icon icon-logout burger-icon" aria-hidden="true"></span>
+              <span>Abmelden</span>
+            </button>
+          </form>
+
+          <div class="burger-version" aria-label="Fintra Version">
+            Fintra · V{{ app_version }}
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</nav>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+
+<script>
+(function(){
+
+
+  /* =====================================================
+     Einheitliche Formular-Validierung
+     ===================================================== */
+
+  const inputErrorModal = document.getElementById('inputErrorModal');
+  const inputErrorText = document.getElementById('inputErrorText');
+  const inputErrorClose = document.getElementById('inputErrorClose');
+  let invalidInput = null;
+
+  function validationMessageFor(input){
+    if(input.validity.valueMissing){
+      return 'Bitte fülle dieses Pflichtfeld aus.';
+    }
+    if(input.validity.typeMismatch){
+      return 'Bitte gib einen gültigen Wert ein.';
+    }
+    if(input.validity.rangeUnderflow){
+      return 'Der eingegebene Wert ist zu klein.';
+    }
+    if(input.validity.rangeOverflow){
+      return 'Der eingegebene Wert ist zu groß.';
+    }
+    if(input.validity.stepMismatch){
+      return 'Bitte gib einen gültigen Wert in der vorgesehenen Schrittweite ein.';
+    }
+    if(input.validity.patternMismatch){
+      return 'Bitte überprüfe das Format deiner Eingabe.';
+    }
+    if(input.validity.badInput){
+      return 'Bitte gib einen gültigen Wert ein.';
+    }
+    return input.validationMessage || 'Bitte überprüfe deine Eingabe.';
+  }
+
+  function showInputError(input){
+    if(!inputErrorModal || !inputErrorText) return;
+    invalidInput = input;
+    inputErrorText.textContent = validationMessageFor(input);
+    inputErrorModal.hidden = false;
+    inputErrorClose?.focus();
+  }
+
+  function closeInputError(){
+    if(!inputErrorModal) return;
+    inputErrorModal.hidden = true;
+    const target = invalidInput;
+    invalidInput = null;
+    target?.focus();
+  }
+
+  document.addEventListener('invalid', function(event){
+    event.preventDefault();
+    if(inputErrorModal && inputErrorModal.hidden){
+      showInputError(event.target);
+    }
+  }, true);
+
+  inputErrorClose?.addEventListener('click', closeInputError);
+
+  inputErrorModal?.addEventListener('click', function(event){
+    if(event.target === inputErrorModal){
+      closeInputError();
+    }
+  });
+
+
+  /* =====================================================
+     Theme
+     ===================================================== */
+
+  const themeButton = document.getElementById('themeToggle');
+
+  if(themeButton){
+
+    function setTheme(theme){
+      document.documentElement.dataset.theme = theme;
+
+      try{
+        localStorage.setItem('fintra-theme', theme);
+      }catch(e){}
+
+      themeButton.innerHTML =
+        '<span class="local-icon ' +
+        (theme === 'dark' ? 'icon-light_mode' : 'icon-dark_mode') +
+        '" aria-hidden="true"></span>';
+
+      themeButton.setAttribute(
+        'aria-label',
+        theme === 'dark'
+          ? 'Hellmodus aktivieren'
+          : 'Dunkelmodus aktivieren'
+      );
+    }
+
+    setTheme(
+      document.documentElement.dataset.theme || 'light'
+    );
+
+    themeButton.addEventListener('click', function(){
+      setTheme(
+        document.documentElement.dataset.theme === 'dark'
+          ? 'light'
+          : 'dark'
+      );
+    });
+
+  }
+
+
+
+  document.addEventListener('keydown', function(event){
+    if(event.key === 'Escape' && inputErrorModal && !inputErrorModal.hidden){
+      closeInputError();
+    }
+  });
+
+
+
+  /* =====================================================
+     Privacy-Modus
+     ===================================================== */
+
+  const privacyButton = document.getElementById('privacyToggle');
+
+  if(privacyButton){
+
+    function setPrivacy(enabled){
+      document.documentElement.classList.toggle('privacy-mode', enabled);
+
+      try{
+        localStorage.setItem('fintra-privacy', enabled ? 'on' : 'off');
+      }catch(e){}
+
+      privacyButton.innerHTML =
+        '<span class="local-icon ' +
+        (enabled ? 'icon-visibility_off' : 'icon-visibility') +
+        '" aria-hidden="true"></span>';
+
+      privacyButton.setAttribute('aria-pressed', String(enabled));
+      privacyButton.setAttribute(
+        'aria-label',
+        enabled ? 'Beträge einblenden' : 'Beträge ausblenden'
+      );
+      privacyButton.setAttribute(
+        'title',
+        enabled ? 'Beträge einblenden' : 'Beträge ausblenden'
+      );
+    }
+
+    setPrivacy(
+      document.documentElement.classList.contains('privacy-mode')
+    );
+
+    privacyButton.addEventListener('click', function(){
+      setPrivacy(
+        !document.documentElement.classList.contains('privacy-mode')
+      );
+    });
+
+  }
+
+
+  /* =====================================================
+     Burger Menu
+     ===================================================== */
+
+  const burgerButton =
+    document.getElementById('burgerToggle');
+
+  const burgerDropdown =
+    document.getElementById('burgerDropdown');
+
+  if(!burgerButton || !burgerDropdown){
+    return;
+  }
+
+
+  function openBurger(){
+
+    burgerDropdown.hidden = false;
+
+    burgerButton.classList.add('is-open');
+
+    burgerButton.setAttribute(
+      'aria-expanded',
+      'true'
+    );
+
+    burgerButton.setAttribute(
+      'aria-label',
+      'Menü schließen'
+    );
+
+  }
+
+
+  function closeBurger(){
+
+    burgerDropdown.hidden = true;
+
+    burgerButton.classList.remove('is-open');
+
+    burgerButton.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+
+    burgerButton.setAttribute(
+      'aria-label',
+      'Menü öffnen'
+    );
+
+  }
+
+
+  function toggleBurger(){
+
+    if(burgerDropdown.hidden){
+      openBurger();
+    }else{
+      closeBurger();
+    }
+
+  }
+
+
+  burgerButton.addEventListener(
+    'click',
+    function(event){
+
+      event.stopPropagation();
+
+      toggleBurger();
+
+    }
+  );
+
+
+  burgerDropdown.addEventListener(
+    'click',
+    function(event){
+
+      event.stopPropagation();
+
+    }
+  );
+
+
+  document.addEventListener(
+    'click',
+    function(){
+
+      if(!burgerDropdown.hidden){
+        closeBurger();
+      }
+
+    }
+  );
+
+
+  document.addEventListener(
+    'keydown',
+    function(event){
+
+      if(
+        event.key === 'Escape' &&
+        !burgerDropdown.hidden
+      ){
+        closeBurger();
+        burgerButton.focus();
+      }
+
+    }
+  );
+
+
+  burgerDropdown
+    .querySelectorAll('a')
+    .forEach(function(link){
+
+      link.addEventListener(
+        'click',
+        closeBurger
+      );
+
+    });
+
+})();
+</script>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %}Fintra · {{year}}{% endblock %}
+{% block head %}<script src="/static/vendor/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<header>
+  <div>
+    <h1>Jahresübersicht {{year}}</h1>
+    <p class="muted">Einnahmen, Ausgaben und Entwicklung auf einen Blick.</p>
+  </div>
+  <div class="yearnav"><a href="/?year={{year-1}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a><b>{{year}}</b><a href="/?year={{year+1}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a></div>
+</header>
+
+<section class="cards">
+  <div class="income-card"><span>Variable Einnahmen</span><b class="amount-positive">+ {{euros(totals[0])}}</b></div>
+  <div class="income-card"><span>Fixe Einnahmen</span><b class="amount-positive">+ {{euros(totals[1])}}</b></div>
+  <div class="expense-card"><span>Variable Ausgaben</span><b class="amount-negative">− {{euros(totals[2])}}</b></div>
+  <div class="expense-card"><span>Fixe Ausgaben</span><b class="amount-negative">− {{euros(totals[3])}}</b></div>
+  <div class="balance"><span>Jahresüberschuss</span><b class="{{'amount-positive' if balance>=0 else 'amount-negative'}}">{{'+' if balance>=0 else '−'}} {{euros(balance|abs)}}</b></div>
+</section>
+
+<div class="summary-strip">
+  <div><span>Gesamteinnahmen</span><strong class="amount-positive">+ {{euros(annual_income)}}</strong></div>
+  <div><span>Gesamtausgaben</span><strong class="amount-negative">− {{euros(annual_expense)}}</strong></div>
+  <div><span>Sparquote</span><strong>{{'%.1f'|format(savings_rate)}} %</strong></div>
+  <div class="summary-actions">
+    <a class="btn" href="/month/{{year}}/{{'%02d' % today_month}}"><span class="local-icon icon-add inline-material-icon" aria-hidden="true"></span> Neue Transaktion</a>
+    <a class="btn" href="/export/transactions.csv?year={{year}}">CSV {{year}}</a>
+  </div>
+</div>
+
+<section class="tablewrap">
+  <div class="year-overview-table">
+    <table>
+      <thead><tr><th></th>{% for r in months %}<th><a href="/month/{{year}}/{{loop.index}}">{{r.month}}</a></th>{% endfor %}<th>Jahr</th></tr></thead>
+      <tbody>
+        <tr>
+          <th>Variable Einnahmen</th>
+          {% for r in months %}
+            <td>
+              <a class="table-amount-neutral">
+                + {{euros(r.income)}}
+              </a>
+            </td>
+          {% endfor %}
+          <td class="amount-positive">+ {{euros(totals[0])}}</td>
+        </tr>
+
+        <tr>
+          <th>Fixe Einnahmen</th>
+          {% for r in months %}
+            <td class="table-amount-neutral">+ {{euros(r.fixed_income)}}</td>
+          {% endfor %}
+          <td class="amount-positive">+ {{euros(totals[1])}}</td>
+        </tr>
+
+        <tr>
+          <th>Variable Ausgaben</th>
+          {% for r in months %}
+            <td>
+              <a class="table-amount-neutral">
+                − {{euros(r.expense)}}
+              </a>
+            </td>
+          {% endfor %}
+          <td class="amount-negative">− {{euros(totals[2])}}</td>
+        </tr>
+
+        <tr>
+          <th>Fixe Ausgaben</th>
+          {% for r in months %}
+            <td class="table-amount-neutral">− {{euros(r.fixed_expense)}}</td>
+          {% endfor %}
+          <td class="amount-negative">− {{euros(totals[3])}}</td>
+        </tr>
+
+        <tr class="total">
+          <th>Überschuss</th>
+          {% for r in months %}
+            <td class="{{'amount-positive' if r.balance>=0 else 'amount-negative'}}">
+              {{'+' if r.balance>=0 else '−'}} {{euros(r.balance|abs)}}
+            </td>
+          {% endfor %}
+          <td class="{{'amount-positive' if balance>=0 else 'amount-negative'}}">
+            {{'+' if balance>=0 else '−'}} {{euros(balance|abs)}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="year-overview-mobile">
+    {% for r in months %}
+    <a class="year-month-row" href="/month/{{year}}/{{loop.index}}">
+      <span class="month-name">{{r.month}}</span>
+      <span class="mobile-number amount-positive"><span>Einnahmen</span>+ {{euros(r.income+r.fixed_income)}}</span>
+      <span class="mobile-number amount-negative"><span>Ausgaben</span>− {{euros(r.expense+r.fixed_expense)}}</span>
+      <span class="mobile-number mobile-balance"><span>Saldo</span>{{'+' if r.balance>=0 else '−'}} {{euros(r.balance|abs)}}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="dashboard-charts">
+  <article class="chart-card">
+    <div class="chart-title"><div><h2>Einnahmen vs. Ausgaben</h2><p class="muted">Monatlicher Verlauf {{year}}</p></div></div>
+    <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
+  </article>
+  <article class="chart-card">
+    <div class="chart-title"><div><h2>Ausgaben nach Kategorie</h2><p class="muted">Variable Ausgaben {{year}}</p></div></div>
+    <div class="chart-container"><canvas id="categoryChart"></canvas></div>
+  </article>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const months={{ months|map(attribute='month')|list|tojson }};
+const incomes={{ months|map(attribute='income')|list|tojson }};
+const fixedIncomes={{ months|map(attribute='fixed_income')|list|tojson }};
+const expenses={{ months|map(attribute='expense')|list|tojson }};
+const fixedExpenses={{ months|map(attribute='fixed_expense')|list|tojson }};
+const categoryData={{ category_chart|tojson }};
+const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(v/100);
+new Chart(document.getElementById('monthlyChart'),{
+  type:'bar',
+  data:{labels:months,datasets:[
+    {label:'Einnahmen',data:incomes.map((v,i)=>v+fixedIncomes[i]),backgroundColor:'rgba(22,163,74,.78)',borderRadius:7},
+    {label:'Ausgaben',data:expenses.map((v,i)=>v+fixedExpenses[i]),backgroundColor:'rgba(220,38,38,.76)',borderRadius:7}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}}}}
+});
+new Chart(document.getElementById('categoryChart'),{
+  type:'doughnut',
+  data:{labels:categoryData.map(x=>x.name),datasets:[{data:categoryData.map(x=>x.total),backgroundColor:['#4f46e5','#16a34a','#f59e0b','#e11d48','#0ea5e9','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16'],borderWidth:0,hoverOffset:10}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}}}
+});
+</script>
+{% endblock %}

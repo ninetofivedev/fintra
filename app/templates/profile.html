@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Profil – Fintra{% endblock %}
+
+{% block content %}
+<header>
+  <div>
+    <a href="/"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Übersicht</a>
+    <h1>Profil</h1>
+    <p class="muted">Kontoinformationen und Passwort verwalten.</p>
+  </div>
+</header>
+
+<section class="profile-layout">
+  <article class="profile-card profile-summary">
+    <div class="profile-avatar" aria-hidden="true">
+      <span class="local-icon icon-account_circle"></span>
+    </div>
+    <div>
+      <span class="muted">Benutzerkonto</span>
+      <h2>{{ user.username }}</h2>
+      <p class="muted">Fintra-Administrator</p>
+    </div>
+  </article>
+
+  <article class="profile-card">
+    <div class="profile-card-head">
+      <div>
+        <h2>Passwort ändern</h2>
+        <p class="muted">Zur Sicherheit musst du zuerst dein aktuelles Passwort bestätigen.</p>
+      </div>
+      <span class="local-icon icon-lock profile-section-icon" aria-hidden="true"></span>
+    </div>
+
+    {% if error %}
+      <div class="profile-message profile-message-error">
+        <span class="local-icon icon-error" aria-hidden="true"></span>
+        <span>{{ error }}</span>
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="profile-message profile-message-success">
+        <span class="local-icon icon-check_circle" aria-hidden="true"></span>
+        <span>{{ success }}</span>
+      </div>
+    {% endif %}
+
+    <form method="post" action="/profile/password" class="profile-password-form">
+      <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+
+      <label>
+        Aktuelles Passwort
+        <input
+          type="password"
+          name="current_password"
+          autocomplete="current-password"
+          required
+        >
+      </label>
+
+      <label>
+        Neues Passwort
+        <input
+          type="password"
+          name="new_password"
+          autocomplete="new-password"
+          minlength="10"
+          required
+        >
+        <small>Mindestens 10 Zeichen.</small>
+      </label>
+
+      <label>
+        Neues Passwort wiederholen
+        <input
+          type="password"
+          name="new_password_confirm"
+          autocomplete="new-password"
+          minlength="10"
+          required
+        >
+      </label>
+
+      <div class="profile-form-actions">
+        <button type="submit">Passwort ändern</button>
+      </div>
+    </form>
+  </article>
+</section>
+{% endblock %}

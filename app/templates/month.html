@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block title %}{{month_name}} {{year}} – Fintra{% endblock %}
+{% block content %}
+<a href="/?year={{year}}"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Jahresübersicht</a>
+
+<div class="month-heading">
+  <a class="month-arrow" href="{{prev_url}}" title="{{prev_label}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+  <h1>{{month_name}} {{year}}</h1>
+  <a class="month-arrow" href="{{next_url}}" title="{{next_label}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+</div>
+
+<section class="cards">
+  <div class="income-card"><span>Variable Einnahmen</span><b class="amount-positive">+ {{euros(income)}}</b></div>
+  <div class="income-card"><span>Fixe Einnahmen</span><b class="amount-positive">+ {{euros(fixed_income)}}</b></div>
+  <div class="expense-card"><span>Variable Ausgaben</span><b class="amount-negative">− {{euros(expense)}}</b></div>
+  <div class="expense-card"><span>Fixe Ausgaben</span><b class="amount-negative">− {{euros(fixed_expense)}}</b></div>
+  <div class="balance"><span>Noch verfügbar</span><b class="{{'amount-positive' if available>=0 else 'amount-negative'}}">{{'+' if available>=0 else '−'}} {{euros(available|abs)}}</b></div>
+</section>
+
+<section class="forms">
+  <div class="formbox income">
+    <h2 class="heading-with-icon"><span class="local-icon icon-add_circle" aria-hidden="true"></span><span>Einnahme</span></h2>
+    <form method="post" action="/transaction" class="transaction-form" data-validate-money>
+      <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+      <input type="hidden" name="tx_type" value="income">
+      <label>Datum<input type="date" name="tx_date" value="{{today_iso}}" required></label>
+      <label>Kategorie<select name="category_id">{% for c in cats if c.type=='income' %}<option value="{{c.id}}">{{c.name}}</option>{% endfor %}</select></label>
+      <label>Betrag<input name="amount" inputmode="decimal" placeholder="0,00" required></label>
+      <label>Kommentar<input name="comment" placeholder="Optional"></label>
+      <button type="submit">Einnahme speichern</button>
+    </form>
+  </div>
+  <div class="formbox expense">
+    <h2 class="heading-with-icon"><span class="local-icon icon-remove_circle" aria-hidden="true"></span><span>Ausgabe</span></h2>
+    <form method="post" action="/transaction" class="transaction-form" data-validate-money>
+      <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+      <input type="hidden" name="tx_type" value="expense">
+      <label>Datum<input type="date" name="tx_date" value="{{today_iso}}" required></label>
+      <label>Kategorie<select name="category_id">{% for c in cats if c.type=='expense' %}<option value="{{c.id}}">{{c.name}}</option>{% endfor %}</select></label>
+      <label>Betrag<input name="amount" inputmode="decimal" placeholder="0,00" required></label>
+      <label>Kommentar<input name="comment" placeholder="Optional"></label>
+      <button type="submit">Ausgabe speichern</button>
+    </form>
+  </div>
+</section>
+
+<section class="tablewrap">
+  <div class="table-toolbar">
+    <div>
+      <h2>Buchungen</h2>
+      <p class="muted">Alle Transaktionen im {{month_name}} {{year}}</p>
+    </div>
+    <div class="transaction-filter">
+      <input id="txSearch" type="search" placeholder="Kategorie oder Kommentar suchen…">
+      <select id="txTypeFilter"><option value="">Alle</option><option value="income">Einnahmen</option><option value="expense">Ausgaben</option></select>
+    </div>
+  </div>
+
+  <table class="transactions-table">
+    <thead><tr><th>Datum</th><th>Art</th><th>Kategorie</th><th>Betrag</th><th>Kommentar</th><th>Aktionen</th></tr></thead>
+    <tbody>
+    {% for t in tx %}
+      <tr data-transaction data-type="{{t.type}}" data-search="{{(t.category ~ ' ' ~ (t.comment or ''))|lower}}">
+        <td>{{t.tx_date}}</td>
+        <td>{{'Einnahme' if t.type=='income' else 'Ausgabe'}}</td>
+        <td>{{t.category}}</td>
+        <td class="{{'amount-positive' if t.type=='income' else 'amount-negative'}}">{{'+' if t.type=='income' else '−'}} {{euros(t.amount_cents)}}</td>
+        <td class="transaction-comment">{{t.comment or ''}}</td>
+        <td>
+          <div class="transaction-actions">
+            <button type="button" class="icon-button edit-button" data-edit-transaction="{{t.id}}" title="Bearbeiten" aria-label="Bearbeiten"><span class="local-icon icon-edit" aria-hidden="true"></span></button>
+            <form method="post" action="/transaction/{{t.id}}/delete" onsubmit="return confirm('Diese Buchung wirklich löschen?');">
+              <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+              <input type="hidden" name="year" value="{{year}}">
+              <input type="hidden" name="month" value="{{month}}">
+              <button class="icon-button delete-button" type="submit" title="Löschen" aria-label="Löschen">−</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      <tr class="transaction-edit-row" id="edit-row-{{t.id}}" hidden>
+        <td colspan="6">
+          <form method="post" action="/transaction/{{t.id}}/edit" class="transaction-edit-form" data-validate-money>
+            <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+            <input type="hidden" name="tx_type" value="{{t.type}}">
+            <label>Datum<input type="date" name="tx_date" value="{{t.tx_date}}" required></label>
+            <label>Kategorie<select name="category_id">
+              {% for c in cats if c.type==t.type %}
+                <option value="{{c.id}}" {% if c.id==t.category_id %}selected{% endif %}>{{c.name}}</option>
+              {% endfor %}
+            </select></label>
+            <label>Betrag<input name="amount" inputmode="decimal" value="{{'%.2f' % (t.amount_cents/100)}}" required></label>
+            <label>Kommentar<input name="comment" value="{{t.comment or ''}}"></label>
+            <div class="edit-actions">
+              <button type="submit">Speichern</button>
+              <button type="button" class="secondary-button" data-cancel-edit="{{t.id}}">Abbrechen</button>
+            </div>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="muted">Noch keine Buchungen.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<div class="modal-backdrop" id="moneyErrorModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="moneyErrorTitle">
+    <div class="modal-icon">!</div>
+    <h2 id="moneyErrorTitle">Betrag prüfen</h2>
+    <p id="moneyErrorText">Bitte gib einen gültigen Geldbetrag ein.</p>
+    <button type="button" id="moneyErrorClose">Okay</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const search=document.getElementById('txSearch');
+const typeFilter=document.getElementById('txTypeFilter');
+function filterTransactions(){
+  const q=(search?.value||'').trim().toLowerCase();
+  const typ=typeFilter?.value||'';
+  document.querySelectorAll('[data-transaction]').forEach(row=>{
+    const edit=document.getElementById('edit-row-'+row.querySelector('[data-edit-transaction]')?.dataset.editTransaction);
+    const visible=(!q || (row.dataset.search||'').includes(q)) && (!typ || row.dataset.type===typ);
+    row.hidden=!visible;
+    if(edit && !visible) edit.hidden=true;
+  });
+}
+search?.addEventListener('input',filterTransactions);
+typeFilter?.addEventListener('change',filterTransactions);
+
+document.querySelectorAll('[data-edit-transaction]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const row=document.getElementById('edit-row-'+btn.dataset.editTransaction);
+    row.hidden=!row.hidden;
+  });
+});
+document.querySelectorAll('[data-cancel-edit]').forEach(btn=>{
+  btn.addEventListener('click',()=>document.getElementById('edit-row-'+btn.dataset.cancelEdit).hidden=true);
+});
+
+const modal=document.getElementById('moneyErrorModal');
+const modalText=document.getElementById('moneyErrorText');
+const modalClose=document.getElementById('moneyErrorClose');
+function showMoneyError(message){
+  modalText.textContent=message;
+  modal.hidden=false;
+  modalClose.focus();
+}
+function closeMoneyError(){ modal.hidden=true; }
+modalClose?.addEventListener('click',closeMoneyError);
+modal?.addEventListener('click',e=>{if(e.target===modal)closeMoneyError();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape' && !modal.hidden)closeMoneyError();});
+
+function validMoney(value){
+  const raw=(value||'').trim().replace(/€/g,'').replace(/\s/g,'');
+  if(!raw) return {ok:false,msg:'Bitte gib einen Betrag ein.'};
+  let normalized=raw;
+  if(normalized.includes(',')) normalized=normalized.replace(/\./g,'').replace(',','.');
+  if(!/^\d+(\.\d{1,2})?$/.test(normalized)) return {ok:false,msg:'Bitte gib einen gültigen Geldbetrag ein, zum Beispiel 12,50.'};
+  const number=Number(normalized);
+  if(!Number.isFinite(number) || number<=0) return {ok:false,msg:'Der Betrag muss größer als 0 sein.'};
+  if(number>999999999.99) return {ok:false,msg:'Der eingegebene Betrag ist zu groß.'};
+  return {ok:true};
+}
+document.querySelectorAll('[data-validate-money]').forEach(form=>{
+  form.addEventListener('submit',e=>{
+    const input=form.querySelector('input[name="amount"]');
+    const check=validMoney(input?.value);
+    if(!check.ok){
+      e.preventDefault();
+      showMoneyError(check.msg);
+      input?.focus();
+    }
+  });
+});
+
+{% if error %}
+showMoneyError({{ error|tojson }});
+{% endif %}
+</script>
+{% endblock %}
