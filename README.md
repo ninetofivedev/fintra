@@ -7,6 +7,14 @@ Diese Version markiert den Beginn der Beta-Phase.
 
 **Aktuelle Version:** `9.6.0-beta.1`
 
+## Screenshots
+
+### Dashboard
+
+![Fintra Dashboard Light](screenshot_light.png)
+
+![Fintra Dashboard Dark](screenshot_dark.png)
+
 ## Funktionen
 
 - Jahres- und Monatsübersichten
