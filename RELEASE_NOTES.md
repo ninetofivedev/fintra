@@ -8,6 +8,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 
 ---
 
+## 9.6.0-beta.3
+
+### Mobile
+- Kompaktere Buchungskarten für Smartphones.
+- Datum und Transaktionstyp wurden in einer gemeinsamen Kopfzeile verdichtet.
+- Kategorie und Betrag werden nebeneinander dargestellt.
+- Kommentar und Aktionsbereich benötigen deutlich weniger vertikalen Platz.
+- Die Desktop-Tabelle bleibt unverändert.
+
+---
+
 ## 9.5.15
 
 - Der bisherige reine Benutzername im Burger-Menü ist jetzt ein normaler Menübutton.

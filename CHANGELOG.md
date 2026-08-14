@@ -1,5 +1,16 @@
 # Changelog
 
+## 9.6.0-beta.3
+
+### Mobile
+- Buchungskarten auf `month.html` deutlich kompakter gestaltet
+- Datum und Einnahme/Ausgabe-Typ stehen jetzt gemeinsam in der Kopfzeile
+- Kategorie und Betrag stehen platzsparend nebeneinander
+- Kommentar liegt direkt darunter ohne zusätzliche Label-Zeile
+- Bearbeiten/Löschen stehen in einer schmalen Aktionsspalte rechts
+- Datumsdarstellung auf Smartphones auf `TT.MM.JJJJ` umgestellt
+- Desktop-Darstellung bleibt unverändert
+
 ## 9.6.0-beta.2
 
 ### Mobile
