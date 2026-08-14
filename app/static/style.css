@@ -2062,10 +2062,6 @@ html[data-theme="dark"] .profile-message-success{
    Fintra 9.6.0-beta.3 – kompakte Smartphone-Buchungskarten
    ========================================================= */
 
-.tx-date-mobile{
-  display:none;
-}
-
 @media(max-width:600px){
 
   .transactions-table tbody{
@@ -2165,14 +2161,6 @@ html[data-theme="dark"] .profile-message-success{
   .transactions-table .transaction-actions form{
     display:flex;
     align-items:center;
-  }
-
-  .tx-date-desktop{
-    display:none;
-  }
-
-  .tx-date-mobile{
-    display:inline;
   }
 
   .tx-type-badge{
