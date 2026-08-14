@@ -1858,3 +1858,201 @@ html[data-theme="dark"] .profile-message-success{
     width:100%;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.2 – Mobile Buchungsübersicht + Burger-Fix
+   ========================================================= */
+
+/* Beim geöffneten Burger-Menü bleibt die Seite auf Smartphones exakt stehen. */
+@media(max-width:700px){
+  html.burger-open,
+  body.burger-open{
+    overflow:hidden;
+    overscroll-behavior:none;
+    touch-action:none;
+  }
+
+  .burger-dropdown{
+    z-index:1100;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y;
+  }
+
+  /* Toolbar oberhalb der Buchungen für schmale Displays. */
+  .table-toolbar{
+    align-items:stretch;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .transaction-filter{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    width:100%;
+  }
+
+  .transaction-filter input,
+  .transaction-filter select{
+    width:100%;
+    min-width:0;
+  }
+
+  /* Desktop-Tabelle wird auf Mobile zu einzelnen Buchungskarten. */
+  .transactions-wrap{
+    padding:0;
+    background:transparent;
+    box-shadow:none;
+    overflow:visible;
+  }
+
+  .transactions-table{
+    width:100%;
+    display:block;
+    border-collapse:separate;
+  }
+
+  .transactions-table thead{
+    display:none;
+  }
+
+  .transactions-table tbody{
+    display:grid;
+    gap:10px;
+    width:100%;
+  }
+
+  .transactions-table tr[data-transaction]{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    column-gap:14px;
+    row-gap:0;
+    width:100%;
+    padding:12px 13px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--card);
+    box-shadow:0 1px 4px var(--shadow);
+  }
+
+  .transactions-table tr[data-transaction][hidden],
+  .transactions-table .transaction-edit-row[hidden]{
+    display:none !important;
+  }
+
+  .transactions-table tbody > tr:not([data-transaction]):not(.transaction-edit-row) td{
+    display:block;
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--card);
+    text-align:center;
+  }
+
+  .transactions-table tr[data-transaction] > td{
+    width:auto !important;
+    min-width:0;
+    padding:8px 0;
+    border:0;
+    text-align:left !important;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+
+  .transactions-table tr[data-transaction] > td::before{
+    content:attr(data-label);
+    display:block;
+    margin-bottom:3px;
+    color:var(--muted);
+    font-size:.68rem;
+    font-weight:750;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(3),
+  .transactions-table tr[data-transaction] > td:nth-child(5),
+  .transactions-table tr[data-transaction] > .transaction-actions-cell{
+    grid-column:1 / -1;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(4){
+    text-align:right !important;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(4)::before{
+    text-align:right;
+  }
+
+  .transaction-comment{
+    max-width:none;
+  }
+
+  .transactions-table .transaction-actions-cell{
+    padding-top:10px;
+    margin-top:2px;
+    border-top:1px solid var(--border);
+  }
+
+  .transactions-table .transaction-actions-cell::before{
+    display:none;
+  }
+
+  .transactions-table .transaction-actions{
+    justify-content:flex-end;
+  }
+
+  /* Bearbeitungsformular erscheint als eigene Karte direkt unter der Buchung. */
+  .transactions-table .transaction-edit-row{
+    display:block;
+    width:100%;
+    margin-top:-4px;
+  }
+
+  .transactions-table .transaction-edit-row > td{
+    display:block;
+    width:100%;
+    padding:0;
+    border:0;
+    background:transparent;
+  }
+
+  .transaction-edit-form{
+    grid-template-columns:1fr;
+    gap:10px;
+    padding:13px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:color-mix(in srgb,var(--card) 90%,#4f46e5 10%);
+    box-shadow:0 1px 4px var(--shadow);
+  }
+
+  .transaction-edit-form input,
+  .transaction-edit-form select{
+    width:100%;
+  }
+
+  .transaction-edit-form .edit-actions{
+    justify-content:flex-end;
+    flex-wrap:wrap;
+  }
+}
+
+@media(max-width:390px){
+  .transactions-table tr[data-transaction]{
+    grid-template-columns:1fr;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(4),
+  .transactions-table tr[data-transaction] > td:nth-child(4)::before{
+    text-align:left !important;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(3),
+  .transactions-table tr[data-transaction] > td:nth-child(5),
+  .transactions-table tr[data-transaction] > .transaction-actions-cell{
+    grid-column:auto;
+  }
+}

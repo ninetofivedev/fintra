@@ -371,9 +371,21 @@
   }
 
 
+  function lockBurgerScroll(){
+    if(window.innerWidth > 700) return;
+    document.documentElement.classList.add('burger-open');
+    document.body.classList.add('burger-open');
+  }
+
+  function unlockBurgerScroll(){
+    document.documentElement.classList.remove('burger-open');
+    document.body.classList.remove('burger-open');
+  }
+
   function openBurger(){
 
     burgerDropdown.hidden = false;
+    lockBurgerScroll();
 
     burgerButton.classList.add('is-open');
 
@@ -393,6 +405,7 @@
   function closeBurger(){
 
     burgerDropdown.hidden = true;
+    unlockBurgerScroll();
 
     burgerButton.classList.remove('is-open');
 

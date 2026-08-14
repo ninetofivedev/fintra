@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.6.0-beta.2
+
+### Mobile
+- Buchungsübersicht auf `month.html` als responsive Kartenansicht auf Smartphones
+- Such- und Filterfelder für schmale Displays optimiert
+- Transaktionsbearbeitung auf Mobile als kompakte Formular-Karte
+- Hintergrundscrollen bei geöffnetem Burger-Menü auf Smartphones gesperrt
+- Burger-Menü bleibt dadurch fest am Viewport
+
 ## 9.6.0-beta.1
 
 Erster Beta-Release.

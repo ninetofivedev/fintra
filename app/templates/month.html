@@ -44,7 +44,7 @@
   </div>
 </section>
 
-<section class="tablewrap">
+<section class="tablewrap transactions-wrap">
   <div class="table-toolbar">
     <div>
       <h2>Buchungen</h2>
@@ -61,12 +61,12 @@
     <tbody>
     {% for t in tx %}
       <tr data-transaction data-type="{{t.type}}" data-search="{{(t.category ~ ' ' ~ (t.comment or ''))|lower}}">
-        <td>{{t.tx_date}}</td>
-        <td>{{'Einnahme' if t.type=='income' else 'Ausgabe'}}</td>
-        <td>{{t.category}}</td>
-        <td class="{{'amount-positive' if t.type=='income' else 'amount-negative'}}">{{'+' if t.type=='income' else '−'}} {{euros(t.amount_cents)}}</td>
-        <td class="transaction-comment">{{t.comment or ''}}</td>
-        <td>
+        <td data-label="Datum">{{t.tx_date}}</td>
+        <td data-label="Art">{{'Einnahme' if t.type=='income' else 'Ausgabe'}}</td>
+        <td data-label="Kategorie">{{t.category}}</td>
+        <td data-label="Betrag" class="{{'amount-positive' if t.type=='income' else 'amount-negative'}}">{{'+' if t.type=='income' else '−'}} {{euros(t.amount_cents)}}</td>
+        <td data-label="Kommentar" class="transaction-comment">{{t.comment or ''}}</td>
+        <td data-label="Aktionen" class="transaction-actions-cell">
           <div class="transaction-actions">
             <button type="button" class="icon-button edit-button" data-edit-transaction="{{t.id}}" title="Bearbeiten" aria-label="Bearbeiten"><span class="local-icon icon-edit" aria-hidden="true"></span></button>
             <form method="post" action="/transaction/{{t.id}}/delete" onsubmit="return confirm('Diese Buchung wirklich löschen?');">
