@@ -2,7 +2,10 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{% block title %}Fintra – Track your finances{% endblock %}</title>
+<title>{% block title %}Fintra – Finance and Tracking{% endblock %}</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/static/branding/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/branding/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/static/branding/apple-touch-icon.png">
 
 <div class="modal-backdrop" id="inputErrorModal" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="inputErrorTitle">
@@ -36,9 +39,12 @@
 <nav class="topnav">
   <div class="topnav-inner">
 
-    <a class="brand" href="/">
-      <strong>Fintra</strong>
-      <span>Track your finances</span>
+    <a class="brand" href="/" aria-label="Fintra – Übersicht">
+      <img class="brand-mark" src="/static/branding/fintra-mark.png" alt="" width="34" height="40">
+      <span class="brand-copy">
+        <strong>Fintra</strong>
+        <span>Finance and Tracking</span>
+      </span>
     </a>
 
     <div class="topnav-actions">

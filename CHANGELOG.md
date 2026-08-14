@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.6.0-beta.6
+
+### Branding
+- Neues Fintra-Logo auf Basis des stilisierten `F` eingeführt
+- Claim auf **Finance and Tracking** vereinheitlicht
+- Logo in Hauptnavigation, Login und Ersteinrichtung integriert
+- Lokale Favicons und Apple-Touch-Icon ergänzt
+- Branding vollständig lokal eingebunden und damit weiterhin offline verfügbar
+- README um das neue Fintra-Branding ergänzt
+
 ## 9.6.0-beta.5
 
 ### Fixed

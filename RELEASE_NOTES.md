@@ -7,6 +7,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.6
+
+### Branding
+- Neues Fintra-Markenzeichen mit dem stilisierten, grün-türkis-blauen `F`.
+- Neuer Claim: **Finance and Tracking**.
+- Branding in Navigation, Login und Ersteinrichtung integriert.
+- Favicon-, App-Icon- und Apple-Touch-Icon-Assets lokal im Projekt ergänzt.
+- Das neue Branding benötigt keine externen Ressourcen und funktioniert offline.
+
+---
+
 ## 9.6.0-beta.5
 
 ### Fixed

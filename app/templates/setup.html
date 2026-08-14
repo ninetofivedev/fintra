@@ -3,13 +3,19 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Fintra einrichten</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/static/branding/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/branding/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/static/branding/apple-touch-icon.png">
 <script>(function(){try{const t=localStorage.getItem('fintra-theme');document.documentElement.dataset.theme=t|| (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}})();</script>
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body class="auth-page">
 <main class="auth-shell">
   <section class="auth-card" aria-labelledby="setup-title">
-    <div class="auth-brand"><div class="auth-logo">F</div><div><strong>Fintra</strong><span>Ersteinrichtung</span></div></div>
+    <div class="auth-brand">
+      <img class="auth-logo" src="/static/branding/fintra-mark.png" alt="" width="52" height="60">
+      <div><strong>Fintra</strong><span>Finance and Tracking</span></div>
+    </div>
     <h1 id="setup-title">Fintra einrichten</h1>
     <p class="muted">Lege den ersten Zugang für deine private Finanzanwendung an.</p>
     {% if error %}<div class="auth-error" role="alert">{{ error }}</div>{% endif %}

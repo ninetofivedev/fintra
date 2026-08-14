@@ -1,5 +1,11 @@
 # Fintra
 
+<p align="center">
+  <img src="app/static/branding/fintra-mark.png" alt="Fintra Logo" width="110">
+</p>
+
+<p align="center"><strong>Finance and Tracking</strong></p>
+
 **A lightweight, self-hosted finance tracker.**
 
 Fintra is a self-hosted web application for managing personal finances.  
@@ -7,7 +13,7 @@ It provides yearly and monthly overviews, recurring income and expenses, budgets
 financial analysis and visualizations while keeping your financial data on your own server.
 
 > **Beta:** Fintra is currently under active development.  
-> The current release is `9.6.0-beta.5`.
+> The current release is `9.6.0-beta.6`.
 
 
 ## Screenshots
@@ -199,7 +205,7 @@ A healthy instance responds with:
 ```json
 {
   "status": "ok",
-  "version": "9.6.0-beta.5"
+  "version": "9.6.0-beta.6"
 }
 ```
 
