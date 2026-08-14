@@ -1,245 +1,199 @@
 # Fintra
 
-**Track your finances**
+**A lightweight, self-hosted finance tracker.**
 
-Fintra ist ein selbstgehostetes Haushaltsbuch für persönliche Finanzen.  
-Diese Version markiert den Beginn der Beta-Phase.
+Fintra is a self-hosted web application for managing personal finances.  
+It provides yearly and monthly overviews, recurring income and expenses, budgets,
+financial analysis and visualizations while keeping your financial data on your own server.
 
-**Aktuelle Version:** `9.6.0-beta.1`
+> **Beta:** Fintra is currently under active development.  
+> The current release is `9.6.0-beta.1`.
 
 ## Screenshots
 
-### Dashboard
+### Dark Mode
 
-![Fintra Dashboard Light](screenshot_light.png)
+<p align="center">
+  <img src="screenshot_dark.png" alt="Fintra Dashboard – Dark Mode" width="900">
+</p>
 
-![Fintra Dashboard Dark](screenshot_dark.png)
+### Light Mode
 
-## Funktionen
+<p align="center">
+  <img src="screenshot_light.png" alt="Fintra Dashboard – Light Mode" width="900">
+</p>
 
-- Jahres- und Monatsübersichten
-- variable Einnahmen und Ausgaben
-- jahresbezogene Fixkosten
-- Kategorien und Monatsbudgets
-- Transaktionen nachträglich bearbeiten
-- CSV-Export und SQLite-Backup
-- Light-/Dark-Mode
-- Privacy-Modus
-- Profilseite mit Passwortänderung
-- responsive Burger-Navigation
-- lokale SVG-Icons
-- lokale Chart.js-Auslieferung im fertigen Container
-- A&D-Analyse mit Hash Map, Min-Heap, Sliding Window und IQR
-- synthetischer Performance-Test bis 100.000 Transaktionen
-- `/health`-Endpoint für Container-Healthchecks
+## Features
 
----
+- 📅 Yearly and monthly financial overviews
+- 💰 Income and expense tracking
+- 🔁 Recurring income and expenses
+- 🗂️ Custom categories
+- 🎯 Monthly budgets
+- 📊 Interactive charts and financial analysis
+- 🔎 Algorithm & data structure demonstrations
+- ✏️ Edit existing transactions
+- 🌓 Light and dark mode
+- 👁️ Privacy mode for hiding financial values
+- 🔐 Local user account and password management
+- 📱 Responsive interface
+- 💾 SQLite database
+- 📤 CSV export
+- 🗄️ Database backup
+- 🐳 Docker support
+- 🖥️ TrueNAS SCALE support
+- ❤️ Container healthcheck
+- 🌐 No external frontend dependencies at runtime
 
-# 1. GitHub-Repository anlegen
+## Privacy
 
-Erstelle bei GitHub ein neues Repository, zum Beispiel:
+Fintra is designed to be self-hosted.
 
-```text
-fintra
-```
+Your financial data is stored in a local SQLite database and does not need to be
+sent to an external cloud service.
 
-Empfehlung für die Beta-Phase:
+The application also includes a **Privacy Mode** which can blur financial values
+when sharing your screen or using Fintra around other people.
 
-- Repository zunächst **privat**, solange du den Code noch nicht veröffentlichen möchtest.
-- Wenn TrueNAS das GHCR-Image ohne Zugangsdaten laden soll, muss das Container-Paket später öffentlich sein.
-- Niemals deine echte `haushaltsbuch.db` committen.
+## Quick Start with Docker
 
-Danach im Fintra-Projekt:
-
-```bash
-git init
-git branch -M main
-git add .
-git commit -m "Fintra 9.6.0-beta.1"
-git remote add origin https://github.com/DEIN_GITHUB_BENUTZERNAME/fintra.git
-git push -u origin main
-```
-
-Die enthaltene `.gitignore` ignoriert Datenbanken, `.env`-Dateien und andere lokale Daten.
-
----
-
-# 2. Docker-Image über GitHub Actions veröffentlichen
-
-Der Workflow liegt unter:
-
-```text
-.github/workflows/container.yml
-```
-
-Ein normaler Push auf `main` prüft und baut Fintra, veröffentlicht aber **noch kein Release-Image**.
-
-Ein Release wird über einen Git-Tag ausgelöst:
+Create a directory for persistent Fintra data:
 
 ```bash
-git tag v9.6.0-beta.1
-git push origin v9.6.0-beta.1
+mkdir -p ./data
 ```
 
-GitHub Actions:
-
-1. installiert die Python-Abhängigkeiten,
-2. prüft den Python-Import,
-3. baut das Docker-Image,
-4. veröffentlicht es in der GitHub Container Registry (GHCR).
-
-Danach existieren unter anderem:
-
-```text
-ghcr.io/DEIN_GITHUB_BENUTZERNAME/fintra:9.6.0-beta.1
-ghcr.io/DEIN_GITHUB_BENUTZERNAME/fintra:latest
-```
-
-Für die nächste Version:
+Then run:
 
 ```bash
-git add .
-git commit -m "Fintra 9.6.0-beta.2"
-git push
-
-git tag v9.6.0-beta.2
-git push origin v9.6.0-beta.2
+docker run -d \
+  --name fintra \
+  -p 8080:8080 \
+  -v ./data:/app/data \
+  --restart unless-stopped \
+  ghcr.io/ninetofivedev/fintra:latest
 ```
 
-Erst der Release-Tag aktualisiert `latest`. So landet nicht jeder Entwicklungsstand automatisch auf deinem Heimserver.
-
----
-
-# 3. GHCR-Paket für TrueNAS freigeben
-
-Wenn dein TrueNAS das Image ohne GitHub-Anmeldedaten laden soll:
-
-1. Öffne auf GitHub dein Benutzerprofil bzw. deine Organisation.
-2. Öffne **Packages**.
-3. Öffne das Fintra-Container-Paket.
-4. Stelle die Sichtbarkeit des Pakets auf **Public**.
-
-Dein Quellcode-Repository kann unabhängig davon privat bleiben, sofern die GitHub-Paketkonfiguration das für dein Konto zulässt.
-
-Alternativ kannst du ein privates GHCR-Paket verwenden und in TrueNAS Registry-Zugangsdaten hinterlegen.
-
----
-
-# 4. Persistente Daten auf TrueNAS vorbereiten
-
-Die Finanzdaten dürfen nicht im Container-Image liegen.
-
-Lege auf TrueNAS beispielsweise einen Dataset-/Verzeichnispfad an:
+Open:
 
 ```text
-/mnt/DEIN_POOL/apps/fintra/data
+http://localhost:8080
 ```
 
-Fintra verwendet im Container:
+On the first start, Fintra will guide you through creating the administrator account.
+
+## Docker Compose
+
+```yaml
+services:
+  fintra:
+    image: ghcr.io/ninetofivedev/fintra:latest
+    pull_policy: always
+    container_name: fintra
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      FINTRA_HTTPS_ONLY: "0"
+
+    volumes:
+      - ./data:/app/data
+
+    restart: unless-stopped
+```
+
+Start Fintra with:
+
+```bash
+docker compose up -d
+```
+
+## TrueNAS SCALE
+
+Fintra can also be deployed as a Custom App on TrueNAS SCALE.
+
+Example:
+
+```yaml
+services:
+  fintra:
+    image: ghcr.io/ninetofivedev/fintra:latest
+    pull_policy: always
+    container_name: fintra
+
+    ports:
+      - "9080:8080"
+
+    environment:
+      FINTRA_HTTPS_ONLY: "0"
+
+    volumes:
+      - /mnt/POOL/apps/fintra/data:/app/data
+
+    restart: unless-stopped
+```
+
+Replace `/mnt/POOL/apps/fintra/data` with the dataset or directory you want to use
+for persistent Fintra data.
+
+A more detailed TrueNAS example is available in:
+
+```text
+deploy/README-TRUENAS.md
+```
+
+## Persistent Data
+
+Fintra stores its persistent application data in:
 
 ```text
 /app/data
 ```
 
-Dort liegen später insbesondere:
+This includes:
 
 ```text
 haushaltsbuch.db
 .session_secret
 ```
 
-Beim Container-Update bleibt dieses Verzeichnis erhalten.
+When using Docker, always mount `/app/data` to persistent storage.
 
-Wenn du bereits eine Fintra-Datenbank hast, kopiere sie vor dem ersten Start nach:
+**Do not store your real financial database inside the container image.**
 
-```text
-/mnt/DEIN_POOL/apps/fintra/data/haushaltsbuch.db
-```
+This allows Fintra to be updated or recreated without losing your financial data.
 
----
+## Updating
 
-# 5. TrueNAS Custom App per YAML
+Fintra container images are published through the GitHub Container Registry.
 
-Eine Vorlage liegt unter:
+When using:
 
 ```text
-deploy/truenas-compose.yaml
+ghcr.io/ninetofivedev/fintra:latest
 ```
 
-Passe mindestens diese beiden Stellen an:
+you can update to the latest release by pulling the new image and recreating the container.
 
-```yaml
-image: ghcr.io/DEIN_GITHUB_BENUTZERNAME/fintra:latest
+With Docker Compose:
+
+```bash
+docker compose pull
+docker compose up -d
 ```
 
-und:
+It is strongly recommended to create a database backup before updating.
 
-```yaml
-- /mnt/DEIN_POOL/apps/fintra/data:/app/data
-```
+## Healthcheck
 
-Danach kannst du den YAML-Code in TrueNAS unter **Apps → Install via YAML / Custom App** verwenden.
-
-Beispiel:
-
-```yaml
-services:
-  fintra:
-    image: ghcr.io/deinname/fintra:latest
-    pull_policy: always
-    container_name: fintra
-    ports:
-      - "8080:8080"
-    environment:
-      FINTRA_HTTPS_ONLY: "0"
-    volumes:
-      - /mnt/tank/apps/fintra/data:/app/data
-    restart: unless-stopped
-```
-
-Danach erreichst du Fintra typischerweise unter:
-
-```text
-http://TRUENAS-IP:8080
-```
-
----
-
-# 6. Updates
-
-Der empfohlene Beta-Workflow:
-
-```text
-Code ändern
-   ↓
-git push
-   ↓
-GitHub Actions prüft Build
-   ↓
-Release-Tag setzen
-   ↓
-GitHub Actions veröffentlicht neues GHCR-Image
-   ↓
-TrueNAS erkennt neues Image für :latest
-   ↓
-Update manuell auslösen
-```
-
-Vor einem Update solltest du ein Backup deiner Datenbank anlegen.
-
-In Fintra kannst du dafür im Burger-Menü **Datenbank-Backup** verwenden.
-
----
-
-# 7. Healthcheck
-
-Fintra stellt öffentlich innerhalb des Containers bereit:
+Fintra provides:
 
 ```text
 GET /health
 ```
 
-Beispielantwort:
+A healthy instance responds with:
 
 ```json
 {
@@ -248,47 +202,67 @@ Beispielantwort:
 }
 ```
 
-Der Docker-Healthcheck verwendet diesen Endpoint automatisch.
+The Docker image includes a healthcheck using this endpoint.
 
----
+## Security
 
-# 8. Lokale Entwicklung
+Fintra includes several security measures:
+
+- passwords are hashed using `scrypt`
+- CSRF protection for state-changing forms
+- persistent session secret
+- local authentication
+- no financial database included in the Docker image
+- database and environment files excluded from Git
+- optional secure session cookies when running behind HTTPS
+
+When Fintra is served exclusively through HTTPS, set:
+
+```text
+FINTRA_HTTPS_ONLY=1
+```
+
+## Algorithms & Data Structures
+
+Fintra also contains an analysis section demonstrating algorithms and data structures
+using financial data.
+
+Currently implemented examples include:
+
+- Hash Map based transaction indexing
+- linear search comparison
+- Min-Heap based Top-K analysis
+- Sliding Window analysis
+- Interquartile Range (IQR) outlier detection
+- synthetic performance benchmarks with up to 100,000 transactions
+
+This part of the project is also intended to explore practical applications of
+algorithms and data structures in financial software.
+
+## Development
+
+Clone the repository:
+
+```bash
+git clone https://github.com/ninetofivedev/fintra.git
+cd fintra
+```
+
+Build and start:
 
 ```bash
 docker compose up -d --build
 ```
 
-Danach:
+Fintra will then be available at:
 
 ```text
 http://localhost:8080
 ```
 
-Lokale persistente Daten liegen in:
+## Releases
 
-```text
-./data/
-```
-
-Optional kannst du `.env.example` nach `.env` kopieren.
-
----
-
-# Sicherheit
-
-- Passwörter werden mit scrypt gehasht.
-- Formulare mit Zustandsänderungen verwenden CSRF-Schutz.
-- Sessions verwenden einen geheimen Schlüssel.
-- Ohne `FINTRA_SECRET_KEY` erzeugt Fintra einen persistenten Schlüssel unter `/app/data/.session_secret`.
-- Bei Betrieb hinter HTTPS sollte `FINTRA_HTTPS_ONLY=1` gesetzt werden.
-- Die echte Finanzdatenbank gehört niemals in GitHub oder in das Docker-Image.
-- Der TrueNAS-Dataset-Pfad mit `haushaltsbuch.db` sollte regelmäßig gesichert werden.
-
----
-
-# Versionsschema
-
-Während der Beta-Phase:
+Fintra currently uses semantic-style beta versions:
 
 ```text
 9.6.0-beta.1
@@ -296,15 +270,24 @@ Während der Beta-Phase:
 9.6.0-beta.3
 ```
 
-Git-Tags:
+Release container images are published to:
 
 ```text
-v9.6.0-beta.1
-v9.6.0-beta.2
+ghcr.io/ninetofivedev/fintra
 ```
 
-Später kann daraus beispielsweise werden:
+## Project Status
 
-```text
-1.0.0
-```
+Fintra is currently **beta software**.
+
+The application is usable, but features, database structures and deployment
+details may still change before the first stable release.
+
+If you encounter a bug or have an idea for improvement, feel free to open an issue.
+
+## License
+
+A license has not yet been specified.
+
+Before using Fintra as a public open-source project, an open-source license should
+be added to the repository.
