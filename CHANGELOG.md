@@ -1,5 +1,20 @@
 # Changelog
 
+## 9.6.0-beta.5
+
+### Fixed
+- Datumsanzeige in der Buchungsübersicht vereinheitlicht: Desktop und Smartphone verwenden jetzt immer `TT.MM.JJJJ`
+- Tippfehler in der IQR-Ausreißeranzeige der Analyse behoben; das Transaktionsdatum wird dort jetzt korrekt dargestellt
+- Datumsformatierung für angezeigte Transaktionsdaten zentralisiert
+
+### Cleanup
+- veralteten Mobile-CSS-Override aus der früheren Buchungskarten-Version entfernt
+- nicht mehr verwendete `.burger-user`-CSS-Regeln entfernt
+- Python-Cachedateien aus dem Projekt entfernt
+- `.directory` zu `.gitignore` hinzugefügt
+- redundante `BETA_RELEASE_NOTES.md` entfernt; `RELEASE_NOTES.md` ist die zentrale Release-Historie
+- Docker-Compose-, README- und TrueNAS-Versionsangaben auf `9.6.0-beta.5` aktualisiert
+
 ## 9.6.0-beta.3
 
 ### Mobile

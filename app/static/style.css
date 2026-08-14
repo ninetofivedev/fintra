@@ -1223,24 +1223,6 @@ html[data-theme="dark"] .error-badge{color:#f87171}
   text-transform:uppercase;
   letter-spacing:.08em;
 }
-
-
-.burger-user{
-  padding:5px 2px;
-}
-
-.burger-user strong{
-  display:block;
-
-  padding:0 10px 7px;
-
-  overflow:hidden;
-  text-overflow:ellipsis;
-
-  white-space:nowrap;
-}
-
-
 .burger-dropdown a,
 .burger-logout{
   width:100%;
@@ -2039,24 +2021,6 @@ html[data-theme="dark"] .profile-message-success{
     flex-wrap:wrap;
   }
 }
-
-@media(max-width:390px){
-  .transactions-table tr[data-transaction]{
-    grid-template-columns:1fr;
-  }
-
-  .transactions-table tr[data-transaction] > td:nth-child(4),
-  .transactions-table tr[data-transaction] > td:nth-child(4)::before{
-    text-align:left !important;
-  }
-
-  .transactions-table tr[data-transaction] > td:nth-child(3),
-  .transactions-table tr[data-transaction] > td:nth-child(5),
-  .transactions-table tr[data-transaction] > .transaction-actions-cell{
-    grid-column:auto;
-  }
-}
-
 
 /* =========================================================
    Fintra 9.6.0-beta.3 – kompakte Smartphone-Buchungskarten

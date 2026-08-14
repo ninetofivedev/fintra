@@ -61,9 +61,7 @@
     <tbody>
     {% for t in tx %}
       <tr data-transaction data-type="{{t.type}}" data-search="{{(t.category ~ ' ' ~ (t.comment or ''))|lower}}">
-        <td data-label="Datum" class="tx-date-cell">
-          {{t.tx_date[8:10]}}.{{t.tx_date[5:7]}}.{{t.tx_date[:4]}}
-        </td>
+        <td data-label="Datum" class="tx-date-cell">{{ date_de(t.tx_date) }}</td>
         <td data-label="Art" class="tx-type-cell">
           <span class="tx-type-badge {{'tx-type-income' if t.type=='income' else 'tx-type-expense'}}">
             {{'Einnahme' if t.type=='income' else 'Ausgabe'}}

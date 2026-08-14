@@ -367,6 +367,14 @@ def euros(n):
     return f'{n/100:,.2f} €'.replace(',','X').replace('.',',').replace('X','.')
 
 
+def date_de(value):
+    """Format an ISO date (YYYY-MM-DD) as DD.MM.YYYY for display."""
+    try:
+        return datetime.strptime(str(value), '%Y-%m-%d').strftime('%d.%m.%Y')
+    except (TypeError, ValueError):
+        return str(value)
+
+
 def month_path(year, month):
     return f'/month/{year}/{month:02d}'
 
@@ -525,7 +533,8 @@ def month(request: Request, year:int, month:int, error: str | None = None):
     return templates.TemplateResponse('month.html',{
         'request':request,'year':year,'month':month,'month_name':MONTHS[month-1],
         'tx':tx,'cats':cats,'income':inc,'expense':exp,'fixed_income':fi,'fixed_expense':fe,
-        'available':available,'error':error,'euros':euros,'today_iso':date.today().isoformat(),
+        'available':available,'error':error,'euros':euros,'date_de':date_de,
+        'today_iso':date.today().isoformat(),
         'prev_url':month_path(py,pm),'next_url':month_path(ny,nm),
         'prev_label':f'{MONTHS[pm-1]} {py}','next_label':f'{MONTHS[nm-1]} {ny}'
     })
@@ -1021,6 +1030,7 @@ def analysis(
         'iqr': iqr,
         'upper': upper,
         'euros': euros,
+        'date_de': date_de,
         'budget_rows': budget_rows,
         'current_month_name': MONTHS[current_month - 1],
         'index_categories': len(idx.by_category),

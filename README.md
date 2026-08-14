@@ -7,7 +7,7 @@ It provides yearly and monthly overviews, recurring income and expenses, budgets
 financial analysis and visualizations while keeping your financial data on your own server.
 
 > **Beta:** Fintra is currently under active development.  
-> The current release is `9.6.0-beta.4`.
+> The current release is `9.6.0-beta.5`.
 
 
 ## Screenshots
@@ -199,7 +199,7 @@ A healthy instance responds with:
 ```json
 {
   "status": "ok",
-  "version": "9.6.0-beta.2"
+  "version": "9.6.0-beta.5"
 }
 ```
 
@@ -269,6 +269,8 @@ Fintra currently uses semantic-style beta versions:
 9.6.0-beta.1
 9.6.0-beta.2
 9.6.0-beta.3
+9.6.0-beta.4
+9.6.0-beta.5
 ```
 
 Release container images are published to:

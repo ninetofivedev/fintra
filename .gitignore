@@ -33,3 +33,6 @@ Thumbs.db
 # Archives
 *.tar.gz
 *.zip
+
+# KDE / Dolphin metadata
+.directory

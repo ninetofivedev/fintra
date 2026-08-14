@@ -178,7 +178,7 @@
     <div class="outlier-list">
       {% for r in outliers %}
       <div>
-        <span><span class="local-icon icon-warning inline-material-icon warning-material-icon" aria-hidden="true"></span> {r.tx_date} · {{r.category}}</span>
+        <span><span class="local-icon icon-warning inline-material-icon warning-material-icon" aria-hidden="true"></span> {{ date_de(r.tx_date) }} · {{r.category}}</span>
         <b>{{euros(r.amount_cents)}}</b>
         {% if r.comment %}<small>{{r.comment}}</small>{% endif %}
       </div>

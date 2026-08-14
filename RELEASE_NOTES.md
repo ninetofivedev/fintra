@@ -7,6 +7,22 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.5
+
+### Fixed
+- Einheitliche Transaktions-Datumsanzeige im Format `TT.MM.JJJJ` auf Desktop und Smartphone.
+- Datumsanzeige der IQR-Ausreißer auf der Analyse-Seite korrigiert.
+- Gemeinsame serverseitige Formatierungsfunktion für angezeigte ISO-Datumswerte eingeführt.
+
+### Cleanup
+- Veraltete Mobile-CSS-Regeln entfernt.
+- Nicht mehr verwendete Burger-Menü-CSS-Regeln entfernt.
+- Projektweite aktuelle Versionsreferenzen auf `9.6.0-beta.5` aktualisiert.
+- `BETA_RELEASE_NOTES.md` zugunsten dieser zentralen Release-Historie entfernt.
+- `.directory` wird künftig von Git ignoriert.
+
+---
+
 ## 9.6.0-beta.4
 
 ### Mobile
