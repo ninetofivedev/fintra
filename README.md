@@ -287,7 +287,6 @@ If you encounter a bug or have an idea for improvement, feel free to open an iss
 
 ## License
 
-A license has not yet been specified.
+Fintra is open-source software licensed under the MIT License.
 
-Before using Fintra as a public open-source project, an open-source license should
-be added to the repository.
+See [LICENSE](LICENSE) for details.
