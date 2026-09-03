@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.6.0-beta.8
+
+### Mobile
+- Dashboard-Diagramme für Smartphones optimiert
+- `Einnahmen vs. Ausgaben` verwendet mobil kompakte Monatslabels, kleinere Achsenbeschriftungen und eine reduzierte Diagrammhöhe
+- `Ausgaben nach Kategorie` wechselt auf Smartphones automatisch vom Doughnut- zum horizontalen Balkendiagramm
+- Mobile Kategorienansicht zeigt die sieben größten Kategorien und fasst weitere als `Sonstiges` zusammen
+- Diagramme werden beim Wechsel über die mobile Breakpoint-Grenze automatisch neu aufgebaut
+- Desktop-Diagramme bleiben in ihrer bisherigen Darstellung erhalten
+
 ## 9.6.0-beta.7
 
 ### Fixed

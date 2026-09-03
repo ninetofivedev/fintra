@@ -2283,3 +2283,36 @@ html[data-theme="dark"] .profile-message-success{
 .year-overview-table td.table-amount-neutral{
   border-bottom:1px solid var(--border);
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.8 – Mobile Dashboard-Charts
+   ========================================================= */
+
+@media(max-width:700px){
+  .dashboard-charts{
+    gap:12px;
+    margin:16px 0 26px;
+  }
+
+  .chart-card{
+    padding:13px 12px 12px;
+  }
+
+  .chart-title h2{
+    font-size:1.05rem;
+  }
+
+  .chart-title p{
+    font-size:.78rem;
+  }
+
+  .chart-container{
+    height:235px;
+    margin-top:8px;
+  }
+
+  .chart-card:nth-child(2) .chart-container{
+    height:285px;
+  }
+}

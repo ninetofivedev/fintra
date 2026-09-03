@@ -7,6 +7,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.8
+
+### Mobile
+- Dashboard-Charts für schmale Smartphone-Displays überarbeitet.
+- Monatsdiagramm mit kompakten Labels und mobil angepasster Skalierung.
+- Kategorien werden mobil als horizontales Balkendiagramm dargestellt; Desktop behält den Doughnut-Chart.
+- Bei mehr als sieben Kategorien werden kleinere Positionen mobil unter `Sonstiges` zusammengefasst.
+- Responsive Chart-Konfiguration wird beim Wechsel der Bildschirmbreite sauber neu aufgebaut.
+
+---
+
 ## 9.6.0-beta.7
 
 ### Fixed

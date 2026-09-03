@@ -120,18 +120,87 @@ const expenses={{ months|map(attribute='expense')|list|tojson }};
 const fixedExpenses={{ months|map(attribute='fixed_expense')|list|tojson }};
 const categoryData={{ category_chart|tojson }};
 const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(v/100);
-new Chart(document.getElementById('monthlyChart'),{
-  type:'bar',
-  data:{labels:months,datasets:[
-    {label:'Einnahmen',data:incomes.map((v,i)=>v+fixedIncomes[i]),backgroundColor:'rgba(22,163,74,.78)',borderRadius:7},
-    {label:'Ausgaben',data:expenses.map((v,i)=>v+fixedExpenses[i]),backgroundColor:'rgba(220,38,38,.76)',borderRadius:7}
-  ]},
-  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}}}}
-});
-new Chart(document.getElementById('categoryChart'),{
-  type:'doughnut',
-  data:{labels:categoryData.map(x=>x.name),datasets:[{data:categoryData.map(x=>x.total),backgroundColor:['#4f46e5','#16a34a','#f59e0b','#e11d48','#0ea5e9','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16'],borderWidth:0,hoverOffset:10}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}}}
-});
+const mobileChartQuery=window.matchMedia('(max-width: 700px)');
+let monthlyChart=null;
+let categoryChart=null;
+
+function shortMonthLabel(value){
+  const text=String(value ?? '');
+  return text.length > 3 ? text.slice(0,3) : text;
+}
+
+function mobileCategoryData(){
+  const sorted=[...categoryData].sort((a,b)=>b.total-a.total);
+  if(sorted.length<=7) return sorted;
+  const top=sorted.slice(0,7);
+  const rest=sorted.slice(7).reduce((sum,item)=>sum+item.total,0);
+  return [...top,{name:'Sonstiges',total:rest}];
+}
+
+function buildDashboardCharts(){
+  const mobile=mobileChartQuery.matches;
+  monthlyChart?.destroy();
+  categoryChart?.destroy();
+
+  monthlyChart=new Chart(document.getElementById('monthlyChart'),{
+    type:'bar',
+    data:{labels:mobile?months.map(shortMonthLabel):months,datasets:[
+      {label:'Einnahmen',data:incomes.map((v,i)=>v+fixedIncomes[i]),backgroundColor:'rgba(22,163,74,.78)',borderRadius:mobile?5:7},
+      {label:'Ausgaben',data:expenses.map((v,i)=>v+fixedExpenses[i]),backgroundColor:'rgba(220,38,38,.76)',borderRadius:mobile?5:7}
+    ]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{boxWidth:mobile?10:12,padding:mobile?10:14}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:false,font:{size:mobile?10:12}}},
+        y:{beginAtZero:true,ticks:{maxTicksLimit:mobile?5:8,callback:v=>money(v),font:{size:mobile?10:12}}}
+      }
+    }
+  });
+
+  const displayedCategories=mobile?mobileCategoryData():categoryData;
+  categoryChart=new Chart(document.getElementById('categoryChart'),{
+    type:mobile?'bar':'doughnut',
+    data:{
+      labels:displayedCategories.map(x=>x.name),
+      datasets:[{
+        data:displayedCategories.map(x=>x.total),
+        backgroundColor:['#4f46e5','#16a34a','#f59e0b','#e11d48','#0ea5e9','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16'],
+        borderWidth:0,
+        hoverOffset:mobile?0:10,
+        borderRadius:mobile?5:0
+      }]
+    },
+    options:mobile?{
+      responsive:true,
+      maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>money(c.raw)}}
+      },
+      scales:{
+        x:{beginAtZero:true,ticks:{maxTicksLimit:5,callback:v=>money(v),font:{size:10}}},
+        y:{grid:{display:false},ticks:{autoSkip:false,font:{size:11}}}
+      }
+    }:{
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout:'58%',
+      plugins:{
+        legend:{position:'bottom'},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}
+      }
+    }
+  });
+}
+
+buildDashboardCharts();
+mobileChartQuery.addEventListener?.('change',buildDashboardCharts);
 </script>
 {% endblock %}
