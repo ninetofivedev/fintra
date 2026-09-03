@@ -6,6 +6,24 @@
   <div class="yearnav"><a href="/fixed/{{year-1}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a><b>{{year}}</b><a href="/fixed/{{year+1}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a></div>
 </header>
 
+<section class="fixed-summary" aria-label="Fixkosten-Zusammenfassung">
+  <article class="fixed-summary-card income-card">
+    <span>Fixe Einnahmen / Monat</span>
+    <b>{{ euros(fixed_summary.income_monthly) }}</b>
+    <small>{{ euros(fixed_summary.income_annual) }} / Jahr</small>
+  </article>
+  <article class="fixed-summary-card expense-card">
+    <span>Fixe Ausgaben / Monat</span>
+    <b>{{ euros(fixed_summary.expense_monthly) }}</b>
+    <small>{{ euros(fixed_summary.expense_annual) }} / Jahr</small>
+  </article>
+  <article class="fixed-summary-card balance-card">
+    <span>Fixkosten-Saldo / Monat</span>
+    <b class="{% if fixed_summary.balance_monthly >= 0 %}amount-positive{% else %}amount-negative{% endif %}">{{ euros(fixed_summary.balance_monthly) }}</b>
+    <small>{{ euros(fixed_summary.balance_annual) }} / Jahr</small>
+  </article>
+</section>
+
 <section class="formbox">
   <h2>Aus anderem Monat importieren</h2>
   <p class="muted">Übernimm Kategorien oder Kategorien inklusive Monatswert.</p>
@@ -29,94 +47,131 @@
   </form>
 </section>
 
+{% macro edit_form(x, scope) -%}
+<form id="fixed-edit-{{scope}}-{{x.id}}" method="post" action="/fixed/{{year}}/{{x.id}}/edit" class="fixed-edit-form" hidden>
+  <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+  <input name="name" value="{{x.name}}" required aria-label="Bezeichnung">
+  <select name="item_type" aria-label="Typ"><option value="income" {% if x.type=='income' %}selected{% endif %}>Einnahme</option><option value="expense" {% if x.type=='expense' %}selected{% endif %}>Ausgabe</option></select>
+  <button type="submit">Speichern</button>
+</form>
+{%- endmacro %}
+
+{% macro action_buttons(x, scope) -%}
+<div class="fixed-actions-inner">
+  <button type="button" class="icon-button edit-button" data-fixed-edit="{{x.id}}" data-fixed-scope="{{scope}}" title="Position bearbeiten"><span class="local-icon icon-edit" aria-hidden="true"></span></button>
+  <form id="update-{{scope}}-{{x.id}}" method="post" action="/fixed/{{year}}/{{x.id}}/update" data-fixed-money-form><input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}"></form>
+  <button form="update-{{scope}}-{{x.id}}" type="submit" class="icon-button save-button" data-fixed-save="{{x.id}}" data-fixed-scope="{{scope}}" title="Monatswerte speichern" disabled><span class="local-icon icon-save" aria-hidden="true"></span></button>
+  <form method="post" action="/fixed/{{year}}/{{x.id}}/delete" class="inline-delete" onsubmit="return confirm('Möchtest du die Fixkosten „{{x.name|e}}“ wirklich löschen?');">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+    <button type="submit" class="icon-button delete-button" title="Löschen"><span class="local-icon icon-delete" aria-hidden="true"></span></button>
+  </form>
+</div>
+{%- endmacro %}
+
 {% for typ,title in [('income','Fixe Einnahmen'),('expense','Fixe Ausgaben')] %}
-<h2>{{title}}</h2>
-<section class="tablewrap fixed-tablewrap">
-  <table class="fixed-table">
-    <thead><tr><th>Bezeichnung</th>{% for m in months %}<th>{{m}}</th>{% endfor %}<th>Aktionen</th></tr></thead>
-    <tbody>
-    {% for x in items if x.type==typ %}
-      <tr>
-        <td class="fixed-name">
-          <span id="fixed-name-{{x.id}}" class="fixed-description">{{x.name}}</span>
-          <form id="fixed-edit-{{x.id}}" method="post" action="/fixed/{{year}}/{{x.id}}/edit" class="fixed-edit-form" hidden>
-            <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
-            <input name="name" value="{{x.name}}" required>
-            <select name="item_type"><option value="income" {% if x.type=='income' %}selected{% endif %}>Einnahme</option><option value="expense" {% if x.type=='expense' %}selected{% endif %}>Ausgabe</option></select>
-            <button type="submit">Speichern</button>
-          </form>
-        </td>
-        {% for col in cols %}
-          <td><input form="update-{{x.id}}" class="money fixed-month-input" name="{{col}}" value="{{('%.2f' % (x[col]/100)).replace('.', ',')}} €" inputmode="decimal" readonly aria-readonly="true"></td>
+<section class="fixed-section">
+  <div class="fixed-section-heading"><h2>{{title}}</h2><span>{{ (items|selectattr('type','equalto',typ)|list)|length }} Positionen</span></div>
+
+  <div class="fixed-desktop-view">
+    <section class="tablewrap fixed-tablewrap">
+      <table class="fixed-table">
+        <thead><tr><th>Bezeichnung</th>{% for m in months %}<th>{{m}}</th>{% endfor %}<th class="fixed-total-col">Jahr</th><th>Aktionen</th></tr></thead>
+        <tbody>
+        {% for x in items if x.type==typ %}
+          <tr data-fixed-item data-fixed-id="{{x.id}}" data-fixed-scope="d">
+            <td class="fixed-name">
+              <span class="fixed-description" data-fixed-name>{{x.name}}</span>
+              {{ edit_form(x, 'd') }}
+            </td>
+            {% for col in cols %}
+              <td><input form="update-d-{{x.id}}" class="money fixed-month-input" name="{{col}}" value="{{('%.2f' % (x[col]/100)).replace('.', ',')}} €" inputmode="decimal" readonly aria-readonly="true"></td>
+            {% endfor %}
+            <td class="fixed-annual-total">{{ euros(x.annual_total) }}</td>
+            <td class="fixed-actions">{{ action_buttons(x, 'd') }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="15" class="muted">Noch keine Einträge.</td></tr>
         {% endfor %}
-        <td class="fixed-actions">
-          <div class="fixed-actions-inner">
-            <button type="button" class="icon-button edit-button" data-fixed-edit="{{x.id}}" title="Bezeichnung bearbeiten"><span class="local-icon icon-edit" aria-hidden="true"></span></button>
-            <form id="update-{{x.id}}" method="post" action="/fixed/{{year}}/{{x.id}}/update" data-fixed-money-form><input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}"></form>
-            <button form="update-{{x.id}}" type="submit" class="icon-button save-button" data-fixed-save="{{x.id}}" title="Monatswerte speichern" disabled><span class="local-icon icon-save" aria-hidden="true"></span></button>
-            <form method="post" action="/fixed/{{year}}/{{x.id}}/delete" class="inline-delete" onsubmit="return confirm('Möchtest du die Fixkosten „{{x.name|e}}“ wirklich löschen?');">
-              <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
-              <button type="submit" class="icon-button delete-button" title="Löschen"><span class="local-icon icon-delete" aria-hidden="true"></span></button>
-            </form>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <div class="fixed-mobile-view">
+    {% for x in items if x.type==typ %}
+      <article class="fixed-mobile-card" data-fixed-item data-fixed-id="{{x.id}}" data-fixed-scope="m">
+        <button type="button" class="fixed-mobile-toggle" aria-expanded="false">
+          <span class="fixed-mobile-title"><strong data-fixed-name>{{x.name}}</strong><small>{{ 'Einnahme' if x.type=='income' else 'Ausgabe' }}</small></span>
+          <span class="fixed-mobile-summary"><b>{{ euros(x.annual_total) }}</b><small>{{ euros(x.monthly_average) }} / Monat</small></span>
+          <span class="fixed-mobile-chevron local-icon icon-chevron_right" aria-hidden="true"></span>
+        </button>
+        <div class="fixed-mobile-details" hidden>
+          {{ edit_form(x, 'm') }}
+          <div class="fixed-mobile-months">
+            {% for col in cols %}
+              <label><span>{{ months[loop.index0] }}</span><input form="update-m-{{x.id}}" class="money fixed-month-input" name="{{col}}" value="{{('%.2f' % (x[col]/100)).replace('.', ',')}} €" inputmode="decimal" readonly aria-readonly="true"></label>
+            {% endfor %}
           </div>
-        </td>
-      </tr>
+          <div class="fixed-mobile-footer">
+            <div><span>Jahressumme</span><b class="fixed-annual-total">{{ euros(x.annual_total) }}</b></div>
+            {{ action_buttons(x, 'm') }}
+          </div>
+        </div>
+      </article>
     {% else %}
-      <tr><td colspan="14" class="muted">Noch keine Einträge.</td></tr>
+      <div class="fixed-mobile-empty muted">Noch keine Einträge.</div>
     {% endfor %}
-    </tbody>
-  </table>
+  </div>
 </section>
 {% endfor %}
 
 <div class="modal-backdrop" id="fixedErrorModal" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="fixedErrorTitle">
-    <div class="modal-icon">
-      <span class="local-icon icon-error" aria-hidden="true"></span>
-    </div>
+    <div class="modal-icon"><span class="local-icon icon-error" aria-hidden="true"></span></div>
     <h2 id="fixedErrorTitle">Betrag prüfen</h2>
     <p id="fixedErrorText">Bitte gib einen gültigen Geldbetrag ein.</p>
     <button type="button" id="fixedErrorClose">Okay</button>
   </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
+document.querySelectorAll('.fixed-mobile-toggle').forEach(toggle => {
+  toggle.addEventListener('click', () => {
+    const details = toggle.nextElementSibling;
+    const open = details.hidden;
+    details.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.closest('.fixed-mobile-card')?.classList.toggle('is-open', open);
+  });
+});
+
 document.querySelectorAll('[data-fixed-edit]').forEach(button => {
   button.addEventListener('click', () => {
     const id = button.dataset.fixedEdit;
-    const form = document.getElementById('fixed-edit-' + id);
-    const name = document.getElementById('fixed-name-' + id);
-    if (!form || !name) return;
+    const scope = button.dataset.fixedScope;
+    const item = button.closest('[data-fixed-item]');
+    const form = document.getElementById(`fixed-edit-${scope}-${id}`);
+    const name = item?.querySelector('[data-fixed-name]');
+    if (!item || !form || !name) return;
 
     const show = form.hidden;
-    const monthlyInputs = document.querySelectorAll(
-      `.fixed-month-input[form="update-${id}"]`
-    );
-    const saveButton = document.querySelector(`[data-fixed-save="${id}"]`);
+    const monthlyInputs = item.querySelectorAll('.fixed-month-input');
+    const saveButton = item.querySelector(`[data-fixed-save="${id}"][data-fixed-scope="${scope}"]`);
 
     form.hidden = !show;
     name.hidden = show;
+    item.classList.toggle('is-editing', show);
 
     monthlyInputs.forEach(input => {
       input.readOnly = !show;
       input.setAttribute('aria-readonly', String(!show));
     });
 
-    if (saveButton) {
-      saveButton.disabled = !show;
-    }
-
-    button.innerHTML =
-      '<span class="local-icon ' +
-      (show ? 'icon-close' : 'icon-edit') +
-      '" aria-hidden="true"></span>';
-
-    if (show) {
-      form.querySelector('input[name="name"]')?.focus();
-    }
+    if (saveButton) saveButton.disabled = !show;
+    button.innerHTML = '<span class="local-icon ' + (show ? 'icon-close' : 'icon-edit') + '" aria-hidden="true"></span>';
+    if (show) form.querySelector('input[name="name"]')?.focus();
   });
 });
 
@@ -130,109 +185,50 @@ function showFixedError(message) {
   fixedErrorModal.hidden = false;
   fixedErrorClose?.focus();
 }
-
-function closeFixedError() {
-  if (fixedErrorModal) fixedErrorModal.hidden = true;
-}
-
+function closeFixedError() { if (fixedErrorModal) fixedErrorModal.hidden = true; }
 function validateFixedMoney(value) {
   const raw = (value || '').trim().replace(/€/g, '').replace(/\s/g, '');
   if (!raw) return {ok: true};
-
   let normalized = raw;
-  if (normalized.includes(',')) {
-    normalized = normalized.replace(/\./g, '').replace(',', '.');
-  }
-
-  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) {
-    return {
-      ok: false,
-      message: 'Bitte gib einen gültigen Geldbetrag ein, zum Beispiel 125,50.'
-    };
-  }
-
+  if (normalized.includes(',')) normalized = normalized.replace(/\./g, '').replace(',', '.');
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return {ok:false,message:'Bitte gib einen gültigen Geldbetrag ein, zum Beispiel 125,50.'};
   const amount = Number(normalized);
-  if (!Number.isFinite(amount) || amount < 0) {
-    return {ok: false, message: 'Der Betrag darf nicht negativ sein.'};
-  }
-  if (amount > 999999999.99) {
-    return {ok: false, message: 'Der eingegebene Betrag ist zu groß.'};
-  }
-
-  return {ok: true};
+  if (!Number.isFinite(amount) || amount < 0) return {ok:false,message:'Der Betrag darf nicht negativ sein.'};
+  if (amount > 999999999.99) return {ok:false,message:'Der eingegebene Betrag ist zu groß.'};
+  return {ok:true};
 }
-
-
 function formatFixedMoneyInput(input) {
   const raw = (input.value || '').trim().replace(/€/g, '').replace(/\s/g, '');
-  if (!raw) {
-    input.value = '0,00 €';
-    return;
-  }
-
+  if (!raw) { input.value = '0,00 €'; return; }
   let normalized = raw;
-  if (normalized.includes(',')) {
-    normalized = normalized.replace(/\./g, '').replace(',', '.');
-  }
-
+  if (normalized.includes(',')) normalized = normalized.replace(/\./g, '').replace(',', '.');
   const amount = Number(normalized);
-  if (Number.isFinite(amount) && amount >= 0) {
-    input.value = amount.toFixed(2).replace('.', ',') + ' €';
-  }
+  if (Number.isFinite(amount) && amount >= 0) input.value = amount.toFixed(2).replace('.', ',') + ' €';
 }
-
 document.querySelectorAll('.fixed-month-input').forEach(input => {
-  input.addEventListener('blur', () => {
-    if (!input.readOnly) formatFixedMoneyInput(input);
-  });
+  input.addEventListener('blur', () => { if (!input.readOnly) formatFixedMoneyInput(input); });
 });
-
 function validateFixedMoneyForm(form) {
-  const inputs = document.querySelectorAll(`input[form="${form.id}"].money`);
-
+  const item = form.closest('[data-fixed-item]');
+  const inputs = item ? item.querySelectorAll('.fixed-month-input') : [];
   for (const input of inputs) {
     const check = validateFixedMoney(input.value);
-    if (!check.ok) {
-      showFixedError(check.message);
-      input.focus();
-      input.select();
-      return false;
-    }
+    if (!check.ok) { showFixedError(check.message); input.focus(); input.select(); return false; }
   }
-
   return true;
 }
-
 document.querySelectorAll('[data-fixed-money-form]').forEach(form => {
-  form.addEventListener('submit', event => {
-    if (!validateFixedMoneyForm(form)) {
-      event.preventDefault();
-    }
-  });
+  form.addEventListener('submit', event => { if (!validateFixedMoneyForm(form)) event.preventDefault(); });
 });
-
 document.querySelectorAll('[data-fixed-save]').forEach(button => {
   button.addEventListener('click', event => {
-    const form = document.getElementById(`update-${button.dataset.fixedSave}`);
-    if (form && !validateFixedMoneyForm(form)) {
-      event.preventDefault();
-    }
+    const form = document.getElementById(`update-${button.dataset.fixedScope}-${button.dataset.fixedSave}`);
+    if (form && !validateFixedMoneyForm(form)) event.preventDefault();
   });
 });
-
 fixedErrorClose?.addEventListener('click', closeFixedError);
-fixedErrorModal?.addEventListener('click', event => {
-  if (event.target === fixedErrorModal) closeFixedError();
-});
-
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && fixedErrorModal && !fixedErrorModal.hidden) {
-    closeFixedError();
-  }
-});
-
-{% if error %}
-showFixedError({{ error|tojson }});
-{% endif %}
+fixedErrorModal?.addEventListener('click', event => { if (event.target === fixedErrorModal) closeFixedError(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && fixedErrorModal && !fixedErrorModal.hidden) closeFixedError(); });
+{% if error %}showFixedError({{ error|tojson }});{% endif %}
 </script>
 {% endblock %}

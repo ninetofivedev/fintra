@@ -7,6 +7,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.9
+
+### Responsive Fixkosten
+- Desktop: übersichtlichere Fixkostentabelle mit Jahressumme sowie fixierter Bezeichnungs- und Aktionsspalte.
+- Smartphone: eigenständige, aufklappbare Kartenansicht ohne horizontales Tabellen-Scrolling.
+- Jede Karte zeigt Jahreswert und Monatsdurchschnitt; die zwölf Monatswerte werden bei Bedarf eingeblendet.
+- Der vorhandene Bearbeitungsablauf mit Stift, Speichern und Löschen bleibt erhalten.
+- Neue Zusammenfassung für fixe Einnahmen, fixe Ausgaben und Fixkosten-Saldo pro Monat und Jahr.
+
+---
+
 ## 9.6.0-beta.8
 
 ### Mobile

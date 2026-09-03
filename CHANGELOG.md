@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.6.0-beta.9
+
+### Fixkosten
+- Fixkosten-Seite um kompakte Monats-/Jahres-Zusammenfassung ergänzt
+- Desktop-Tabelle mit fixierter Bezeichnung, fixierten Aktionen und Jahressumme verbessert
+- Zeilen-Hover und klarerer Bearbeitungszustand ergänzt
+- Smartphone-Ansicht als aufklappbare Karten statt breiter Tabelle umgesetzt
+- Mobile Karten zeigen Jahressumme, Monatsdurchschnitt und bei Bedarf alle 12 Monatswerte
+- Bearbeiten, Speichern und Löschen funktionieren direkt innerhalb der mobilen Karte
+
 ## 9.6.0-beta.8
 
 ### Mobile

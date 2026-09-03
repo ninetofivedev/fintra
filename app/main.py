@@ -596,11 +596,30 @@ def fixed_redirect(year:int|None=None): return RedirectResponse(f'/fixed/{year o
 @app.get('/fixed/{year}')
 def fixed_page(request:Request, year:int, error:str|None=None):
     c = db()
-    items = c.execute(
+    rows = c.execute(
         'SELECT * FROM fixed_items WHERE year=? ORDER BY type,name,id',
         (year,)
     ).fetchall()
     c.close()
+
+    items = []
+    for row in rows:
+        item = dict(row)
+        item['annual_total'] = sum(int(item[col] or 0) for col in COLS)
+        item['monthly_average'] = round(item['annual_total'] / 12)
+        items.append(item)
+
+    income_annual = sum(item['annual_total'] for item in items if item['type'] == 'income')
+    expense_annual = sum(item['annual_total'] for item in items if item['type'] == 'expense')
+    fixed_summary = {
+        'income_monthly': round(income_annual / 12),
+        'expense_monthly': round(expense_annual / 12),
+        'balance_monthly': round((income_annual - expense_annual) / 12),
+        'income_annual': income_annual,
+        'expense_annual': expense_annual,
+        'balance_annual': income_annual - expense_annual,
+    }
+
     return templates.TemplateResponse('fixed.html', {
         'request': request,
         'items': items,
@@ -609,6 +628,7 @@ def fixed_page(request:Request, year:int, error:str|None=None):
         'year': year,
         'euros': euros,
         'error': error,
+        'fixed_summary': fixed_summary,
     })
 
 @app.post('/fixed/{year}')
