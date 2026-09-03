@@ -7,6 +7,14 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.7
+
+### Fixed
+- Die horizontale Trennlinie der Jahresübersicht läuft wieder vollständig von der Bezeichnungsspalte bis zur Jahresspalte.
+- Der neutrale Stil der Monatsbeträge beeinflusst keine Tabellenrahmen mehr.
+
+---
+
 ## 9.6.0-beta.6
 
 ### Branding

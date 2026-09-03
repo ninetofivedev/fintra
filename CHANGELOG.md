@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.6.0-beta.7
+
+### Fixed
+- Tabellenlinie in der Jahresübersicht zwischen `Fixe Einnahmen` und `Variable Ausgaben` wieder über die komplette Breite sichtbar
+- Neutral dargestellte Monatsbeträge entfernen die Zell-Trennlinien nicht mehr
+
 ## 9.6.0-beta.6
 
 ### Branding

@@ -241,7 +241,6 @@ html[data-theme="dark"] .modal-icon{background:#4c1725;color:#fda4af}
   color:var(--text)!important;
   font-weight:inherit;
   background:transparent!important;
-  border:0!important;
   text-decoration:none;
 }
 
@@ -2273,4 +2272,14 @@ html[data-theme="dark"] .profile-message-success{
     width:27px;
     height:32px;
   }
+}
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.7 – Jahresübersicht Tabellenlinien
+   ========================================================= */
+
+/* Neutrale Monatsbeträge dürfen die Zell-Trennlinien nicht entfernen. */
+.year-overview-table td.table-amount-neutral{
+  border-bottom:1px solid var(--border);
 }
