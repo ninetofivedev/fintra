@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Transaktionen – Fintra{% endblock %}
+{% block content %}
+<header class="transactions-page-header">
+  <div>
+    <h1>Transaktionen</h1>
+    <p class="muted">Alle Buchungen zentral durchsuchen, filtern und auswerten.</p>
+  </div>
+  <a class="btn transactions-export" href="{{ export_url }}" title="Gefilterte Transaktionen als CSV exportieren">
+    <span class="local-icon icon-download inline-material-icon" aria-hidden="true"></span>
+    CSV exportieren
+  </a>
+</header>
+
+<section class="cards transaction-summary-cards">
+  <div><span>Treffer</span><b>{{ total_count }}</b></div>
+  <div class="income-card"><span>Einnahmen</span><b class="amount-positive">+ {{ euros(income) }}</b></div>
+  <div class="expense-card"><span>Ausgaben</span><b class="amount-negative">− {{ euros(expense) }}</b></div>
+  <div class="balance"><span>Saldo</span><b class="{{ 'amount-positive' if balance >= 0 else 'amount-negative' }}">{{ '+' if balance >= 0 else '−' }} {{ euros(balance|abs) }}</b></div>
+</section>
+
+<section class="transaction-browser-filter" aria-labelledby="transaction-filter-title">
+  <div class="transaction-browser-filter-head">
+    <div>
+      <h2 id="transaction-filter-title">Filter</h2>
+      <p class="muted">Kombiniere beliebig mehrere Kriterien.</p>
+    </div>
+    <a class="secondary-button" href="/transactions">Zurücksetzen</a>
+  </div>
+  {% if filter_error %}<div class="auth-error" role="alert">{{ filter_error }}</div>{% endif %}
+  <form method="get" action="/transactions" class="transaction-browser-filter-grid">
+    <label>Suche
+      <input type="search" name="q" value="{{ filters.q }}" placeholder="Kategorie oder Kommentar…">
+    </label>
+    <label>Jahr
+      <select name="year">
+        <option value="">Alle Jahre</option>
+        {% for y in years|reverse %}<option value="{{ y }}" {% if filters.year == y %}selected{% endif %}>{{ y }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Monat
+      <select name="month">
+        <option value="">Alle Monate</option>
+        {% for name in months %}<option value="{{ loop.index }}" {% if filters.month == loop.index %}selected{% endif %}>{{ name }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Art
+      <select name="tx_type">
+        <option value="">Alle Arten</option>
+        <option value="income" {% if filters.tx_type == 'income' %}selected{% endif %}>Einnahmen</option>
+        <option value="expense" {% if filters.tx_type == 'expense' %}selected{% endif %}>Ausgaben</option>
+      </select>
+    </label>
+    <label>Kategorie
+      <select name="category_id">
+        <option value="">Alle Kategorien</option>
+        {% for c in cats %}<option value="{{ c.id }}" {% if filters.category_id == c.id %}selected{% endif %}>{{ c.name }} · {{ 'Einnahme' if c.type == 'income' else 'Ausgabe' }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Betrag von
+      <input name="amount_min" inputmode="decimal" value="{{ filters.amount_min }}" placeholder="0,00">
+    </label>
+    <label>Betrag bis
+      <input name="amount_max" inputmode="decimal" value="{{ filters.amount_max }}" placeholder="0,00">
+    </label>
+    <button type="submit" class="transaction-filter-submit">Filter anwenden</button>
+  </form>
+</section>
+
+<section class="tablewrap all-transactions-wrap">
+  <div class="table-toolbar">
+    <div>
+      <h2>Buchungen</h2>
+      <p class="muted">Neueste Transaktionen zuerst · Seite {{ page }} von {{ total_pages }}</p>
+    </div>
+  </div>
+
+  <table class="all-transactions-table">
+    <thead><tr><th>Datum</th><th>Art</th><th>Kategorie</th><th>Betrag</th><th>Kommentar</th><th>Monat</th></tr></thead>
+    <tbody>
+    {% for t in transactions %}
+      <tr>
+        <td>{{ date_de(t.tx_date) }}</td>
+        <td><span class="tx-type-badge {{ 'tx-type-income' if t.type == 'income' else 'tx-type-expense' }}">{{ 'Einnahme' if t.type == 'income' else 'Ausgabe' }}</span></td>
+        <td>{{ t.category }}</td>
+        <td class="{{ 'amount-positive' if t.type == 'income' else 'amount-negative' }}">{{ '+' if t.type == 'income' else '−' }} {{ euros(t.amount_cents) }}</td>
+        <td class="transaction-comment">{{ t.comment or '' }}</td>
+        <td><a class="icon-button transaction-open-month" href="/month/{{ t.tx_date[:4] }}/{{ t.tx_date[5:7] }}" title="Monat öffnen" aria-label="Monat zu dieser Transaktion öffnen"><span class="local-icon icon-arrow_forward" aria-hidden="true"></span></a></td>
+      </tr>
+    {% else %}
+      <tr class="empty-table-row"><td colspan="6"><div class="empty-state"><strong>Keine Transaktionen gefunden</strong><span>Ändere die Filter oder erfasse eine neue Buchung.</span><a class="btn" href="/new-transaction">Neue Transaktion</a></div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="all-transactions-mobile" aria-label="Transaktionen">
+    {% for t in transactions %}
+      <a class="all-transaction-card" href="/month/{{ t.tx_date[:4] }}/{{ t.tx_date[5:7] }}">
+        <div class="all-transaction-card-top">
+          <time datetime="{{ t.tx_date }}">{{ date_de(t.tx_date) }}</time>
+          <strong class="{{ 'amount-positive' if t.type == 'income' else 'amount-negative' }}">{{ '+' if t.type == 'income' else '−' }} {{ euros(t.amount_cents) }}</strong>
+        </div>
+        <div class="all-transaction-card-main">
+          <strong>{{ t.category }}</strong>
+          <span class="tx-type-badge {{ 'tx-type-income' if t.type == 'income' else 'tx-type-expense' }}">{{ 'Einnahme' if t.type == 'income' else 'Ausgabe' }}</span>
+        </div>
+        {% if t.comment %}<p>{{ t.comment }}</p>{% endif %}
+        <span class="all-transaction-card-open" aria-hidden="true"><span class="local-icon icon-chevron_right"></span></span>
+      </a>
+    {% else %}
+      <div class="empty-state"><strong>Keine Transaktionen gefunden</strong><span>Ändere die Filter oder erfasse eine neue Buchung.</span><a class="btn" href="/new-transaction">Neue Transaktion</a></div>
+    {% endfor %}
+  </div>
+</section>
+
+{% if total_pages > 1 %}
+<nav class="transaction-pagination" aria-label="Seitennavigation">
+  {% if prev_page_url %}<a class="secondary-button" href="{{ prev_page_url }}"><span class="local-icon icon-chevron_left inline-material-icon" aria-hidden="true"></span> Zurück</a>{% else %}<span></span>{% endif %}
+  <span>Seite <strong>{{ page }}</strong> von <strong>{{ total_pages }}</strong></span>
+  {% if next_page_url %}<a class="secondary-button" href="{{ next_page_url }}">Weiter <span class="local-icon icon-chevron_right inline-material-icon" aria-hidden="true"></span></a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

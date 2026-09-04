@@ -1,5 +1,17 @@
 # Changelog
 
+## 9.6.0-beta.16
+
+### Transaktionen
+- Neue zentrale Unterseite **Transaktionen** mit allen Buchungen über sämtliche Jahre
+- Filter für Jahr, Monat, Art, Kategorie, Freitextsuche sowie Betragsbereich ergänzt
+- Gefilterte Kennzahlen für Treffer, Einnahmen, Ausgaben und Saldo
+- Serverseitige Pagination mit 50 Buchungen pro Seite und neueste Buchungen zuerst
+- CSV-Export übernimmt die aktuell gesetzten Filter
+- Desktop-Tabelle mit direktem Sprung in den zugehörigen Monat
+- Eigene kompakte Kartenansicht für Smartphones ohne horizontales Scrollen
+- Neuer Menüpunkt **Transaktionen** im Bereich Finanzen
+
 ## 9.6.0-beta.15
 
 ### UI & Bedienung

@@ -1,7 +1,7 @@
 import os, sqlite3, statistics, heapq, hashlib, hmac, secrets, csv, io, tempfile, random, time, math
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 from pathlib import Path
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse, HTMLResponse, Response, FileResponse, JSONResponse
@@ -421,6 +421,40 @@ def transaction_redirect_with_error(tx_date: str, message: str):
 
 
 
+def transaction_filter_sql(*, year=None, month=None, category_id=None, tx_type=None, q=None, amount_min=None, amount_max=None):
+    clauses = []
+    params = []
+    if year:
+        clauses.append("substr(t.tx_date,1,4)=?")
+        params.append(str(year))
+    if month:
+        clauses.append("CAST(substr(t.tx_date,6,2) AS INTEGER)=?")
+        params.append(int(month))
+    if category_id:
+        clauses.append("t.category_id=?")
+        params.append(int(category_id))
+    if tx_type in {'income', 'expense'}:
+        clauses.append("t.type=?")
+        params.append(tx_type)
+    if q:
+        clauses.append("(LOWER(c.name) LIKE ? OR LOWER(COALESCE(t.comment,'')) LIKE ?)")
+        needle = f"%{q.strip().lower()}%"
+        params.extend([needle, needle])
+    if amount_min is not None:
+        clauses.append("t.amount_cents>=?")
+        params.append(int(amount_min))
+    if amount_max is not None:
+        clauses.append("t.amount_cents<=?")
+        params.append(int(amount_max))
+    return (" WHERE " + " AND ".join(clauses)) if clauses else "", params
+
+
+def optional_filter_cents(value: str | None):
+    if value is None or not str(value).strip():
+        return None
+    return cents(value)
+
+
 def fetch_year_month_transactions(c, year, month=None):
     query = '''
         SELECT t.*, c.name category
@@ -605,6 +639,84 @@ def edit_transaction(request: Request, tx_id:int, tx_type:str=Form(...),tx_date:
 def delete_transaction(request: Request, tx_id:int,year:int=Form(...),month:int=Form(...),csrf_token:str=Form('')):
     if not check_csrf(request, csrf_token): return HTMLResponse('Ungültige Anfrage (CSRF-Schutz).', status_code=403)
     c=db(); c.execute('DELETE FROM transactions WHERE id=?',(tx_id,)); c.commit(); c.close(); return RedirectResponse(f'/month/{year}/{month}',303)
+
+
+@app.get('/transactions')
+def transactions_page(
+    request: Request,
+    year: int | None = None,
+    month: int | None = None,
+    category_id: int | None = None,
+    tx_type: str | None = None,
+    q: str | None = None,
+    amount_min: str | None = None,
+    amount_max: str | None = None,
+    page: int = 1,
+):
+    if month is not None and month not in range(1, 13):
+        month = None
+    if tx_type not in {None, '', 'income', 'expense'}:
+        tx_type = None
+    page = max(1, page)
+    per_page = 50
+    filter_error = None
+    try:
+        min_cents = optional_filter_cents(amount_min)
+        max_cents = optional_filter_cents(amount_max)
+    except ValueError:
+        min_cents = max_cents = None
+        filter_error = 'Bitte überprüfe den Betragsfilter.'
+    if min_cents is not None and max_cents is not None and min_cents > max_cents:
+        min_cents, max_cents = max_cents, min_cents
+
+    c = db()
+    cats = c.execute('SELECT id,name,type,active FROM categories ORDER BY type,name,id').fetchall()
+    years = available_years(c, date.today().year)
+    where, params = transaction_filter_sql(
+        year=year, month=month, category_id=category_id, tx_type=tx_type,
+        q=q, amount_min=min_cents, amount_max=max_cents
+    )
+    base_join = ' FROM transactions t JOIN categories c ON c.id=t.category_id '
+    summary = c.execute(
+        'SELECT COUNT(*) count, '
+        "COALESCE(SUM(CASE WHEN t.type='income' THEN t.amount_cents ELSE 0 END),0) income, "
+        "COALESCE(SUM(CASE WHEN t.type='expense' THEN t.amount_cents ELSE 0 END),0) expense" +
+        base_join + where,
+        params
+    ).fetchone()
+    total_count = int(summary['count'])
+    total_pages = max(1, math.ceil(total_count / per_page))
+    page = min(page, total_pages)
+    rows = c.execute(
+        'SELECT t.id,t.tx_date,t.type,t.category_id,c.name category,t.amount_cents,t.comment '
+        + base_join + where + ' ORDER BY t.tx_date DESC,t.id DESC LIMIT ? OFFSET ?',
+        [*params, per_page, (page - 1) * per_page]
+    ).fetchall()
+    c.close()
+
+    filters = {
+        'year': year, 'month': month, 'category_id': category_id,
+        'tx_type': tx_type or '', 'q': q or '',
+        'amount_min': amount_min or '', 'amount_max': amount_max or ''
+    }
+    clean_params = {k: v for k, v in filters.items() if v not in (None, '')}
+    def page_url(target):
+        return '/transactions?' + urlencode({**clean_params, 'page': target})
+    export_url = '/export/transactions.csv'
+    if clean_params:
+        export_url += '?' + urlencode(clean_params)
+
+    income = int(summary['income'])
+    expense = int(summary['expense'])
+    return templates.TemplateResponse('transactions.html', {
+        'request': request, 'transactions': rows, 'cats': cats, 'years': years,
+        'filters': filters, 'months': MONTHS, 'page': page, 'total_pages': total_pages,
+        'total_count': total_count, 'income': income, 'expense': expense,
+        'balance': income - expense, 'euros': euros, 'date_de': date_de,
+        'prev_page_url': page_url(page - 1) if page > 1 else None,
+        'next_page_url': page_url(page + 1) if page < total_pages else None,
+        'export_url': export_url, 'filter_error': filter_error,
+    })
 
 
 @app.get('/fixed')
@@ -1181,25 +1293,33 @@ async def save_budgets(year:int,month:int,request:Request):
 
 
 @app.get('/export/transactions.csv')
-def export_transactions_csv(year:int|None=None):
+def export_transactions_csv(
+    year: int | None = None,
+    month: int | None = None,
+    category_id: int | None = None,
+    tx_type: str | None = None,
+    q: str | None = None,
+    amount_min: str | None = None,
+    amount_max: str | None = None,
+):
+    try:
+        min_cents = optional_filter_cents(amount_min)
+        max_cents = optional_filter_cents(amount_max)
+    except ValueError:
+        min_cents = max_cents = None
+    if min_cents is not None and max_cents is not None and min_cents > max_cents:
+        min_cents, max_cents = max_cents, min_cents
+    where, params = transaction_filter_sql(
+        year=year, month=month, category_id=category_id, tx_type=tx_type,
+        q=q, amount_min=min_cents, amount_max=max_cents
+    )
     c=db()
-    if year:
-        start_date, end_date = year_bounds(year)
-        rows = c.execute(
-            '''
-            SELECT t.tx_date,t.type,c.name category,t.amount_cents,t.comment
-            FROM transactions t
-            JOIN categories c ON c.id=t.category_id
-            WHERE t.tx_date>=? AND t.tx_date<?
-            ORDER BY t.tx_date,t.id
-            ''',
-            (start_date, end_date)
-        ).fetchall()
-    else:
-        rows=c.execute(
-            "SELECT t.tx_date,t.type,c.name category,t.amount_cents,t.comment "
-            "FROM transactions t JOIN categories c ON c.id=t.category_id ORDER BY t.tx_date,t.id"
-        ).fetchall()
+    rows=c.execute(
+        "SELECT t.tx_date,t.type,c.name category,t.amount_cents,t.comment "
+        "FROM transactions t JOIN categories c ON c.id=t.category_id" + where +
+        " ORDER BY t.tx_date DESC,t.id DESC",
+        params
+    ).fetchall()
     c.close()
     out=io.StringIO()
     writer=csv.writer(out,delimiter=';')

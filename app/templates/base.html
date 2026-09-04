@@ -118,6 +118,11 @@
           <div class="burger-section">
             <span class="burger-section-label">Finanzen</span>
 
+            <a href="/transactions"{% if current_path.startswith('/transactions') %} class="is-active" aria-current="page"{% endif %}>
+              <span class="local-icon icon-bar_chart burger-icon" aria-hidden="true"></span>
+              <span>Transaktionen</span>
+            </a>
+
             <a href="/fixed"{% if current_path.startswith('/fixed') %} class="is-active" aria-current="page"{% endif %}>
               <span class="local-icon icon-event_repeat burger-icon" aria-hidden="true"></span>
               <span>Fixkosten</span>

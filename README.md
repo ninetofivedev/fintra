@@ -13,7 +13,7 @@ It provides yearly and monthly overviews, recurring income and expenses, budgets
 financial analysis and visualizations while keeping your financial data on your own server.
 
 > **Beta:** Fintra is currently under active development.  
-> The current release is `9.6.0-beta.15`.
+> The current release is `9.6.0-beta.16`.
 
 
 ## Screenshots
@@ -33,6 +33,7 @@ financial analysis and visualizations while keeping your financial data on your 
 ## Features
 
 - 📅 Yearly and monthly financial overviews
+- 🔎 Central transaction browser with filters, search, pagination and filtered CSV export
 - 💰 Income and expense tracking
 - 🔁 Recurring income and expenses
 - 🗂️ Custom categories
@@ -208,7 +209,7 @@ A healthy instance responds with:
 ```json
 {
   "status": "ok",
-  "version": "9.6.0-beta.15"
+  "version": "9.6.0-beta.16"
 }
 ```
 

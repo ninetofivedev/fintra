@@ -7,6 +7,18 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.16
+
+### Zentrale Transaktionsübersicht
+- Die neue Seite **Transaktionen** bündelt alle Buchungen in einer zentralen Übersicht.
+- Jahr, Monat, Buchungsart, Kategorie, Text und Betragsbereich können kombiniert gefiltert werden.
+- Trefferzahl sowie gefilterte Einnahmen, Ausgaben und der Saldo werden direkt zusammengefasst.
+- Große Datenbestände werden serverseitig mit 50 Buchungen pro Seite paginiert.
+- Der CSV-Export kann genau die aktuell gefilterte Ansicht exportieren.
+- Desktop verwendet eine kompakte Tabelle; Smartphones erhalten eine eigenständige Kartenansicht.
+- Jede Buchung kann direkt in ihrem zugehörigen Monat geöffnet werden.
+
+---
 ## 9.6.0-beta.15
 
 ### UI Consistency & Usability
