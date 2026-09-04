@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.6.0-beta.23
+
+### Mobile UI
+- CSV-Export-Button auf der Transaktionsseite für Smartphones deutlich kompakter gestaltet.
+- Button ist nicht mehr über die komplette Breite gestreckt und wirkt jetzt wie eine sekundäre Aktion.
+
 ## 9.6.0-beta.22
 
 ### UI

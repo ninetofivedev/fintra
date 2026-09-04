@@ -7,6 +7,14 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.23
+
+### Transaktionsseite mobil
+- Der Button „CSV exportieren“ ist auf Smartphones jetzt kompakt statt Full-Width.
+- Abstände, Icon und Schriftgröße wurden an die übrigen mobilen Aktionen angepasst.
+
+---
+
 ## 9.6.0-beta.22
 
 ### Transaktionsseite

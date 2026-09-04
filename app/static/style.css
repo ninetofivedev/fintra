@@ -2797,3 +2797,29 @@ html[data-theme="dark"] .budget-status-over{color:#f87171!important}
     min-width:92px;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.23 – kompakter CSV-Button mobil
+   ========================================================= */
+@media(max-width:700px){
+  .transactions-page-header{
+    align-items:flex-start;
+  }
+
+  .transactions-page-header .transactions-export{
+    width:auto;
+    align-self:flex-start;
+    justify-content:center;
+    min-height:34px;
+    padding:7px 10px;
+    font-size:.82rem;
+    border-radius:8px;
+    gap:5px;
+  }
+
+  .transactions-page-header .transactions-export .inline-material-icon{
+    width:17px;
+    height:17px;
+  }
+}
