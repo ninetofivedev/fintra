@@ -3,8 +3,8 @@ services:
     build:
       context: .
       args:
-        FINTRA_VERSION: 9.6.0-beta.13
-    image: fintra:9.6.0-beta.13
+        FINTRA_VERSION: 9.6.0-beta.14
+    image: fintra:9.6.0-beta.14
     container_name: fintra
     environment:
       FINTRA_HTTPS_ONLY: ${FINTRA_HTTPS_ONLY:-0}

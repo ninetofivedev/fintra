@@ -7,6 +7,14 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.14
+
+### Kategorien – Aktionsleiste
+- Bearbeiten, Speichern und Löschen stehen nun geschlossen und rechtsbündig nebeneinander.
+- Alle drei Symbole verwenden denselben Abstand.
+- Der bisherige zusätzliche Leerraum zwischen Bearbeiten und Speichern wurde entfernt.
+
+---
 ## 9.6.0-beta.13
 
 ### Einheitlicher Kategorien-Editor

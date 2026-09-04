@@ -2495,3 +2495,27 @@ html[data-theme="dark"] .profile-message-success{
     gap:8px;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.14 – gleichmäßige Kategorien-Aktionen
+   ========================================================= */
+.category-columns .cat-actions .cat-update-form{
+  display:none !important;
+  width:0 !important;
+  height:0 !important;
+  min-width:0 !important;
+  flex:0 0 0 !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+.category-columns .cat-actions{
+  justify-content:flex-end;
+  gap:6px !important;
+}
+
+.category-columns .cat-actions > .icon-button,
+.category-columns .cat-actions > .cat-delete-form{
+  flex:0 0 32px;
+}

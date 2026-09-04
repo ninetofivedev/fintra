@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.14
+
+### Kategorien
+- Aktionssymbole der Kategorienzeilen vollständig rechtsbündig ausgerichtet
+- Gleichmäßiger Abstand zwischen Bearbeiten, Speichern und Löschen
+- Unsichtbares Update-Formular belegt keinen zusätzlichen Platz mehr in der Aktionsleiste
+
 ## 9.6.0-beta.13
 
 ### Kategorien
