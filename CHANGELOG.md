@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.6.0-beta.10
+
+### Dashboard
+- Desktop-Umschalter für `Ausgaben nach Kategorie` zwischen Doughnut- und horizontalem Balkendiagramm ergänzt
+- Gewählte Desktop-Darstellung wird lokal im Browser gespeichert
+- Balkenansicht nutzt die kompakte Top-7-plus-`Sonstiges`-Darstellung aus der mobilen Ansicht
+- Auf Smartphones bleibt der Umschalter ausgeblendet und das Balkendiagramm wird weiterhin automatisch verwendet
+- Zwei neue lokale Diagramm-Icons ergänzt; keine externen Ressourcen erforderlich
+
 ## 9.6.0-beta.9
 
 ### Fixkosten

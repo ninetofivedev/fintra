@@ -1447,6 +1447,8 @@ html[data-theme="dark"] .error-badge{color:#f87171}
 .icon-category{-webkit-mask-image:url("/static/icons/category.svg");mask-image:url("/static/icons/category.svg")}
 .icon-savings{-webkit-mask-image:url("/static/icons/savings.svg");mask-image:url("/static/icons/savings.svg")}
 .icon-monitoring{-webkit-mask-image:url("/static/icons/monitoring.svg");mask-image:url("/static/icons/monitoring.svg")}
+.icon-pie_chart{-webkit-mask-image:url("/static/icons/pie_chart.svg");mask-image:url("/static/icons/pie_chart.svg")}
+.icon-bar_chart{-webkit-mask-image:url("/static/icons/bar_chart.svg");mask-image:url("/static/icons/bar_chart.svg")}
 .icon-account_tree{-webkit-mask-image:url("/static/icons/account_tree.svg");mask-image:url("/static/icons/account_tree.svg")}
 .icon-download{-webkit-mask-image:url("/static/icons/download.svg");mask-image:url("/static/icons/download.svg")}
 .icon-backup{-webkit-mask-image:url("/static/icons/backup.svg");mask-image:url("/static/icons/backup.svg")}
@@ -2399,3 +2401,15 @@ html[data-theme="dark"] .profile-message-success{
 .privacy-mode .fixed-mobile-summary small{
   filter:blur(6px);user-select:none
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.10 – Desktop Chart-Umschalter
+   ========================================================= */
+.chart-title-with-actions{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.chart-view-toggle{display:inline-flex;align-items:center;gap:3px;padding:3px;background:var(--bg);border:1px solid var(--border);border-radius:9px;flex:0 0 auto}
+.chart-view-button{width:31px;height:29px;padding:0;display:grid;place-items:center;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer}
+.chart-view-button:hover{background:var(--card);color:var(--text)}
+.chart-view-button.is-active,.chart-view-button[aria-pressed="true"]{background:var(--card);color:var(--text);box-shadow:0 1px 3px var(--shadow)}
+.chart-view-button .local-icon{font-size:1.05rem}
+@media(max-width:700px){.chart-view-toggle{display:none}}

@@ -7,6 +7,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.10
+
+### Desktop Chart-Umschalter
+- `Ausgaben nach Kategorie` kann auf dem Desktop zwischen Doughnut- und horizontalem Balkendiagramm umgeschaltet werden.
+- Die gewählte Ansicht wird im Browser gespeichert und nach einem Neuladen wiederhergestellt.
+- Die Balkenansicht zeigt wie mobil die sieben größten Kategorien und fasst kleinere Positionen unter `Sonstiges` zusammen.
+- Auf Smartphones bleibt der Umschalter unsichtbar; dort wird weiterhin automatisch die mobile Balkenansicht verwendet.
+- Die Umschalt-Icons werden lokal aus Fintra ausgeliefert.
+
+---
+
 ## 9.6.0-beta.9
 
 ### Responsive Fixkosten

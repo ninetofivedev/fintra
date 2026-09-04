@@ -104,8 +104,18 @@
     <div class="chart-title"><div><h2>Einnahmen vs. Ausgaben</h2><p class="muted">Monatlicher Verlauf {{year}}</p></div></div>
     <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
   </article>
-  <article class="chart-card">
-    <div class="chart-title"><div><h2>Ausgaben nach Kategorie</h2><p class="muted">Variable Ausgaben {{year}}</p></div></div>
+  <article class="chart-card category-chart-card">
+    <div class="chart-title chart-title-with-actions">
+      <div><h2>Ausgaben nach Kategorie</h2><p class="muted">Variable Ausgaben {{year}}</p></div>
+      <div class="chart-view-toggle" id="categoryChartToggle" role="group" aria-label="Diagrammansicht wählen">
+        <button type="button" class="chart-view-button" data-chart-view="doughnut" aria-label="Tortendiagramm" title="Tortendiagramm" aria-pressed="true">
+          <span class="local-icon icon-pie_chart" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="chart-view-button" data-chart-view="bar" aria-label="Balkendiagramm" title="Balkendiagramm" aria-pressed="false">
+          <span class="local-icon icon-bar_chart" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
     <div class="chart-container"><canvas id="categoryChart"></canvas></div>
   </article>
 </section>
@@ -121,15 +131,24 @@ const fixedExpenses={{ months|map(attribute='fixed_expense')|list|tojson }};
 const categoryData={{ category_chart|tojson }};
 const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(v/100);
 const mobileChartQuery=window.matchMedia('(max-width: 700px)');
+const categoryChartToggle=document.getElementById('categoryChartToggle');
+const categoryChartButtons=[...(categoryChartToggle?.querySelectorAll('[data-chart-view]') || [])];
+const categoryChartPreferenceKey='fintra-category-chart-view';
 let monthlyChart=null;
 let categoryChart=null;
+let desktopCategoryView='doughnut';
+
+try{
+  const savedView=localStorage.getItem(categoryChartPreferenceKey);
+  if(savedView==='doughnut' || savedView==='bar') desktopCategoryView=savedView;
+}catch(e){}
 
 function shortMonthLabel(value){
   const text=String(value ?? '');
   return text.length > 3 ? text.slice(0,3) : text;
 }
 
-function mobileCategoryData(){
+function compactCategoryData(){
   const sorted=[...categoryData].sort((a,b)=>b.total-a.total);
   if(sorted.length<=7) return sorted;
   const top=sorted.slice(0,7);
@@ -163,20 +182,29 @@ function buildDashboardCharts(){
     }
   });
 
-  const displayedCategories=mobile?mobileCategoryData():categoryData;
+  const categoryView=mobile?'bar':desktopCategoryView;
+  const displayedCategories=categoryView==='bar'?compactCategoryData():categoryData;
+  const horizontalBars=categoryView==='bar';
+
+  categoryChartButtons.forEach(button=>{
+    const active=!mobile && button.dataset.chartView===categoryView;
+    button.setAttribute('aria-pressed',active?'true':'false');
+    button.classList.toggle('is-active',active);
+  });
+
   categoryChart=new Chart(document.getElementById('categoryChart'),{
-    type:mobile?'bar':'doughnut',
+    type:horizontalBars?'bar':'doughnut',
     data:{
       labels:displayedCategories.map(x=>x.name),
       datasets:[{
         data:displayedCategories.map(x=>x.total),
         backgroundColor:['#4f46e5','#16a34a','#f59e0b','#e11d48','#0ea5e9','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16'],
         borderWidth:0,
-        hoverOffset:mobile?0:10,
-        borderRadius:mobile?5:0
+        hoverOffset:horizontalBars?0:10,
+        borderRadius:horizontalBars?5:0
       }]
     },
-    options:mobile?{
+    options:horizontalBars?{
       responsive:true,
       maintainAspectRatio:false,
       indexAxis:'y',
@@ -185,8 +213,8 @@ function buildDashboardCharts(){
         tooltip:{callbacks:{label:c=>money(c.raw)}}
       },
       scales:{
-        x:{beginAtZero:true,ticks:{maxTicksLimit:5,callback:v=>money(v),font:{size:10}}},
-        y:{grid:{display:false},ticks:{autoSkip:false,font:{size:11}}}
+        x:{beginAtZero:true,ticks:{maxTicksLimit:mobile?5:6,callback:v=>money(v),font:{size:mobile?10:11}}},
+        y:{grid:{display:false},ticks:{autoSkip:false,font:{size:mobile?11:12}}}
       }
     }:{
       responsive:true,
@@ -199,6 +227,17 @@ function buildDashboardCharts(){
     }
   });
 }
+
+categoryChartButtons.forEach(button=>{
+  button.addEventListener('click',()=>{
+    if(mobileChartQuery.matches) return;
+    const view=button.dataset.chartView;
+    if(view!=='doughnut' && view!=='bar') return;
+    desktopCategoryView=view;
+    try{localStorage.setItem(categoryChartPreferenceKey,view)}catch(e){}
+    buildDashboardCharts();
+  });
+});
 
 buildDashboardCharts();
 mobileChartQuery.addEventListener?.('change',buildDashboardCharts);
