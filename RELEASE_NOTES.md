@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.17
+
+### Transaktionsfilter
+- Behebt einen 422-Fehler beim Anwenden von Filtern auf `/transactions`.
+- Leere Auswahlfelder für Jahr, Monat und Kategorie werden nun als nicht gesetzte Filter interpretiert.
+- CSV-Export und Transaktionsübersicht verarbeiten Filterparameter einheitlich.
+
+---
+
 ## 9.6.0-beta.16
 
 ### Zentrale Transaktionsübersicht

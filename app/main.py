@@ -449,6 +449,16 @@ def transaction_filter_sql(*, year=None, month=None, category_id=None, tx_type=N
     return (" WHERE " + " AND ".join(clauses)) if clauses else "", params
 
 
+def optional_query_int(value: str | int | None) -> int | None:
+    """Treat empty query values as no filter and parse non-empty integers safely."""
+    if value is None or value == '':
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def optional_filter_cents(value: str | None):
     if value is None or not str(value).strip():
         return None
@@ -644,15 +654,18 @@ def delete_transaction(request: Request, tx_id:int,year:int=Form(...),month:int=
 @app.get('/transactions')
 def transactions_page(
     request: Request,
-    year: int | None = None,
-    month: int | None = None,
-    category_id: int | None = None,
+    year: str | None = None,
+    month: str | None = None,
+    category_id: str | None = None,
     tx_type: str | None = None,
     q: str | None = None,
     amount_min: str | None = None,
     amount_max: str | None = None,
     page: int = 1,
 ):
+    year = optional_query_int(year)
+    month = optional_query_int(month)
+    category_id = optional_query_int(category_id)
     if month is not None and month not in range(1, 13):
         month = None
     if tx_type not in {None, '', 'income', 'expense'}:
@@ -1294,14 +1307,19 @@ async def save_budgets(year:int,month:int,request:Request):
 
 @app.get('/export/transactions.csv')
 def export_transactions_csv(
-    year: int | None = None,
-    month: int | None = None,
-    category_id: int | None = None,
+    year: str | None = None,
+    month: str | None = None,
+    category_id: str | None = None,
     tx_type: str | None = None,
     q: str | None = None,
     amount_min: str | None = None,
     amount_max: str | None = None,
 ):
+    year = optional_query_int(year)
+    month = optional_query_int(month)
+    category_id = optional_query_int(category_id)
+    if month is not None and month not in range(1, 13):
+        month = None
     try:
         min_cents = optional_filter_cents(amount_min)
         max_cents = optional_filter_cents(amount_max)

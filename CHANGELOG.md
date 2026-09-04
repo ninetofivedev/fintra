@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.17
+
+### Bugfix
+- Leere Filterwerte auf der Transaktionsseite werden jetzt korrekt als „kein Filter“ behandelt.
+- Jahr, Monat und Kategorie erzeugen beim Filtern keine FastAPI-422-JSON-Fehler mehr.
+- Der gefilterte CSV-Export verwendet dieselbe robuste Query-Parameter-Verarbeitung.
+
 ## 9.6.0-beta.16
 
 ### Transaktionen
