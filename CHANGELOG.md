@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.6.0-beta.20
+
+### UI
+- Schatten unter dem sticky Bereich „Buchungen“ und den Filtern auf der Monatsseite entfernt.
+- Sticky-Verhalten bleibt erhalten, die Darstellung ist wieder flacher und näher am früheren Look.
+
 ## 9.6.0-beta.19
 
 ### CI / GitHub Actions

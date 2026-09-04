@@ -2693,7 +2693,7 @@ html[data-theme="dark"] .budget-status-over{color:#f87171!important}
     padding:12px 14px;
     background:var(--card);
     border-bottom:1px solid var(--border);
-    box-shadow:0 4px 10px var(--shadow);
+    box-shadow:none;
   }
 
   /* Tabellenkopf sitzt direkt unter dem tatsächlich gemessenen Toolbar-Bereich. */
@@ -2713,4 +2713,10 @@ html[data-theme="dark"] .budget-status-over{color:#f87171!important}
     background:var(--card);
     box-shadow:0 1px 0 var(--border);
   }
+}
+
+
+/* Fintra 9.6.0-beta.20 – Monatsansicht ohne Schatten unter dem Sticky-Filterbereich */
+@media(min-width:701px){
+  .transactions-wrap .table-toolbar{box-shadow:none}
 }
