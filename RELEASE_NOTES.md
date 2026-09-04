@@ -7,6 +7,16 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.18
+
+### Tabellen-Navigation
+- Auf der Monatsseite bleiben „Buchungen“ und die Filter beim Scrollen oben sichtbar.
+- Der Tabellenkopf der Monatsbuchungen bleibt direkt darunter angeheftet.
+- Auf „Transaktionen“ bleibt die Spaltenüberschrift beim Scrollen sichtbar.
+- Die Sticky-Logik orientiert sich wieder am normalen Seiten-Scrollen.
+
+---
+
 ## 9.6.0-beta.17
 
 ### Transaktionsfilter

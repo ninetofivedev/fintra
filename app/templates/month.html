@@ -111,6 +111,22 @@
   </table>
 </section>
 
+<script>
+(() => {
+  const wrap = document.querySelector('.transactions-wrap');
+  const toolbar = wrap?.querySelector('.table-toolbar');
+  if (!wrap || !toolbar || !window.ResizeObserver) return;
+
+  const updateStickyOffset = () => {
+    wrap.style.setProperty('--month-transactions-toolbar-height', `${Math.ceil(toolbar.getBoundingClientRect().height)}px`);
+  };
+
+  const observer = new ResizeObserver(updateStickyOffset);
+  observer.observe(toolbar);
+  updateStickyOffset();
+})();
+</script>
+
 <div class="modal-backdrop" id="moneyErrorModal" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="moneyErrorTitle">
     <div class="modal-icon">!</div>

@@ -2667,3 +2667,50 @@ html[data-theme="dark"] .budget-status-over{color:#f87171!important}
   .transaction-browser-filter-grid label:first-child,.transaction-browser-filter-grid label:nth-child(5),.transaction-filter-submit{grid-column:auto}
   .transaction-pagination>span:nth-child(2){font-size:.72rem}
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.18 – Sticky Tabellenbereiche
+   ========================================================= */
+@media(min-width:701px){
+  /*
+   * Die Tabellen sollen mit der Seite scrollen. Dadurch beziehen sich
+   * sticky-Elemente auf den Viewport und nicht auf einen inneren
+   * max-height/overflow-Scrollcontainer.
+   */
+  .transactions-wrap,
+  .all-transactions-wrap{
+    overflow:visible;
+    max-height:none;
+  }
+
+  /* Monatsansicht: Überschrift + Filter bleiben unter der Top-Navigation. */
+  .transactions-wrap .table-toolbar{
+    position:sticky;
+    top:62px;
+    z-index:20;
+    margin:0 -14px 14px;
+    padding:12px 14px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    box-shadow:0 4px 10px var(--shadow);
+  }
+
+  /* Tabellenkopf sitzt direkt unter dem tatsächlich gemessenen Toolbar-Bereich. */
+  .transactions-table thead th{
+    position:sticky;
+    top:calc(62px + var(--month-transactions-toolbar-height, 76px));
+    z-index:18;
+    background:var(--card);
+    box-shadow:0 1px 0 var(--border);
+  }
+
+  /* Gesamtübersicht: Spaltenkopf bleibt direkt unter der Top-Navigation sichtbar. */
+  .all-transactions-table thead th{
+    position:sticky;
+    top:62px;
+    z-index:18;
+    background:var(--card);
+    box-shadow:0 1px 0 var(--border);
+  }
+}

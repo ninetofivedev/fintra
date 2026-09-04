@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0-beta.18
+
+### UI / Sticky Tabellen
+- Monatsansicht: Bereich „Buchungen“ inklusive Filter bleibt beim Scrollen unter der Hauptnavigation sichtbar.
+- Monatsansicht: Tabellenkopf bleibt direkt unter dem Filterbereich angeheftet.
+- Transaktionsübersicht: Spaltenkopf `Datum · Art · Kategorie · Betrag · Kommentar · Monat` bleibt beim Scrollen sichtbar.
+- Innere vertikale Tabellen-Scrollcontainer entfernt, damit Sticky-Elemente wieder am Seiten-Scrollen ausgerichtet sind.
+
 ## 9.6.0-beta.17
 
 ### Bugfix
