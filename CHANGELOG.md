@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.6.0-beta.11
+
+### Fixkosten
+- Im Bearbeitungsmodus wird die statische Bezeichnung ausgeblendet, sodass nur noch das Eingabefeld mit der Bezeichnung sichtbar ist.
+- Doppelte Darstellung von Fixkosten-Bezeichnungen in der Desktop-Tabelle behoben.
+
 ## 9.6.0-beta.10
 
 ### Dashboard

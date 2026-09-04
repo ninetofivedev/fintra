@@ -1595,6 +1595,10 @@ html[data-theme="dark"] .error-badge{color:#f87171}
   line-height:1.4;
 }
 
+.fixed-description[hidden]{
+  display:none!important;
+}
+
 
 /* =========================================================
    Fintra V9.5.12 – Privacy-Modus

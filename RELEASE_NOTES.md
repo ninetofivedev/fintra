@@ -7,6 +7,14 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.11
+
+### Fixkosten
+- Beim Bearbeiten einer Fixkostenposition verschwindet die normale Bezeichnung und wird ausschließlich durch das Eingabefeld ersetzt.
+- Dadurch ist der Editiermodus in den Fixkostentabellen kompakter und eindeutiger.
+
+---
+
 ## 9.6.0-beta.10
 
 ### Desktop Chart-Umschalter
