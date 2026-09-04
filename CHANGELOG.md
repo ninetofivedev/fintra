@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.12
+
+### Fixkosten
+- Bearbeitungsmodus vereinfacht: Der Typ-Dropdown und der separate Speichern-Button neben der Bezeichnung wurden entfernt.
+- Der bestehende Speichern-Button unter „Aktionen“ speichert jetzt gemeinsam die geänderte Bezeichnung und alle Monatswerte.
+- Der Typ einer bestehenden Fixkostenposition bleibt beim Bearbeiten unverändert.
+
 ## 9.6.0-beta.11
 
 ### Fixkosten

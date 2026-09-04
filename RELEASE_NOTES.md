@@ -7,6 +7,16 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.12
+
+### Cleaner Fixkosten-Editor
+- Im Bearbeitungsmodus erscheint neben der Bezeichnung kein Einnahme-/Ausgabe-Dropdown mehr.
+- Der separate Speichern-Button im Bezeichnungsbereich wurde entfernt.
+- Der vorhandene Aktions-Speichern-Button übernimmt jetzt Bezeichnung und Monatswerte in einem Schritt.
+- Bestehende Fixkosten bleiben dabei ihrer bisherigen Einnahmen-/Ausgaben-Gruppe zugeordnet.
+
+---
+
 ## 9.6.0-beta.11
 
 ### Fixkosten

@@ -643,6 +643,9 @@ def add_fixed(request: Request, year:int,name:str=Form(...),item_type:str=Form(.
 async def update_fixed(year:int,item_id:int,request:Request):
     f=await request.form()
     if not check_csrf(request, str(f.get('csrf_token', ''))): return HTMLResponse('Ungültige Anfrage (CSRF-Schutz).', status_code=403)
+    name = str(f.get('name', '')).strip()
+    if not name:
+        return HTMLResponse('Die Bezeichnung darf nicht leer sein.', status_code=400)
     try:
         vals=[cents(str(f.get(x,'0'))) if str(f.get(x,'')).strip() else 0 for x in COLS]
     except ValueError as exc:
@@ -650,7 +653,12 @@ async def update_fixed(year:int,item_id:int,request:Request):
             f'/fixed/{year}?error=' + quote(str(exc), safe=''),
             303
         )
-    c=db(); c.execute('UPDATE fixed_items SET '+','.join(x+'=?' for x in COLS)+' WHERE id=? AND year=?',(*vals,item_id,year)); c.commit(); c.close(); return RedirectResponse(f'/fixed/{year}',303)
+    c=db()
+    c.execute(
+        'UPDATE fixed_items SET name=?,' + ','.join(x+'=?' for x in COLS) + ' WHERE id=? AND year=?',
+        (name,*vals,item_id,year)
+    )
+    c.commit(); c.close(); return RedirectResponse(f'/fixed/{year}',303)
 
 @app.post('/fixed/{year}/{item_id}/edit')
 def edit_fixed(request: Request, year:int, item_id:int, name:str=Form(...), item_type:str=Form(...), csrf_token:str=Form('')):

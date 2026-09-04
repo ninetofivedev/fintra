@@ -48,19 +48,16 @@
 </section>
 
 {% macro edit_form(x, scope) -%}
-<form id="fixed-edit-{{scope}}-{{x.id}}" method="post" action="/fixed/{{year}}/{{x.id}}/edit" class="fixed-edit-form" hidden>
-  <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
-  <input name="name" value="{{x.name}}" required aria-label="Bezeichnung">
-  <select name="item_type" aria-label="Typ"><option value="income" {% if x.type=='income' %}selected{% endif %}>Einnahme</option><option value="expense" {% if x.type=='expense' %}selected{% endif %}>Ausgabe</option></select>
-  <button type="submit">Speichern</button>
-</form>
+<div id="fixed-edit-{{scope}}-{{x.id}}" class="fixed-edit-form" hidden>
+  <input form="update-{{scope}}-{{x.id}}" name="name" value="{{x.name}}" required aria-label="Bezeichnung">
+</div>
 {%- endmacro %}
 
 {% macro action_buttons(x, scope) -%}
 <div class="fixed-actions-inner">
   <button type="button" class="icon-button edit-button" data-fixed-edit="{{x.id}}" data-fixed-scope="{{scope}}" title="Position bearbeiten"><span class="local-icon icon-edit" aria-hidden="true"></span></button>
   <form id="update-{{scope}}-{{x.id}}" method="post" action="/fixed/{{year}}/{{x.id}}/update" data-fixed-money-form><input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}"></form>
-  <button form="update-{{scope}}-{{x.id}}" type="submit" class="icon-button save-button" data-fixed-save="{{x.id}}" data-fixed-scope="{{scope}}" title="Monatswerte speichern" disabled><span class="local-icon icon-save" aria-hidden="true"></span></button>
+  <button form="update-{{scope}}-{{x.id}}" type="submit" class="icon-button save-button" data-fixed-save="{{x.id}}" data-fixed-scope="{{scope}}" title="Änderungen speichern" disabled><span class="local-icon icon-save" aria-hidden="true"></span></button>
   <form method="post" action="/fixed/{{year}}/{{x.id}}/delete" class="inline-delete" onsubmit="return confirm('Möchtest du die Fixkosten „{{x.name|e}}“ wirklich löschen?');">
     <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
     <button type="submit" class="icon-button delete-button" title="Löschen"><span class="local-icon icon-delete" aria-hidden="true"></span></button>

@@ -151,7 +151,6 @@ html[data-theme="dark"] .modal-icon{background:#4c1725;color:#fda4af}
 }
 .fixed-edit-form[hidden]{display:none!important}
 .fixed-edit-form input{min-width:130px}
-.fixed-edit-form select{width:auto;min-width:105px}
 
 .category-list{
   background:var(--card);
@@ -2384,10 +2383,9 @@ html[data-theme="dark"] .profile-message-success{
   .fixed-mobile-card .fixed-actions-inner{display:flex;gap:6px}
   .fixed-mobile-card .fixed-actions-inner>form[id^="update-"]{display:none}
   .fixed-mobile-card .icon-button{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;display:grid!important;place-items:center}
-  .fixed-mobile-card .fixed-edit-form{display:grid!important;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+  .fixed-mobile-card .fixed-edit-form{display:grid!important;grid-template-columns:1fr;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
   .fixed-mobile-card .fixed-edit-form[hidden]{display:none!important}
   .fixed-mobile-card .fixed-edit-form input{grid-column:1/-1;min-width:0}
-  .fixed-mobile-card .fixed-edit-form select{min-width:0;width:100%}
   .fixed-mobile-card.is-editing{border-color:#8b95a3}
   .fixed-mobile-empty{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
 }
