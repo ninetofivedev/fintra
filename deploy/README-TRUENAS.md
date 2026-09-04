@@ -30,7 +30,7 @@ beobachten kann, während GitHub bei jedem expliziten Fintra-Release dessen Dige
 Fintra veröffentlicht `latest` nur bei einem Git-Tag wie:
 
 ```text
-v9.6.0-beta.18
+v9.6.0-beta.19
 ```
 
 Dadurch ist ein einfacher Push auf `main` noch kein Server-Update.

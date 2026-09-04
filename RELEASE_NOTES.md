@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.19
+
+### GitHub Actions
+- Checkout-Action auf `actions/checkout@v6` aktualisiert.
+- Python-Setup auf `actions/setup-python@v6` aktualisiert.
+- Damit wird die Node.js-20-Deprecation-Warnung für diese Actions beseitigt.
+
+---
+
 ## 9.6.0-beta.18
 
 ### Tabellen-Navigation

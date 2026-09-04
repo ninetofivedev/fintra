@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.19
+
+### CI / GitHub Actions
+- `actions/checkout` von v4 auf v6 aktualisiert.
+- `actions/setup-python` von v5 auf v6 aktualisiert.
+- GitHub-Actions-Workflow damit auf die Node.js-24-basierten Action-Versionen umgestellt.
+
 ## 9.6.0-beta.18
 
 ### UI / Sticky Tabellen
