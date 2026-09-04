@@ -2720,3 +2720,59 @@ html[data-theme="dark"] .budget-status-over{color:#f87171!important}
 @media(min-width:701px){
   .transactions-wrap .table-toolbar{box-shadow:none}
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.21 – Transaktions-Pagination
+   ========================================================= */
+.transaction-pagination{
+  width:100%;
+  min-height:auto;
+  padding:10px 12px;
+  margin:16px 0 4px;
+  background:var(--card);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:0 1px 4px var(--shadow);
+}
+
+.transaction-pagination > span:nth-child(2){
+  color:var(--text);
+}
+
+.transaction-pagination .secondary-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-height:36px;
+  padding:7px 11px;
+  border-radius:9px;
+  background:var(--input)!important;
+  color:var(--text)!important;
+  border:1px solid var(--border)!important;
+  text-decoration:none;
+}
+
+.transaction-pagination .secondary-button:hover{
+  background:var(--border)!important;
+}
+
+@media(max-width:700px){
+  .transaction-pagination{
+    grid-template-columns:1fr auto 1fr;
+    gap:8px;
+    padding:9px;
+  }
+
+  .transaction-pagination .secondary-button{
+    padding:7px 9px;
+    font-size:.82rem;
+  }
+
+  .transaction-pagination > span:nth-child(2){
+    font-size:.82rem;
+    white-space:nowrap;
+  }
+}

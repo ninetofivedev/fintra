@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.21
+
+### Oberfläche
+- Der redundante `CSV <Jahr>`-Button wurde von der Startseite entfernt.
+- Die Seitennavigation unter „Transaktionen“ ist jetzt in hellem und dunklem Theme vollständig lesbar.
+- Pagination verwendet nun dieselbe Karten- und Button-Sprache wie der Rest von Fintra.
+
+---
+
 ## 9.6.0-beta.20
 
 ### Monatsansicht

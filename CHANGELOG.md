@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.21
+
+### UI / Aufräumen
+- Doppelten Jahres-CSV-Button auf der Startseite entfernt; CSV-Export bleibt zentral über das Burger-Menü und die Transaktionsübersicht verfügbar.
+- Pagination der Seite „Transaktionen“ vollständig an Light/Dark Theme angepasst.
+- Seitennavigation als Fintra-Karte mit konsistenten Rahmen, Abständen und Buttons gestaltet.
+
 ## 9.6.0-beta.20
 
 ### UI
