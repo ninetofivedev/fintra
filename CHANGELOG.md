@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.6.0-beta.24
+
+### Branding
+- Favicon und alle weiteren Logo-Assets auf die transparente Fintra-Marke ohne weißen Hintergrund umgestellt.
+- Browser-Tab, Touch-Icon und App-Icons verwenden jetzt denselben Look wie das Logo in der Navigationsleiste.
+
 ## 9.6.0-beta.23
 
 ### Mobile UI

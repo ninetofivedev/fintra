@@ -7,6 +7,14 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.24
+
+### Logo-Assets
+- Favicon, Apple-Touch-Icon und weitere Branding-Dateien wurden auf die transparente Fintra-Marke ohne weißen Hintergrund umgestellt.
+- Damit entsprechen alle Icons jetzt dem Logo in der Navigationsleiste.
+
+---
+
 ## 9.6.0-beta.23
 
 ### Transaktionsseite mobil
