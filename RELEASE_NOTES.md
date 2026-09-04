@@ -7,6 +7,13 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.22
+
+### Transaktionsseite
+- Die Buttons „Zurück“ und „Weiter“ in der Seitennavigation sind jetzt gleich groß und sauber ausgerichtet.
+
+---
+
 ## 9.6.0-beta.21
 
 ### Oberfläche

@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.6.0-beta.22
+
+### UI
+- Pagination auf der Transaktionsseite vereinheitlicht.
+- „Zurück“ und „Weiter“ haben jetzt dieselbe Breite und symmetrische Ausrichtung.
+
 ## 9.6.0-beta.21
 
 ### UI / Aufräumen

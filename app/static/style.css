@@ -2776,3 +2776,24 @@ html[data-theme="dark"] .budget-status-over{color:#f87171!important}
     white-space:nowrap;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.22 – gleich große Pagination-Buttons
+   ========================================================= */
+.transaction-pagination > a.secondary-button{
+  width:104px;
+  min-width:104px;
+  justify-self:start;
+}
+
+.transaction-pagination > a.secondary-button:last-child{
+  justify-self:end;
+}
+
+@media(max-width:700px){
+  .transaction-pagination > a.secondary-button{
+    width:92px;
+    min-width:92px;
+  }
+}
