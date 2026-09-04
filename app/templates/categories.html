@@ -12,82 +12,70 @@
     <button type="submit">Hinzufügen</button>
   </form>
 </section>
-<div class="twocol">
+<div class="twocol category-columns">
 {% for typ,title in [('income','Einnahmen'),('expense','Ausgaben')] %}
 <section>
   <h2>{{title}}</h2>
   <div class="category-list">
   {% for c in cats if c.type==typ and c.active %}
     <div class="catrow" data-category-row="{{c.id}}">
-      <div class="cat-display" id="cat-display-{{c.id}}">
-        <span class="cat-name">{{c.name}}</span>
-
-        <div class="cat-actions">
-          <button
-            type="button"
-            class="icon-button edit-button"
-            data-category-edit="{{c.id}}"
-            title="Kategorie bearbeiten"
-            aria-label="Kategorie bearbeiten"
-          >
-            <span class="local-icon icon-edit" aria-hidden="true"></span>
-          </button>
-
-          <form
-            method="post"
-            action="/categories/{{c.id}}/delete"
-            onsubmit="return confirm('Möchtest du die Kategorie „{{c.name|e}}“ wirklich löschen?');"
-          >
-            <input
-              type="hidden"
-              name="csrf_token"
-              value="{{ request.session.get('csrf_token','') }}"
-            >
-
-            <button
-              type="submit"
-              class="icon-button delete-button"
-              title="Kategorie löschen"
-              aria-label="Kategorie löschen"
-            >
-              <span class="local-icon icon-delete" aria-hidden="true"></span>
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <form
-        method="post"
-        action="/categories/{{c.id}}/edit"
-        class="cat-edit-form"
-        id="cat-edit-{{c.id}}"
-        hidden
-      >
+      <div class="cat-main">
+        <span class="cat-name" data-category-name>{{c.name}}</span>
         <input
-          type="hidden"
-          name="csrf_token"
-          value="{{ request.session.get('csrf_token','') }}"
-        >
-
-        <input
-          class="category-input"
+          form="cat-update-{{c.id}}"
+          class="category-input cat-name-input"
           name="name"
           value="{{c.name}}"
           required
+          aria-label="Kategoriebezeichnung"
+          hidden
         >
+      </div>
 
-        <div class="cat-edit-actions">
-          <button type="submit">Speichern</button>
+      <div class="cat-actions">
+        <button
+          type="button"
+          class="icon-button edit-button"
+          data-category-edit="{{c.id}}"
+          title="Kategorie bearbeiten"
+          aria-label="Kategorie bearbeiten"
+        >
+          <span class="local-icon icon-edit" aria-hidden="true"></span>
+        </button>
 
+        <form id="cat-update-{{c.id}}" method="post" action="/categories/{{c.id}}/edit" class="cat-update-form">
+          <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+        </form>
+
+        <button
+          form="cat-update-{{c.id}}"
+          type="submit"
+          class="icon-button save-button"
+          data-category-save="{{c.id}}"
+          title="Änderungen speichern"
+          aria-label="Änderungen speichern"
+          disabled
+        >
+          <span class="local-icon icon-save" aria-hidden="true"></span>
+        </button>
+
+        <form
+          method="post"
+          action="/categories/{{c.id}}/delete"
+          onsubmit="return confirm('Möchtest du die Kategorie „{{c.name|e}}“ wirklich löschen?');"
+          class="cat-delete-form"
+        >
+          <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
           <button
-            type="button"
-            class="secondary-button"
-            data-category-cancel="{{c.id}}"
+            type="submit"
+            class="icon-button delete-button"
+            title="Kategorie löschen"
+            aria-label="Kategorie löschen"
           >
-            Abbrechen
+            <span class="local-icon icon-delete" aria-hidden="true"></span>
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   {% else %}
     <p class="muted empty-category">Keine Kategorien vorhanden.</p>
@@ -104,32 +92,28 @@
 document.querySelectorAll('[data-category-edit]').forEach(button => {
   button.addEventListener('click', () => {
     const id = button.dataset.categoryEdit;
-    const display = document.getElementById('cat-display-' + id);
-    const form = document.getElementById('cat-edit-' + id);
+    const row = button.closest('[data-category-row]');
+    const name = row?.querySelector('[data-category-name]');
+    const input = row?.querySelector('.cat-name-input');
+    const saveButton = row?.querySelector(`[data-category-save="${id}"]`);
+    if (!row || !name || !input) return;
 
-    if (!display || !form) return;
+    const editing = input.hidden;
+    input.hidden = !editing;
+    name.hidden = editing;
+    row.classList.toggle('is-editing', editing);
+    if (saveButton) saveButton.disabled = !editing;
 
-    display.hidden = true;
-    form.hidden = false;
+    button.innerHTML = '<span class="local-icon ' + (editing ? 'icon-close' : 'icon-edit') + '" aria-hidden="true"></span>';
+    button.title = editing ? 'Bearbeiten abbrechen' : 'Kategorie bearbeiten';
+    button.setAttribute('aria-label', button.title);
 
-    const input = form.querySelector('input[name="name"]');
-    if (input) {
+    if (editing) {
       input.focus();
       input.select();
+    } else {
+      input.value = name.textContent.trim();
     }
-  });
-});
-
-document.querySelectorAll('[data-category-cancel]').forEach(button => {
-  button.addEventListener('click', () => {
-    const id = button.dataset.categoryCancel;
-    const display = document.getElementById('cat-display-' + id);
-    const form = document.getElementById('cat-edit-' + id);
-
-    if (!display || !form) return;
-
-    form.hidden = true;
-    display.hidden = false;
   });
 });
 </script>

@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.6.0-beta.13
+
+### Kategorien
+- Bearbeitungsmodus an die Fixkosten-Seite angeglichen
+- Kategorienamen werden direkt an Ort und Stelle editiert
+- Separate große Speichern-/Abbrechen-Leiste entfernt
+- Kompakte Aktionsleiste mit Bearbeiten, Speichern und Löschen bleibt dauerhaft rechts sichtbar
+- Speichern-Button wird erst im Bearbeitungsmodus aktiviert
+- Responsive Darstellung für Smartphones vereinheitlicht
+
 ## 9.6.0-beta.12
 
 ### Fixkosten

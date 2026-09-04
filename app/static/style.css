@@ -2415,3 +2415,83 @@ html[data-theme="dark"] .profile-message-success{
 .chart-view-button.is-active,.chart-view-button[aria-pressed="true"]{background:var(--card);color:var(--text);box-shadow:0 1px 3px var(--shadow)}
 .chart-view-button .local-icon{font-size:1.05rem}
 @media(max-width:700px){.chart-view-toggle{display:none}}
+
+/* =========================================================
+   Fintra 9.6.0-beta.13 – einheitlicher Kategorien-Editor
+   ========================================================= */
+.category-columns .catrow{
+  min-height:50px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+}
+
+.cat-main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:center;
+}
+
+.cat-name{
+  display:block;
+  width:100%;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.cat-name[hidden],
+.cat-name-input[hidden]{
+  display:none !important;
+}
+
+.cat-name-input{
+  width:100%;
+  min-width:0;
+  height:40px;
+}
+
+.category-columns .cat-actions{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-left:auto;
+}
+
+.category-columns .cat-actions form{
+  width:32px;
+  height:32px;
+  margin:0;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.category-columns .cat-actions .icon-button{
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+}
+
+.category-columns .cat-actions .save-button:disabled{
+  opacity:.35;
+  cursor:default;
+  filter:none;
+}
+
+.category-columns .catrow.is-editing{
+  background:color-mix(in srgb,var(--border) 35%,var(--card));
+}
+
+@media(max-width:650px){
+  .category-columns{
+    grid-template-columns:1fr;
+  }
+
+  .category-columns .catrow{
+    gap:8px;
+  }
+}

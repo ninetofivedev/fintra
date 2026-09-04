@@ -7,6 +7,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.13
+
+### Einheitlicher Kategorien-Editor
+- Die Kategorien-Seite verwendet nun denselben kompakten Editierstil wie die Fixkosten-Seite.
+- Beim Bearbeiten wird der Kategoriename direkt durch das Eingabefeld ersetzt.
+- Speichern erfolgt über den Icon-Button in der rechten Aktionsleiste.
+- Der Bearbeiten-Button wechselt während der Bearbeitung zu Abbrechen.
+- Die Darstellung bleibt auch auf Smartphones kompakt und einheitlich.
+
+---
+
 ## 9.6.0-beta.12
 
 ### Cleaner Fixkosten-Editor
