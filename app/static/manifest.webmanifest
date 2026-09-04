@@ -1,0 +1,14 @@
+{
+  "name": "Fintra – Finance and Tracking",
+  "short_name": "Fintra",
+  "description": "Self-hosted finance tracking for household budgets.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#111418",
+  "theme_color": "#20242a",
+  "icons": [
+    {"src": "/static/branding/fintra-app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+    {"src": "/static/branding/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any"}
+  ]
+}

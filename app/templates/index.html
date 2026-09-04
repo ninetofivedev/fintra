@@ -7,15 +7,19 @@
     <h1>Jahresübersicht {{year}}</h1>
     <p class="muted">Einnahmen, Ausgaben und Entwicklung auf einen Blick.</p>
   </div>
-  <div class="yearnav"><a href="/?year={{year-1}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a><b>{{year}}</b><a href="/?year={{year+1}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a></div>
+  <div class="yearnav" aria-label="Jahr auswählen">
+    <a href="/?year={{year-1}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+    <label class="year-select-label"><span class="sr-only">Jahr</span><select class="year-select" data-year-jump data-url-template="/?year={year}">{% for y in years %}<option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>{% endfor %}</select></label>
+    <a href="/?year={{year+1}}" aria-label="Nächstes Jahr"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+  </div>
 </header>
 
-<section class="cards">
-  <div class="income-card"><span>Variable Einnahmen</span><b class="amount-positive">+ {{euros(totals[0])}}</b></div>
-  <div class="income-card"><span>Fixe Einnahmen</span><b class="amount-positive">+ {{euros(totals[1])}}</b></div>
-  <div class="expense-card"><span>Variable Ausgaben</span><b class="amount-negative">− {{euros(totals[2])}}</b></div>
-  <div class="expense-card"><span>Fixe Ausgaben</span><b class="amount-negative">− {{euros(totals[3])}}</b></div>
-  <div class="balance"><span>Jahresüberschuss</span><b class="{{'amount-positive' if balance>=0 else 'amount-negative'}}">{{'+' if balance>=0 else '−'}} {{euros(balance|abs)}}</b></div>
+<section class="cards dashboard-summary-cards">
+  <a class="dashboard-card-link income-card" href="/month/{{year}}/{{'%02d' % today_month}}" title="Variable Einnahmen im aktuellen Monat öffnen"><span>Variable Einnahmen</span><b class="amount-positive">+ {{euros(totals[0])}}</b><small>Monat öffnen →</small></a>
+  <a class="dashboard-card-link income-card" href="/fixed/{{year}}" title="Fixe Einnahmen verwalten"><span>Fixe Einnahmen</span><b class="amount-positive">+ {{euros(totals[1])}}</b><small>Fixkosten öffnen →</small></a>
+  <a class="dashboard-card-link expense-card" href="/month/{{year}}/{{'%02d' % today_month}}" title="Variable Ausgaben im aktuellen Monat öffnen"><span>Variable Ausgaben</span><b class="amount-negative">− {{euros(totals[2])}}</b><small>Monat öffnen →</small></a>
+  <a class="dashboard-card-link expense-card" href="/fixed/{{year}}" title="Fixe Ausgaben verwalten"><span>Fixe Ausgaben</span><b class="amount-negative">− {{euros(totals[3])}}</b><small>Fixkosten öffnen →</small></a>
+  <a class="dashboard-card-link balance" href="/analysis?year={{year}}" title="Finanzanalyse öffnen"><span>Jahresüberschuss</span><b class="{{'amount-positive' if balance>=0 else 'amount-negative'}}">{{'+' if balance>=0 else '−'}} {{euros(balance|abs)}}</b><small>Analyse öffnen →</small></a>
 </section>
 
 <div class="summary-strip">
@@ -102,7 +106,7 @@
 <section class="dashboard-charts">
   <article class="chart-card">
     <div class="chart-title"><div><h2>Einnahmen vs. Ausgaben</h2><p class="muted">Monatlicher Verlauf {{year}}</p></div></div>
-    <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
+    <div class="chart-container"{% if annual_income == 0 and annual_expense == 0 %} hidden{% endif %}><canvas id="monthlyChart"></canvas></div>{% if annual_income == 0 and annual_expense == 0 %}<div class="empty-state compact"><strong>Noch keine Jahresdaten</strong><span>Lege eine Transaktion oder Fixkosten an, um den Verlauf zu sehen.</span><a class="btn" href="/month/{{year}}/{{'%02d' % today_month}}">Neue Transaktion</a></div>{% endif %}
   </article>
   <article class="chart-card category-chart-card">
     <div class="chart-title chart-title-with-actions">
@@ -116,7 +120,7 @@
         </button>
       </div>
     </div>
-    <div class="chart-container"><canvas id="categoryChart"></canvas></div>
+    <div class="chart-container"{% if not category_chart %} hidden{% endif %}><canvas id="categoryChart"></canvas></div>{% if not category_chart %}<div class="empty-state compact"><strong>Noch keine variablen Ausgaben</strong><span>Sobald Ausgaben erfasst sind, erscheint hier die Kategorienauswertung.</span></div>{% endif %}
   </article>
 </section>
 {% endblock %}
@@ -161,7 +165,8 @@ function buildDashboardCharts(){
   monthlyChart?.destroy();
   categoryChart?.destroy();
 
-  monthlyChart=new Chart(document.getElementById('monthlyChart'),{
+  const monthlyCanvas=document.getElementById('monthlyChart');
+  if(monthlyCanvas) monthlyChart=new Chart(monthlyCanvas,{
     type:'bar',
     data:{labels:mobile?months.map(shortMonthLabel):months,datasets:[
       {label:'Einnahmen',data:incomes.map((v,i)=>v+fixedIncomes[i]),backgroundColor:'rgba(22,163,74,.78)',borderRadius:mobile?5:7},
@@ -192,7 +197,8 @@ function buildDashboardCharts(){
     button.classList.toggle('is-active',active);
   });
 
-  categoryChart=new Chart(document.getElementById('categoryChart'),{
+  const categoryCanvas=document.getElementById('categoryChart');
+  if(categoryCanvas) categoryChart=new Chart(categoryCanvas,{
     type:horizontalBars?'bar':'doughnut',
     data:{
       labels:displayedCategories.map(x=>x.name),
@@ -241,5 +247,10 @@ categoryChartButtons.forEach(button=>{
 
 buildDashboardCharts();
 mobileChartQuery.addEventListener?.('change',buildDashboardCharts);
+
+document.querySelectorAll('[data-year-jump]').forEach(select=>select.addEventListener('change',()=>{
+  const template=select.dataset.urlTemplate;
+  if(template) window.location.href=template.replace('{year}',select.value);
+}));
 </script>
 {% endblock %}

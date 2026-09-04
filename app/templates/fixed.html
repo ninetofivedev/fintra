@@ -3,7 +3,11 @@
 {% block content %}
 <header>
   <div><a href="/?year={{year}}"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Übersicht</a><h1>Fixe Einnahmen &amp; Ausgaben</h1><p class="muted">Wiederkehrende Positionen für {{year}}.</p></div>
-  <div class="yearnav"><a href="/fixed/{{year-1}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a><b>{{year}}</b><a href="/fixed/{{year+1}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a></div>
+  <div class="yearnav" aria-label="Jahr auswählen">
+    <a href="/fixed/{{year-1}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+    <label class="year-select-label"><span class="sr-only">Jahr</span><select class="year-select" data-year-jump data-url-template="/fixed/{year}">{% for y in years %}<option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>{% endfor %}</select></label>
+    <a href="/fixed/{{year+1}}" aria-label="Nächstes Jahr"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+  </div>
 </header>
 
 <section class="fixed-summary" aria-label="Fixkosten-Zusammenfassung">
@@ -87,7 +91,7 @@
             <td class="fixed-actions">{{ action_buttons(x, 'd') }}</td>
           </tr>
         {% else %}
-          <tr><td colspan="15" class="muted">Noch keine Einträge.</td></tr>
+          <tr class="empty-table-row"><td colspan="15"><div class="empty-state compact"><strong>Noch keine Positionen</strong><span>Lege oben die erste fixe Position für dieses Jahr an.</span></div></td></tr>
         {% endfor %}
         </tbody>
       </table>
@@ -116,7 +120,7 @@
         </div>
       </article>
     {% else %}
-      <div class="fixed-mobile-empty muted">Noch keine Einträge.</div>
+      <div class="fixed-mobile-empty empty-state compact"><strong>Noch keine Positionen</strong><span>Lege oben die erste fixe Position für dieses Jahr an.</span></div>
     {% endfor %}
   </div>
 </section>
@@ -226,6 +230,10 @@ document.querySelectorAll('[data-fixed-save]').forEach(button => {
 fixedErrorClose?.addEventListener('click', closeFixedError);
 fixedErrorModal?.addEventListener('click', event => { if (event.target === fixedErrorModal) closeFixedError(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && fixedErrorModal && !fixedErrorModal.hidden) closeFixedError(); });
+document.querySelectorAll('[data-year-jump]').forEach(select=>select.addEventListener('change',()=>{
+  const template=select.dataset.urlTemplate;
+  if(template) window.location.href=template.replace('{year}',select.value);
+}));
 {% if error %}showFixedError({{ error|tojson }});{% endif %}
 </script>
 {% endblock %}

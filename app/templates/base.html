@@ -6,6 +6,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/static/branding/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/static/branding/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/static/branding/apple-touch-icon.png">
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#20242a">
 
 <div class="modal-backdrop" id="inputErrorModal" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="inputErrorTitle">
@@ -35,6 +37,7 @@
 </head>
 
 <body>
+{% set current_path = request.url.path %}
 
 <nav class="topnav">
   <div class="topnav-inner">
@@ -49,11 +52,11 @@
 
     <div class="topnav-actions">
 
-      <a class="topnav-overview" href="/">
+      <a class="topnav-overview{% if current_path == '/' %} is-active{% endif %}" href="/"{% if current_path == '/' %} aria-current="page"{% endif %}>
         Übersicht
       </a>
 
-      <a class="nav-new-transaction" href="/new-transaction">
+      <a class="nav-new-transaction{% if current_path.startswith('/month/') %} is-active{% endif %}" href="/new-transaction"{% if current_path.startswith('/month/') %} aria-current="page"{% endif %}>
         <span class="local-icon icon-add nav-action-icon" aria-hidden="true"></span>
         <span class="nav-action-label">Neue Transaktion</span>
       </a>
@@ -104,7 +107,7 @@
           <div class="burger-section">
             <span class="burger-section-label">Konto</span>
 
-            <a href="/profile" class="burger-profile-link">
+            <a href="/profile" class="burger-profile-link{% if current_path.startswith('/profile') %} is-active{% endif %}"{% if current_path.startswith('/profile') %} aria-current="page"{% endif %}>
               <span class="local-icon icon-account_circle burger-icon" aria-hidden="true"></span>
               <span>{{ request.session.get("username", "") }}</span>
             </a>
@@ -115,17 +118,17 @@
           <div class="burger-section">
             <span class="burger-section-label">Finanzen</span>
 
-            <a href="/fixed">
+            <a href="/fixed"{% if current_path.startswith('/fixed') %} class="is-active" aria-current="page"{% endif %}>
               <span class="local-icon icon-event_repeat burger-icon" aria-hidden="true"></span>
               <span>Fixkosten</span>
             </a>
 
-            <a href="/categories">
+            <a href="/categories"{% if current_path.startswith('/categories') %} class="is-active" aria-current="page"{% endif %}>
               <span class="local-icon icon-category burger-icon" aria-hidden="true"></span>
               <span>Kategorien</span>
             </a>
 
-            <a href="/budgets">
+            <a href="/budgets"{% if current_path.startswith('/budgets') %} class="is-active" aria-current="page"{% endif %}>
               <span class="local-icon icon-savings burger-icon" aria-hidden="true"></span>
               <span>Budgets</span>
             </a>
@@ -136,12 +139,12 @@
           <div class="burger-section">
             <span class="burger-section-label">Auswertung</span>
 
-            <a href="/analysis">
+            <a href="/analysis"{% if current_path.startswith('/analysis') %} class="is-active" aria-current="page"{% endif %}>
               <span class="local-icon icon-monitoring burger-icon" aria-hidden="true"></span>
               <span>Finanzanalyse</span>
             </a>
 
-            <a href="/algorithm">
+            <a href="/algorithm"{% if current_path.startswith('/algorithm') %} class="is-active" aria-current="page"{% endif %}>
               <span class="local-icon icon-account_tree burger-icon" aria-hidden="true"></span>
               <span>Algorithmen &amp; Datenstrukturen</span>
             </a>

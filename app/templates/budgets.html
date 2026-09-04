@@ -3,52 +3,67 @@
 {% block content %}
 <header>
   <div><a href="/?year={{year}}"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Übersicht</a><h1>Budgets · {{month_name}} {{year}}</h1><p class="muted">Monatsbudgets festlegen und Verbrauch verfolgen.</p></div>
-  <div class="yearnav"><a href="/budgets?year={{year-1}}&month={{month}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a><b>{{year}}</b><a href="/budgets?year={{year+1}}&month={{month}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a></div>
+  <div class="yearnav" aria-label="Jahr auswählen">
+    <a href="/budgets?year={{year-1}}&month={{month}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+    <label class="year-select-label"><span class="sr-only">Jahr</span><select class="year-select" data-year-jump data-url-template="/budgets?year={year}&month={{month}}">{% for y in years %}<option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>{% endfor %}</select></label>
+    <a href="/budgets?year={{year+1}}&month={{month}}" aria-label="Nächstes Jahr"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+  </div>
 </header>
-<div class="month-picker">
-  <a href="/budgets?year={{year if month>1 else year-1}}&month={{month-1 if month>1 else 12}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+<div class="month-picker" aria-label="Monat auswählen">
+  <a href="/budgets?year={{year if month>1 else year-1}}&month={{month-1 if month>1 else 12}}" aria-label="Vorheriger Monat"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
   <b>{{month_name}}</b>
-  <a href="/budgets?year={{year if month<12 else year+1}}&month={{month+1 if month<12 else 1}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+  <a href="/budgets?year={{year if month<12 else year+1}}&month={{month+1 if month<12 else 1}}" aria-label="Nächster Monat"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
 </div>
-<section class="formbox">
-<form method="post" action="/budgets/{{year}}/{{month}}" data-budget-form>
-<input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
-<div class="budget-grid">
+
+{% if cats %}
+<section class="budget-grid" aria-label="Budgets für {{month_name}} {{year}}">
 {% for c in cats %}
   {% set p=progress[c.id] %}
-  <article class="budget-card">
-    <div class="budget-card-head"><strong>{{c.name}}</strong><span class="{{'budget-over' if p.pct>100 else ''}}">{{p.pct}} %</span></div>
-    <label>Monatsbudget
-      <input class="budget-money-input" name="budget_{{c.id}}" value="{{'%.2f' % (existing[c.id].amount_cents/100) if c.id in existing else ''}}" placeholder="0,00" inputmode="decimal">
-    </label>
-    <div class="budget-progress"><i style="width:{{100 if p.pct>100 else p.pct}}%" class="{{'over' if p.pct>100 else 'warn' if p.pct>=80 else ''}}"></i></div>
-    <div class="budget-meta">
-      <span>Ausgegeben <b>{{euros(p.spent)}}</b></span>
-      {% if p.budget %}<span>Verfügbar <b>{{euros(p.remaining)}}</b></span>{% else %}<span class="muted">Noch kein Budget</span>{% endif %}
-    </div>
+  {% set state='over' if p.pct>=100 else 'warn' if p.pct>=80 else 'ok' %}
+  <article class="budget-card budget-state-{{state}}" data-budget-card>
+    <form method="post" action="/budgets/{{year}}/{{month}}" data-budget-form>
+      <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
+      <div class="budget-card-head">
+        <div><strong>{{c.name}}</strong><span class="budget-status budget-status-{{state}}">{% if p.pct>=100 %}Limit erreicht{% elif p.pct>=80 %}Fast ausgeschöpft{% elif p.budget %}Im Rahmen{% else %}Kein Budget{% endif %}</span></div>
+        <span class="budget-percent {{'budget-over' if p.pct>=100 else 'budget-warn' if p.pct>=80 else ''}}">{{p.pct}} %</span>
+      </div>
+      <label>Monatsbudget
+        <input class="budget-money-input" name="budget_{{c.id}}" value="{{'%.2f' % (existing[c.id].amount_cents/100) if c.id in existing else ''}}" placeholder="0,00" inputmode="decimal" readonly aria-readonly="true">
+      </label>
+      <div class="budget-progress" role="progressbar" aria-label="Budgetverbrauch {{c.name}}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{100 if p.pct>100 else p.pct}}"><i style="width:{{100 if p.pct>100 else p.pct}}%" class="{{'over' if p.pct>=100 else 'warn' if p.pct>=80 else ''}}"></i></div>
+      <div class="budget-meta">
+        <span>Ausgegeben <b>{{euros(p.spent)}}</b></span>
+        {% if p.budget %}<span>Verfügbar <b>{{euros(p.remaining)}}</b></span>{% else %}<span class="muted">Noch kein Budget</span>{% endif %}
+      </div>
+      <div class="budget-actions">
+        <button type="button" class="icon-button edit-button" data-budget-edit title="Budget bearbeiten" aria-label="Budget bearbeiten"><span class="local-icon icon-edit" aria-hidden="true"></span></button>
+        <button type="submit" class="icon-button save-button" data-budget-save title="Budget speichern" aria-label="Budget speichern" disabled><span class="local-icon icon-save" aria-hidden="true"></span></button>
+      </div>
+    </form>
   </article>
 {% endfor %}
-</div>
-<button type="submit">Budgets speichern</button>
-</form>
 </section>
+{% else %}
+<section class="empty-state page-empty-state">
+  <strong>Noch keine Ausgabenkategorien</strong>
+  <span>Lege zuerst eine Ausgabenkategorie an, um dafür ein Monatsbudget festzulegen.</span>
+  <a class="btn" href="/categories">Kategorie anlegen</a>
+</section>
+{% endif %}
 
 <div class="modal-backdrop" id="budgetErrorModal" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="budgetErrorTitle">
-    <div class="modal-icon">!</div>
+    <div class="modal-icon"><span class="local-icon icon-error" aria-hidden="true"></span></div>
     <h2 id="budgetErrorTitle">Budget prüfen</h2>
     <p id="budgetErrorText">Bitte gib einen gültigen Geldbetrag ein.</p>
     <button type="button" id="budgetErrorClose">Okay</button>
   </div>
 </div>
-
 {% endblock %}
-
 
 {% block scripts %}
 <script>
 (function(){
-  const form = document.querySelector('[data-budget-form]');
   const modal = document.getElementById('budgetErrorModal');
   const modalText = document.getElementById('budgetErrorText');
   const modalClose = document.getElementById('budgetErrorClose');
@@ -59,84 +74,54 @@
     modal.hidden = false;
     modalClose?.focus();
   }
-
-  function closeBudgetError(){
-    if(modal) modal.hidden = true;
-  }
-
+  function closeBudgetError(){ if(modal) modal.hidden = true; }
   function validateMoney(value){
     const raw = (value || '').trim().replace(/€/g,'').replace(/\s/g,'');
-
-    // Leere Budgetfelder sind erlaubt und entsprechen 0 €.
-    if(!raw){
-      return {ok:true};
-    }
-
+    if(!raw) return {ok:true};
     let normalized = raw;
-
-    if(normalized.includes(',')){
-      normalized = normalized.replace(/\./g,'').replace(',','.');
-    }
-
-    if(!/^\d+(\.\d{1,2})?$/.test(normalized)){
-      return {
-        ok:false,
-        message:'Bitte gib einen gültigen Geldbetrag ein, zum Beispiel 150,00.'
-      };
-    }
-
+    if(normalized.includes(',')) normalized = normalized.replace(/\./g,'').replace(',','.');
+    if(!/^\d+(\.\d{1,2})?$/.test(normalized)) return {ok:false,message:'Bitte gib einen gültigen Geldbetrag ein, zum Beispiel 150,00.'};
     const number = Number(normalized);
-
-    if(!Number.isFinite(number) || number < 0){
-      return {
-        ok:false,
-        message:'Ein Budget darf nicht negativ sein.'
-      };
-    }
-
-    if(number > 999999999.99){
-      return {
-        ok:false,
-        message:'Der eingegebene Budgetbetrag ist zu groß.'
-      };
-    }
-
+    if(!Number.isFinite(number) || number < 0) return {ok:false,message:'Ein Budget darf nicht negativ sein.'};
+    if(number > 999999999.99) return {ok:false,message:'Der eingegebene Budgetbetrag ist zu groß.'};
     return {ok:true};
   }
 
-  form?.addEventListener('submit', function(event){
-    const inputs = form.querySelectorAll('.budget-money-input');
+  document.querySelectorAll('[data-budget-card]').forEach(card=>{
+    const form=card.querySelector('[data-budget-form]');
+    const input=card.querySelector('.budget-money-input');
+    const edit=card.querySelector('[data-budget-edit]');
+    const save=card.querySelector('[data-budget-save]');
+    const original=input?.value || '';
 
-    for(const input of inputs){
-      const check = validateMoney(input.value);
+    edit?.addEventListener('click',()=>{
+      const start=input?.readOnly ?? true;
+      if(!input) return;
+      input.readOnly=!start;
+      input.setAttribute('aria-readonly',String(!start));
+      card.classList.toggle('is-editing',start);
+      if(save) save.disabled=!start;
+      edit.innerHTML='<span class="local-icon '+(start?'icon-close':'icon-edit')+'" aria-hidden="true"></span>';
+      edit.title=start?'Bearbeiten abbrechen':'Budget bearbeiten';
+      edit.setAttribute('aria-label',edit.title);
+      if(start){ input.focus(); input.select(); } else { input.value=original; }
+    });
 
-      if(!check.ok){
-        event.preventDefault();
-        showBudgetError(check.message);
-        input.focus();
-        input.select();
-        return;
-      }
-    }
+    form?.addEventListener('submit',event=>{
+      const check=validateMoney(input?.value);
+      if(!check.ok){ event.preventDefault(); showBudgetError(check.message); input?.focus(); input?.select(); }
+    });
   });
+
+  document.querySelectorAll('[data-year-jump]').forEach(select=>select.addEventListener('change',()=>{
+    const template=select.dataset.urlTemplate;
+    if(template) window.location.href=template.replace('{year}',select.value);
+  }));
 
   modalClose?.addEventListener('click', closeBudgetError);
-
-  modal?.addEventListener('click', function(event){
-    if(event.target === modal){
-      closeBudgetError();
-    }
-  });
-
-  document.addEventListener('keydown', function(event){
-    if(event.key === 'Escape' && modal && !modal.hidden){
-      closeBudgetError();
-    }
-  });
-
-  {% if error %}
-  showBudgetError({{ error|tojson }});
-  {% endif %}
+  modal?.addEventListener('click', event=>{ if(event.target===modal) closeBudgetError(); });
+  document.addEventListener('keydown', event=>{ if(event.key==='Escape' && modal && !modal.hidden) closeBudgetError(); });
+  {% if error %}showBudgetError({{ error|tojson }});{% endif %}
 })();
 </script>
 {% endblock %}

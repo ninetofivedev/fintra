@@ -7,6 +7,20 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.15
+
+### UI Consistency & Usability
+- Dashboard, Monatsansicht, Fixkosten, Kategorien und Budgets wurden in Bedienung und leeren Zuständen weiter vereinheitlicht.
+- Monatsbuchungen lassen sich zusätzlich nach Kategorie filtern; alle Filter können mit einem Klick zurückgesetzt werden.
+- Budgets verwenden jetzt denselben kompakten Bearbeiten-/Speichern-Stil wie Fixkosten und Kategorien.
+- Budgetfortschritt zeigt deutlicher `Im Rahmen`, `Fast ausgeschöpft` und `Limit erreicht`.
+- Dashboard-, Fixkosten- und Budgetansichten unterstützen einen direkten Jahreswechsel per Dropdown.
+- Dashboard-Kennzahlen führen direkt zu den passenden Detailansichten.
+- Aktive Navigation, Tastaturfokus und ARIA-Beschriftungen wurden verbessert.
+- Ein lokales `manifest.webmanifest` ergänzt Fintra um installierbare Web-App-Metadaten, ohne Service Worker oder externe Abhängigkeiten.
+- Dieser Stand bündelt mehrere UI-Polish-Punkte als Vorbereitung auf einen späteren stabilen Release.
+
+---
 ## 9.6.0-beta.14
 
 ### Kategorien – Aktionsleiste

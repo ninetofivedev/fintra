@@ -1,5 +1,20 @@
 # Changelog
 
+## 9.6.0-beta.15
+
+### UI & Bedienung
+- Einheitlichere Bearbeitungslogik für Budgets und Transaktionen mit kompakten Icon-Aktionen
+- Monatsansicht um Kategorie-Filter und Filter-Zurücksetzen erweitert
+- Leere Zustände auf Dashboard, Monats-, Fixkosten-, Kategorien- und Budgetansichten verbessert
+- Sticky Tabellenköpfe für Jahresübersicht und Transaktionen ergänzt
+- Schneller Jahreswechsel per Dropdown auf Dashboard, Fixkosten und Budgets
+- Dashboard-Kennzahlen sind jetzt direkt zu den passenden Ansichten verlinkt
+- Budgetkarten mit klareren Fortschritts-, Warn- und Limit-Zuständen überarbeitet
+- Aktive Seite wird im Burger-Menü hervorgehoben
+- Tastaturfokus, ARIA-Beschriftungen und Reduced-Motion-Unterstützung verbessert
+- PWA-Manifest ergänzt, damit Fintra sauber zum Homescreen hinzugefügt werden kann
+- UI-Konsistenz als Vorbereitung auf einen späteren stabilen Release weiter vereinheitlicht
+
 ## 9.6.0-beta.14
 
 ### Kategorien

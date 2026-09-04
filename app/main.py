@@ -76,6 +76,20 @@ def db():
     return c
 
 
+def available_years(connection, current_year: int):
+    years = {int(current_year), date.today().year}
+    for query in (
+        "SELECT DISTINCT CAST(substr(tx_date,1,4) AS INTEGER) AS year FROM transactions",
+        "SELECT DISTINCT year FROM fixed_items",
+        "SELECT DISTINCT year FROM budgets",
+    ):
+        try:
+            years.update(int(row['year']) for row in connection.execute(query).fetchall() if row['year'])
+        except sqlite3.Error:
+            pass
+    return sorted(years)
+
+
 def hash_password(password: str) -> str:
     salt = secrets.token_bytes(16)
     digest = hashlib.scrypt(password.encode('utf-8'), salt=salt, n=2**14, r=8, p=1)
@@ -479,6 +493,8 @@ def index(request: Request, year: int | None = None):
             'balance': inc + fi - exp - fe,
         })
 
+    years = available_years(c, y)
+
     cat_rows = c.execute(
         '''
         SELECT c.name, COALESCE(SUM(t.amount_cents),0) total
@@ -511,6 +527,7 @@ def index(request: Request, year: int | None = None):
         'euros': euros,
         'today_month': date.today().month,
         'month_full': MONTHS,
+        'years': years,
     })
 
 
@@ -600,6 +617,7 @@ def fixed_page(request:Request, year:int, error:str|None=None):
         'SELECT * FROM fixed_items WHERE year=? ORDER BY type,name,id',
         (year,)
     ).fetchall()
+    years = available_years(c, year)
     c.close()
 
     items = []
@@ -629,6 +647,7 @@ def fixed_page(request:Request, year:int, error:str|None=None):
         'euros': euros,
         'error': error,
         'fixed_summary': fixed_summary,
+        'years': years,
     })
 
 @app.post('/fixed/{year}')
@@ -1084,6 +1103,7 @@ def budgets_page(request:Request, year:int|None=None, month:int|None=None, error
     cats=c.execute("SELECT * FROM categories WHERE active=1 AND type='expense' ORDER BY name").fetchall()
     existing={r['category_id']:r for r in c.execute('SELECT * FROM budgets WHERE year=? AND month=?',(y,m)).fetchall()}
     start_date, end_date = month_bounds(y, m)
+    years = available_years(c, y)
     spent = {
         r['category_id']: r['total']
         for r in c.execute(
@@ -1105,7 +1125,7 @@ def budgets_page(request:Request, year:int|None=None, month:int|None=None, error
         progress[cat['id']]={'spent':used,'budget':budget,'remaining':max(0,budget-used),'pct':pct}
     return templates.TemplateResponse('budgets.html',{
         'request':request,'year':y,'month':m,'month_name':MONTHS[m-1],
-        'cats':cats,'existing':existing,'progress':progress,'euros':euros,'error':error
+        'cats':cats,'existing':existing,'progress':progress,'euros':euros,'error':error,'years':years
     })
 
 

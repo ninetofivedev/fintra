@@ -50,9 +50,11 @@
       <h2>Buchungen</h2>
       <p class="muted">Alle Transaktionen im {{month_name}} {{year}}</p>
     </div>
-    <div class="transaction-filter">
-      <input id="txSearch" type="search" placeholder="Kategorie oder Kommentar suchen…">
-      <select id="txTypeFilter"><option value="">Alle</option><option value="income">Einnahmen</option><option value="expense">Ausgaben</option></select>
+    <div class="transaction-filter" aria-label="Buchungen filtern">
+      <input id="txSearch" type="search" placeholder="Kategorie oder Kommentar suchen…" aria-label="Buchungen durchsuchen">
+      <select id="txTypeFilter" aria-label="Nach Buchungsart filtern"><option value="">Alle Arten</option><option value="income">Einnahmen</option><option value="expense">Ausgaben</option></select>
+      <select id="txCategoryFilter" aria-label="Nach Kategorie filtern"><option value="">Alle Kategorien</option>{% for c in cats %}<option value="{{c.id}}">{{c.name}}</option>{% endfor %}</select>
+      <button id="txFilterReset" class="secondary-button tx-filter-reset" type="button">Zurücksetzen</button>
     </div>
   </div>
 
@@ -60,7 +62,7 @@
     <thead><tr><th>Datum</th><th>Art</th><th>Kategorie</th><th>Betrag</th><th>Kommentar</th><th>Aktionen</th></tr></thead>
     <tbody>
     {% for t in tx %}
-      <tr data-transaction data-type="{{t.type}}" data-search="{{(t.category ~ ' ' ~ (t.comment or ''))|lower}}">
+      <tr data-transaction data-type="{{t.type}}" data-category="{{t.category_id}}" data-search="{{(t.category ~ ' ' ~ (t.comment or ''))|lower}}">
         <td data-label="Datum" class="tx-date-cell">{{ date_de(t.tx_date) }}</td>
         <td data-label="Art" class="tx-type-cell">
           <span class="tx-type-badge {{'tx-type-income' if t.type=='income' else 'tx-type-expense'}}">
@@ -77,7 +79,7 @@
               <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}">
               <input type="hidden" name="year" value="{{year}}">
               <input type="hidden" name="month" value="{{month}}">
-              <button class="icon-button delete-button" type="submit" title="Löschen" aria-label="Löschen">−</button>
+              <button class="icon-button delete-button" type="submit" title="Löschen" aria-label="Buchung löschen"><span class="local-icon icon-delete" aria-hidden="true"></span></button>
             </form>
           </div>
         </td>
@@ -95,15 +97,15 @@
             </select></label>
             <label>Betrag<input name="amount" inputmode="decimal" value="{{'%.2f' % (t.amount_cents/100)}}" required></label>
             <label>Kommentar<input name="comment" value="{{t.comment or ''}}"></label>
-            <div class="edit-actions">
-              <button type="submit">Speichern</button>
-              <button type="button" class="secondary-button" data-cancel-edit="{{t.id}}">Abbrechen</button>
+            <div class="edit-actions transaction-edit-actions">
+              <button type="button" class="icon-button edit-button" data-cancel-edit="{{t.id}}" title="Bearbeiten abbrechen" aria-label="Bearbeiten abbrechen"><span class="local-icon icon-close" aria-hidden="true"></span></button>
+              <button type="submit" class="icon-button save-button" title="Änderungen speichern" aria-label="Änderungen speichern"><span class="local-icon icon-save" aria-hidden="true"></span></button>
             </div>
           </form>
         </td>
       </tr>
     {% else %}
-      <tr><td colspan="6" class="muted">Noch keine Buchungen.</td></tr>
+      <tr class="empty-table-row"><td colspan="6"><div class="empty-state"><strong>Noch keine Buchungen</strong><span>Erfasse oben deine erste Einnahme oder Ausgabe für {{month_name}}.</span></div></td></tr>
     {% endfor %}
     </tbody>
   </table>
@@ -123,18 +125,29 @@
 <script>
 const search=document.getElementById('txSearch');
 const typeFilter=document.getElementById('txTypeFilter');
+const categoryFilter=document.getElementById('txCategoryFilter');
+const filterReset=document.getElementById('txFilterReset');
 function filterTransactions(){
   const q=(search?.value||'').trim().toLowerCase();
   const typ=typeFilter?.value||'';
+  const category=categoryFilter?.value||'';
   document.querySelectorAll('[data-transaction]').forEach(row=>{
     const edit=document.getElementById('edit-row-'+row.querySelector('[data-edit-transaction]')?.dataset.editTransaction);
-    const visible=(!q || (row.dataset.search||'').includes(q)) && (!typ || row.dataset.type===typ);
+    const visible=(!q || (row.dataset.search||'').includes(q)) && (!typ || row.dataset.type===typ) && (!category || row.dataset.category===category);
     row.hidden=!visible;
     if(edit && !visible) edit.hidden=true;
   });
 }
 search?.addEventListener('input',filterTransactions);
 typeFilter?.addEventListener('change',filterTransactions);
+categoryFilter?.addEventListener('change',filterTransactions);
+filterReset?.addEventListener('click',()=>{
+  if(search) search.value='';
+  if(typeFilter) typeFilter.value='';
+  if(categoryFilter) categoryFilter.value='';
+  filterTransactions();
+  search?.focus();
+});
 
 document.querySelectorAll('[data-edit-transaction]').forEach(btn=>{
   btn.addEventListener('click',()=>{
