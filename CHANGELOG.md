@@ -1,5 +1,17 @@
 # Changelog
 
+## 9.6.0-beta.25
+
+### Algorithmen & Datenstrukturen / Hausarbeit
+- Analytics-Seite in eine didaktische A&D-Demoseite mit klarer Theorie-/Praxis-Trennung ausgebaut.
+- Pseudocode für Hash Map, Min-Heap, Sliding Window und IQR ergänzt.
+- Speicherkomplexität zusätzlich zur Zeitkomplexität dokumentiert.
+- Reproduzierbare Skalierungs-Messreihe für 1.000 bis 100.000 synthetische Transaktionen ergänzt.
+- Neues Laufzeitdiagramm für lineare Suche, Hash-Index, Sortierung und Min-Heap.
+- Tabelle mit gemessenen Mikrobenchmark-Zeiten für mehrere Datensatzgrößen ergänzt.
+- Sliding-Window-Schritte anhand konkreter Monatsfenster visualisiert.
+- Hinweise zur Interpretation von Big-O, Indexaufbau und Messwerten für die Hausarbeit ergänzt.
+
 ## 9.6.0-beta.24
 
 ### Branding

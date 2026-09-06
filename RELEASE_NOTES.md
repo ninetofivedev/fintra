@@ -7,6 +7,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.25
+
+### A&D / Hausarbeits-Ausbau
+- Fintra Analytics zeigt jetzt deutlicher den Weg vom praktischen Finanzproblem zur Datenstruktur und zum Algorithmus.
+- Pseudocode, Zeit- und Speicherkomplexität sowie konkrete Fintra-Anwendungsfälle wurden ergänzt.
+- Eine reproduzierbare Messreihe über mehrere Datensatzgrößen visualisiert die Skalierung der Verfahren.
+- Neues Laufzeitdiagramm und eine Messwerttabelle unterstützen den Vergleich von Theorie und empirischem Verhalten.
+- Sliding Window, Hash Map, Min-Heap und IQR wurden didaktisch erweitert.
+
+---
+
 ## 9.6.0-beta.24
 
 ### Logo-Assets

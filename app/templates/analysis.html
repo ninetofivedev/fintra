@@ -25,6 +25,40 @@
   <div><span>Testdatensatz</span><strong>{{"{:,}".format(benchmark.n).replace(",", ".")}}</strong></div>
 </section>
 
+<section class="analysis-card analysis-wide study-overview">
+  <div class="analysis-card-head">
+    <div>
+      <span class="algo-label">Hausarbeits-Perspektive</span>
+      <h2>Vom Finanzproblem zur algorithmischen Lösung</h2>
+      <p class="muted">Jede Demonstration trennt den praktischen Einsatz in Fintra von der zugrunde liegenden Datenstruktur, dem Algorithmus und seiner Komplexität.</p>
+    </div>
+    <span class="study-dataset-badge">{{transaction_count}} echte · bis 100.000 synthetische Transaktionen</span>
+  </div>
+
+  <div class="study-topic-grid">
+    <article>
+      <span class="study-topic-number">01</span>
+      <div><strong>Suchen</strong><small>Lineare Suche vs. Hash Map</small></div>
+      <code>O(n) → Ø O(1)</code>
+    </article>
+    <article>
+      <span class="study-topic-number">02</span>
+      <div><strong>Top-K</strong><small>Vollsortierung vs. Min-Heap</small></div>
+      <code>O(n log n) → O(n log k)</code>
+    </article>
+    <article>
+      <span class="study-topic-number">03</span>
+      <div><strong>Zeitreihen</strong><small>Gleitender Durchschnitt</small></div>
+      <code>O(n · k) → O(n)</code>
+    </article>
+    <article>
+      <span class="study-topic-number">04</span>
+      <div><strong>Ausreißer</strong><small>Sortierung + Quartile + IQR</small></div>
+      <code>O(n log n)</code>
+    </article>
+  </div>
+</section>
+
 <section class="analysis-hero-grid">
   <article class="analysis-card">
     <div class="analysis-card-head">
@@ -77,6 +111,19 @@
       <span><span class="local-icon icon-arrow_forward inline-material-icon" aria-hidden="true"></span></span>
       <span class="index-bucket">[ {{hash_matches}} Transaktions-IDs ]</span>
     </div>
+
+    <div class="theory-practice-grid">
+      <div><span>Praxis in Fintra</span><p>Alle Transaktionen einer Kategorie finden, ohne den gesamten Jahresdatensatz für jede Abfrage erneut zu durchsuchen.</p></div>
+      <div><span>Datenstruktur</span><p><code>dict</code> / Hash Map: <code>category_id → Liste von Transaktionen</code>. Aufbau <code>O(n)</code>, Lookup durchschnittlich <code>O(1)</code>, Speicher <code>O(n)</code>.</p></div>
+    </div>
+    <details class="pseudo-block">
+      <summary>Pseudocode anzeigen</summary>
+      <pre><code>index = leere HashMap
+für transaktion in transaktionen:
+    index[transaktion.kategorie].anhängen(transaktion)
+
+ergebnis = index[gesuchte_kategorie]</code></pre>
+    </details>
   </article>
 
   <article class="analysis-card">
@@ -122,6 +169,20 @@
     </div>
 
     <p class="muted">Heap-Operationen auf den aggregierten Kategorien: <b>{{heap_operations}}</b>. Eine vollständige Sortierung müsste alle Kategorien sortieren.</p>
+    <div class="theory-practice-grid">
+      <div><span>Praxis in Fintra</span><p>Nur die {{k}} größten Ausgabenkategorien ermitteln, ohne alle Kategorien vollständig zu sortieren.</p></div>
+      <div><span>Datenstruktur</span><p>Min-Heap mit höchstens <code>k</code> Elementen. Zeit <code>O(n log k)</code>, zusätzlicher Speicher <code>O(k)</code>.</p></div>
+    </div>
+    <details class="pseudo-block">
+      <summary>Pseudocode anzeigen</summary>
+      <pre><code>heap = leer
+für kandidat in daten:
+    wenn größe(heap) &lt; k: einfügen(kandidat)
+    sonst wenn kandidat &gt; minimum(heap):
+        minimum ersetzen
+
+gib heap zurück</code></pre>
+    </details>
   </article>
 </section>
 
@@ -147,6 +208,23 @@
       <p>Beim Verschieben des Fensters wird der neue Monatswert addiert und der älteste entfernt. Dadurch muss die Summe nicht jedes Mal neu berechnet werden.</p>
       <div class="complexity-line"><span>Naiver Ansatz</span><code>O(n · k)</code></div>
       <div class="complexity-line"><span>Sliding Window</span><code>O(n)</code></div>
+      {% if window_steps %}
+      <div class="window-step-demo">
+        <span class="window-step-label">Beispiel</span>
+        {% for step in window_steps[:3] %}
+        <div><strong>{{step.months|join(' + ')}}</strong><span>→ {{euros(step.average)}} Ø</span></div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <details class="pseudo-block">
+        <summary>Pseudocode anzeigen</summary>
+        <pre><code>summe = 0
+für i von 0 bis n-1:
+    summe += wert[i]
+    wenn i ≥ fenstergröße:
+        summe -= wert[i-fenstergröße]
+    mittelwert = summe / aktuelle_fenstergröße</code></pre>
+      </details>
     </div>
   </div>
 </section>
@@ -187,6 +265,18 @@
     {% else %}
     <p class="muted">Für {{year}} wurden keine statistisch auffälligen Ausgaben erkannt.</p>
     {% endif %}
+    <div class="theory-practice-grid single-row">
+      <div><span>Theorie</span><p>Die Ausgaben werden sortiert, Quartile bestimmt und Werte oberhalb von <code>Q3 + 1,5 × IQR</code> markiert. Der dominante Schritt ist die Sortierung mit <code>O(n log n)</code>.</p></div>
+    </div>
+    <details class="pseudo-block">
+      <summary>Pseudocode anzeigen</summary>
+      <pre><code>werte sortieren
+Q1 = erstes Quartil
+Q3 = drittes Quartil
+IQR = Q3 - Q1
+grenze = Q3 + 1.5 * IQR
+ausreißer = werte über grenze</code></pre>
+    </details>
   </article>
 
   <article class="analysis-card">
@@ -283,6 +373,49 @@
   </div>
 </section>
 
+<section class="analysis-card analysis-wide benchmark-series-section">
+  <div class="analysis-card-head">
+    <div>
+      <span class="algo-label">Theorie vs. Messung</span>
+      <h2>Skalierung bei wachsendem n</h2>
+      <p class="muted">Die Messreihe verwendet denselben Seed und fünf Datensatzgrößen. Zeiten sind lokale Mikrobenchmarks; entscheidend ist die Form der Skalierung, nicht der absolute Wert.</p>
+    </div>
+    <code>1.000 → 100.000</code>
+  </div>
+
+  <div class="benchmark-series-layout">
+    <div class="chart-container benchmark-series-chart"><canvas id="benchmarkChart"></canvas></div>
+    <div class="theory-measure-boxes">
+      <div><span>Lineare Suche</span><strong>O(n)</strong><small>Mit wachsendem n müssen proportional mehr Elemente geprüft werden.</small></div>
+      <div><span>Hash-Lookup</span><strong>Ø O(1)</strong><small>Nach einmaligem Indexaufbau bleibt der einzelne Lookup nahezu unabhängig von n.</small></div>
+      <div><span>Indexaufbau</span><strong>O(n)</strong><small>Der Vorteil lohnt sich besonders, wenn derselbe Index für viele Abfragen wiederverwendet wird.</small></div>
+      <div><span>Top-K</span><strong>O(n log k)</strong><small>Bei festem k wächst der Heap deutlich günstiger als eine vollständige Sortierung.</small></div>
+    </div>
+  </div>
+
+  <div class="complexity-table-wrap benchmark-table-wrap">
+    <table class="complexity-table benchmark-series-table">
+      <thead><tr><th>n</th><th>Linear</th><th>Hash-Aufbau</th><th>Hash-Lookup</th><th>Sortierung</th><th>Min-Heap</th></tr></thead>
+      <tbody>
+        {% for row in benchmark_series %}
+        <tr>
+          <td>{{"{:,}".format(row.n).replace(",", ".")}}</td>
+          <td>{{'%.1f'|format(row.linear_us)}} µs</td>
+          <td>{{'%.1f'|format(row.hash_build_us)}} µs</td>
+          <td>{{'%.1f'|format(row.hash_lookup_us)}} µs</td>
+          <td>{{'%.1f'|format(row.sort_us)}} µs</td>
+          <td>{{'%.1f'|format(row.heap_us)}} µs</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="research-note">
+    <strong>Für die Hausarbeit:</strong> Die Tabelle eignet sich als empirische Ergänzung zur Big-O-Analyse. Der Hash-Index besitzt zunächst Aufbaukosten <code>O(n)</code>; der Vorteil entsteht durch wiederholte Abfragen mit durchschnittlich <code>O(1)</code>.
+  </div>
+</section>
+
 <section class="analysis-card analysis-wide">
   <div class="analysis-card-head">
     <div>
@@ -295,14 +428,14 @@
   <div class="complexity-table-wrap">
     <table class="complexity-table">
       <thead>
-        <tr><th>Problem</th><th>Datenstruktur / Algorithmus</th><th>Zeit</th><th>Warum?</th></tr>
+        <tr><th>Problem</th><th>Datenstruktur / Algorithmus</th><th>Zeit</th><th>Zusatzspeicher</th><th>Warum?</th></tr>
       </thead>
       <tbody>
-        <tr><td>Kategorie finden</td><td>Hash Map</td><td><code>Ø O(1)</code></td><td>Direkter Zugriff über Kategorie-ID.</td></tr>
-        <tr><td>Top-K Kategorien</td><td>Min-Heap</td><td><code>O(n log k)</code></td><td>Nur k Kandidaten bleiben im Heap.</td></tr>
-        <tr><td>Gleitender Mittelwert</td><td>Sliding Window</td><td><code>O(n)</code></td><td>Alten Wert entfernen, neuen addieren.</td></tr>
-        <tr><td>Ausreißer erkennen</td><td>Sortierung + IQR</td><td><code>O(n log n)</code></td><td>Quartile benötigen geordnete Werte.</td></tr>
-        <tr><td>Historische DB-Suche</td><td>SQLite B-Tree Index</td><td><code>O(log n)</code></td><td>Index auf Datum und Kategorie.</td></tr>
+        <tr><td>Kategorie finden</td><td>Hash Map</td><td><code>Ø O(1)</code></td><td><code>O(n)</code></td><td>Direkter Zugriff über Kategorie-ID.</td></tr>
+        <tr><td>Top-K Kategorien</td><td>Min-Heap</td><td><code>O(n log k)</code></td><td><code>O(k)</code></td><td>Nur k Kandidaten bleiben im Heap.</td></tr>
+        <tr><td>Gleitender Mittelwert</td><td>Sliding Window</td><td><code>O(n)</code></td><td><code>O(1)</code></td><td>Alten Wert entfernen, neuen addieren.</td></tr>
+        <tr><td>Ausreißer erkennen</td><td>Sortierung + IQR</td><td><code>O(n log n)</code></td><td><code>O(n)</code></td><td>Quartile benötigen geordnete Werte.</td></tr>
+        <tr><td>Historische DB-Suche</td><td>SQLite B-Tree Index</td><td><code>O(log n)</code></td><td><code>O(n)</code></td><td>Index auf Datum und Kategorie.</td></tr>
       </tbody>
     </table>
   </div>
@@ -315,6 +448,7 @@ const monthly={{monthly|tojson}};
 const rolling={{rolling|tojson}};
 const labels={{months_full|tojson}};
 const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(v/100);
+const benchmarkSeries={{benchmark_series|tojson}};
 
 const ctx=document.getElementById('slidingChart');
 if(ctx){
@@ -349,6 +483,33 @@ if(ctx){
       interaction:{mode:'index',intersect:false},
       plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},
       scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}}}
+    }
+  });
+}
+
+const benchmarkCtx=document.getElementById('benchmarkChart');
+if(benchmarkCtx){
+  new Chart(benchmarkCtx,{
+    type:'line',
+    data:{
+      labels:benchmarkSeries.map(r=>new Intl.NumberFormat('de-DE').format(r.n)),
+      datasets:[
+        {label:'Lineare Suche',data:benchmarkSeries.map(r=>r.linear_us),tension:.25,pointRadius:3},
+        {label:'Hash-Index Aufbau',data:benchmarkSeries.map(r=>r.hash_build_us),tension:.25,pointRadius:3},
+        {label:'Hash-Lookup',data:benchmarkSeries.map(r=>r.hash_lookup_us),tension:.25,pointRadius:3},
+        {label:'Vollständige Sortierung',data:benchmarkSeries.map(r=>r.sort_us),tension:.25,pointRadius:3},
+        {label:'Min-Heap Top-K',data:benchmarkSeries.map(r=>r.heap_us),tension:.25,pointRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${Number(c.raw).toLocaleString('de-DE',{maximumFractionDigits:1})} µs`}}},
+      scales:{
+        x:{title:{display:true,text:'Anzahl synthetischer Transaktionen n'}},
+        y:{beginAtZero:true,title:{display:true,text:'Laufzeit in µs'}}
+      }
     }
   });
 }

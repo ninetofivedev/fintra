@@ -1161,6 +1161,70 @@ def analysis(
         'same_top_result': sorted_ids == heap_ids,
     }
 
+    # ---------------------------------------------------------
+    # 6) Skalierungs-Messreihe für die Hausarbeit
+    # ---------------------------------------------------------
+    # Jede Messgröße basiert auf deterministischen synthetischen Daten.
+    # Die Messreihe ist bewusst unabhängig von der gewählten Einzelgröße n,
+    # damit die Kurven über mehrere Datenmengen direkt vergleichbar bleiben.
+    benchmark_sizes = [1000, 5000, 10000, 50000, 100000]
+    benchmark_series = []
+    for size in benchmark_sizes:
+        series_rng = random.Random(42)
+        series_data = [
+            (series_rng.randrange(1, synthetic_categories + 1), series_rng.randrange(100, 100000))
+            for _ in range(size)
+        ]
+
+        start_ns = time.perf_counter_ns()
+        series_linear_matches = sum(1 for cid, _amount in series_data if cid == target_category)
+        series_linear_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        series_index = {}
+        for pos, (cid, _amount) in enumerate(series_data):
+            series_index.setdefault(cid, []).append(pos)
+        series_build_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        series_hash_matches = len(series_index.get(target_category, []))
+        series_lookup_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        sorted(series_data, key=lambda item: item[1], reverse=True)[:k]
+        series_sort_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        series_heap = []
+        for pos, (_cid, amount) in enumerate(series_data):
+            item = (amount, pos)
+            if len(series_heap) < k:
+                heapq.heappush(series_heap, item)
+            elif amount > series_heap[0][0]:
+                heapq.heapreplace(series_heap, item)
+        series_heap_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        benchmark_series.append({
+            'n': size,
+            'linear_us': round(series_linear_us, 2),
+            'hash_build_us': round(series_build_us, 2),
+            'hash_lookup_us': round(series_lookup_us, 2),
+            'sort_us': round(series_sort_us, 2),
+            'heap_us': round(series_heap_us, 2),
+            'same_search_result': series_linear_matches == series_hash_matches,
+        })
+
+    # Sliding-Window-Schritte als konkrete, nachvollziehbare Demonstration.
+    window_steps = []
+    for end_idx in range(2, len(monthly)):
+        start_idx = end_idx - 2
+        values = monthly[start_idx:end_idx + 1]
+        window_steps.append({
+            'months': MONTHS[start_idx:end_idx + 1],
+            'values': values,
+            'average': round(sum(values) / 3),
+        })
+
     # Budgetstatus wie bisher.
     current_month = date.today().month if y == date.today().year else 1
     c = db()
@@ -1214,6 +1278,9 @@ def analysis(
         'linear_matches': linear_matches,
         'hash_matches': hash_matches,
         'benchmark': benchmark,
+        'benchmark_series': benchmark_series,
+        'window_steps': window_steps,
+        'expense_count': sum(1 for row in rows if row['type'] == 'expense'),
         'k': k,
     })
 

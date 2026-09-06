@@ -2823,3 +2823,173 @@ html[data-theme="dark"] .budget-status-over{color:#f87171!important}
     height:17px;
   }
 }
+
+/* =========================================================
+   Fintra 9.6.0-beta.25 – A&D / Hausarbeits-Ausbau
+   ========================================================= */
+.study-overview{border-top:3px solid #4f46e5}
+.study-dataset-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:7px 10px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:var(--bg);
+  color:var(--muted);
+  font-size:.75rem;
+  font-weight:700;
+  white-space:nowrap;
+}
+.study-topic-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.study-topic-grid article{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:4px 10px;
+  align-items:center;
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--bg);
+}
+.study-topic-number{
+  grid-row:1/3;
+  display:grid;
+  place-items:center;
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  background:rgba(79,70,229,.10);
+  color:#4f46e5;
+  font-size:.72rem;
+  font-weight:850;
+}
+html[data-theme="dark"] .study-topic-number{color:#a5b4fc}
+.study-topic-grid article>div{display:grid;gap:2px;min-width:0}
+.study-topic-grid strong{font-size:.9rem}
+.study-topic-grid small{color:var(--muted);font-size:.7rem;line-height:1.3}
+.study-topic-grid code{grid-column:1/-1;margin-top:5px;width:max-content;max-width:100%;white-space:normal}
+
+.theory-practice-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:16px;
+}
+.theory-practice-grid.single-row{grid-template-columns:1fr}
+.theory-practice-grid>div{
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--bg);
+}
+.theory-practice-grid span{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.theory-practice-grid p{margin:0;font-size:.82rem;line-height:1.5}
+
+.pseudo-block{
+  margin-top:10px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.pseudo-block summary{
+  cursor:pointer;
+  padding:10px 12px;
+  font-size:.78rem;
+  font-weight:750;
+  color:var(--text);
+}
+.pseudo-block pre{
+  margin:0;
+  padding:12px;
+  border-top:1px solid var(--border);
+  overflow:auto;
+  background:color-mix(in srgb,var(--bg) 88%,var(--card));
+  font-size:.75rem;
+  line-height:1.55;
+}
+.pseudo-block pre code{padding:0;background:transparent;white-space:pre}
+
+.window-step-demo{
+  display:grid;
+  gap:6px;
+  padding:11px;
+  border:1px dashed var(--border);
+  border-radius:10px;
+  background:var(--bg);
+}
+.window-step-label{
+  color:var(--muted);
+  font-size:.68rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.window-step-demo>div{display:flex;justify-content:space-between;gap:10px;font-size:.75rem}
+.window-step-demo>div span{color:var(--muted);white-space:nowrap}
+
+.benchmark-series-section{border-top:3px solid #16a34a}
+.benchmark-series-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);
+  gap:18px;
+  align-items:stretch;
+}
+.benchmark-series-chart{height:360px;margin:0}
+.theory-measure-boxes{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+.theory-measure-boxes>div{
+  display:grid;
+  align-content:start;
+  gap:5px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--bg);
+}
+.theory-measure-boxes span{color:var(--muted);font-size:.72rem}
+.theory-measure-boxes strong{font-size:1rem}
+.theory-measure-boxes small{color:var(--muted);font-size:.72rem;line-height:1.45}
+.benchmark-table-wrap{margin-top:18px}
+.benchmark-series-table{min-width:820px}
+.benchmark-series-table td:first-child{font-weight:800}
+.research-note{
+  margin-top:14px;
+  padding:12px 14px;
+  border-left:3px solid #4f46e5;
+  border-radius:0 9px 9px 0;
+  background:rgba(79,70,229,.06);
+  font-size:.8rem;
+  line-height:1.5;
+}
+
+@media(max-width:1100px){
+  .study-topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .benchmark-series-layout{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .study-dataset-badge{white-space:normal}
+  .study-topic-grid{grid-template-columns:1fr}
+  .theory-practice-grid{grid-template-columns:1fr}
+  .theory-measure-boxes{grid-template-columns:1fr 1fr}
+  .benchmark-series-chart{height:300px}
+}
+@media(max-width:480px){
+  .theory-measure-boxes{grid-template-columns:1fr}
+  .window-step-demo>div{display:grid;gap:2px}
+}
