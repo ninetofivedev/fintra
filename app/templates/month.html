@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{month_name}} {{year}} – Fintra{% endblock %}
 {% block content %}
-<a href="/?year={{year}}"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Jahresübersicht</a>
-
 <div class="month-heading">
   <a class="month-arrow" href="{{prev_url}}" title="{{prev_label}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
   <h1>{{month_name}} {{year}}</h1>

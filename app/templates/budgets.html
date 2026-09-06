@@ -2,7 +2,7 @@
 {% block title %}Budgets – Fintra{% endblock %}
 {% block content %}
 <header>
-  <div><a href="/?year={{year}}"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Übersicht</a><h1>Budgets · {{month_name}} {{year}}</h1><p class="muted">Monatsbudgets festlegen und Verbrauch verfolgen.</p></div>
+  <div><h1>Budgets · {{month_name}} {{year}}</h1><p class="muted">Monatsbudgets festlegen und Verbrauch verfolgen.</p></div>
   <div class="yearnav" aria-label="Jahr auswählen">
     <a href="/budgets?year={{year-1}}&month={{month}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
     <label class="year-select-label"><span class="sr-only">Jahr</span><select class="year-select" data-year-jump data-url-template="/budgets?year={year}&month={{month}}">{% for y in years %}<option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>{% endfor %}</select></label>

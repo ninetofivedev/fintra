@@ -2,7 +2,7 @@
 {% block title %}Fixkosten {{year}} – Fintra{% endblock %}
 {% block content %}
 <header>
-  <div><a href="/?year={{year}}"><span class="local-icon icon-arrow_back inline-material-icon" aria-hidden="true"></span> Übersicht</a><h1>Fixe Einnahmen &amp; Ausgaben</h1><p class="muted">Wiederkehrende Positionen für {{year}}.</p></div>
+  <div><h1>Fixe Einnahmen &amp; Ausgaben</h1><p class="muted">Wiederkehrende Positionen für {{year}}.</p></div>
   <div class="yearnav" aria-label="Jahr auswählen">
     <a href="/fixed/{{year-1}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
     <label class="year-select-label"><span class="sr-only">Jahr</span><select class="year-select" data-year-jump data-url-template="/fixed/{year}">{% for y in years %}<option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>{% endfor %}</select></label>

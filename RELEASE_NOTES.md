@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.27
+
+### Navigation
+- Die zusätzlichen Zurück-/Übersicht-Pfeile auf den Unterseiten wurden entfernt.
+- Auch „Zurück zu Fintra Analytics“ auf der Algorithmus-Seite entfällt.
+- Dadurch wirkt die Seitenkopf-Navigation ruhiger und konsistenter.
+
+---
+
 ## 9.6.0-beta.26
 
 ### A&D-Benchmark

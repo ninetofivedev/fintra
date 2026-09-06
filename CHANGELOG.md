@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.27
+
+### Navigation
+- Redundante Zurück-/Übersicht-Links oben auf den Unterseiten entfernt.
+- Auf der Seite „Algorithmen & Datenstrukturen“ wurde der Link zurück zu „Fintra Analytics“ entfernt.
+- Die Navigation erfolgt damit einheitlich über die Hauptnavigation und das Burger-Menü.
+
 ## 9.6.0-beta.26
 
 ### A&D / Benchmark
