@@ -10,10 +10,21 @@
 <h1>Fintra Analytics · {{year}}</h1>
     <p class="muted">Finanzanalyse und interaktive Demonstration der verwendeten Algorithmen und Datenstrukturen.</p>
   </div>
-  <div class="yearnav">
-    <a href="/analysis?year={{year-1}}&k={{k}}&n={{benchmark.n}}"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
-    <b>{{year}}</b>
-    <a href="/analysis?year={{year+1}}&k={{k}}&n={{benchmark.n}}"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+  <div class="yearnav" aria-label="Jahr auswählen">
+    <a href="/analysis?year={{year-1}}&k={{k}}&n={{benchmark.n}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+    <label class="year-select-label">
+      <span class="sr-only">Jahr</span>
+      <select
+        class="year-select"
+        data-analysis-year-jump
+        aria-label="Jahr auswählen"
+      >
+        {% for y in years %}
+          <option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <a href="/analysis?year={{year+1}}&k={{k}}&n={{benchmark.n}}" aria-label="Nächstes Jahr"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
   </div>
 </header>
 
@@ -513,5 +524,23 @@ if(benchmarkCtx){
     }
   });
 }
+</script>
+
+<script>
+(() => {
+  const yearSelect = document.querySelector('[data-analysis-year-jump]');
+  if (!yearSelect) return;
+
+  yearSelect.addEventListener('change', () => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('year', yearSelect.value);
+    params.set('k', '{{k}}');
+    params.set('n', '{{benchmark.n}}');
+    {% if selected_category_id %}
+    params.set('category_id', '{{selected_category_id}}');
+    {% endif %}
+    window.location.href = `/analysis?${params.toString()}`;
+  });
+})();
 </script>
 {% endblock %}

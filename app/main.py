@@ -983,6 +983,7 @@ def analysis(
     c = db()
     rows = fetch_year_month_transactions(c, y)
     cats = c.execute('SELECT * FROM categories WHERE active=1 ORDER BY type,name').fetchall()
+    years = available_years(c, y)
     c.close()
 
     # Die Analyse echter Fintra-Daten bezieht sich vollständig auf das gewählte Jahr.
@@ -1258,6 +1259,7 @@ def analysis(
     return templates.TemplateResponse('analysis.html', {
         'request': request,
         'year': y,
+        'years': years,
         'months_full': MONTHS,
         'monthly': monthly,
         'rolling': rolling,

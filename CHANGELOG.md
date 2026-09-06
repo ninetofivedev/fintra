@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0-beta.28
+
+### UI-Konsistenz
+- Kopfbereich der Seite „Algorithmen & Datenstrukturen“ an das Layout der übrigen Unterseiten angepasst.
+- Jahresnavigation auf „Fintra Analytics“ vereinheitlicht.
+- Analysis besitzt jetzt wie Fixkosten Pfeile plus Jahr-Dropdown.
+- Beim Jahreswechsel bleiben Benchmark-Größe, Top-K-Wert und gewählte Kategorie erhalten.
+
 ## 9.6.0-beta.27
 
 ### Navigation

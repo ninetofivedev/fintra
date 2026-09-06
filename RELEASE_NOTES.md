@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.28
+
+### Einheitliche Seitenköpfe
+- „Algorithmen & Datenstrukturen“ verwendet jetzt denselben Header-Stil wie die restlichen Fintra-Unterseiten.
+- Die Jahresauswahl auf „Fintra Analytics“ entspricht jetzt der Jahresnavigation auf Fixkosten und anderen Jahresansichten.
+- Zusätzlich zu den Pfeilen steht ein direktes Jahr-Dropdown zur Verfügung.
+
+---
+
 ## 9.6.0-beta.27
 
 ### Navigation
