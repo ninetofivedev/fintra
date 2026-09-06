@@ -1115,10 +1115,11 @@ def analysis(
     # Top-K-Vergleich über alle n synthetischen Transaktionen.
     # Damit beziehen sich Messung und Big-O-Angabe tatsächlich auf denselben Datenumfang.
     start_ns = time.perf_counter_ns()
+    # Bei gleichen Beträgen entscheidet die ursprüngliche Position aufsteigend.
+    # Dadurch verwenden Vollsortierung und Heap exakt dieselbe Tie-Break-Regel.
     synthetic_sorted_top = sorted(
         enumerate(synthetic),
-        key=lambda item: item[1][1],
-        reverse=True
+        key=lambda item: (-item[1][1], item[0])
     )[:k]
     sort_ns = time.perf_counter_ns() - start_ns
 
@@ -1126,11 +1127,14 @@ def analysis(
     synthetic_heap = []
     synthetic_heap_ops = 0
     for pos, (_cid, amount) in enumerate(synthetic):
-        item = (amount, pos)
+        # Im Min-Heap ist bei gleichem Betrag die größere Position das
+        # "schlechtere" Element. So entspricht die Auswahl exakt der
+        # Tie-Break-Regel der Vollsortierung.
+        item = (amount, -pos, pos)
         if len(synthetic_heap) < k:
             heapq.heappush(synthetic_heap, item)
             synthetic_heap_ops += 1
-        elif amount > synthetic_heap[0][0]:
+        elif item > synthetic_heap[0]:
             heapq.heapreplace(synthetic_heap, item)
             synthetic_heap_ops += 1
     synthetic_heap_top = sorted(synthetic_heap, reverse=True)
@@ -1141,7 +1145,7 @@ def analysis(
     heap_work = round(n * math.log2(max(k, 2)))
 
     sorted_ids = {pos for pos, _row in synthetic_sorted_top}
-    heap_ids = {pos for _amount, pos in synthetic_heap_top}
+    heap_ids = {pos for _amount, _neg_pos, pos in synthetic_heap_top}
 
     benchmark = {
         'n': n,

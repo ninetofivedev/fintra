@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.26
+
+### A&D-Benchmark
+- Behebt falsche rote Warnungen beim Vergleich der Top-K-Ergebnisse von Vollsortierung und Min-Heap.
+- Ursache war unterschiedliches Verhalten bei identischen Beträgen an der Top-K-Grenze.
+- Die Statusmeldung ist jetzt auch textlich eindeutig.
+
+---
+
 ## 9.6.0-beta.25
 
 ### A&D / Hausarbeits-Ausbau

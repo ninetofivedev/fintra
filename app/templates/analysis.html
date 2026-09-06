@@ -367,7 +367,8 @@ ausreißer = werte über grenze</code></pre>
       <span class="local-icon {{ 'icon-check_circle' if benchmark.same_search_result else 'icon-error' }}" aria-hidden="true"></span> Suchergebnisse identisch
     </span>
     <span class="{{'check-badge' if benchmark.same_top_result else 'error-badge'}}">
-      <span class="local-icon {{ 'icon-check_circle' if benchmark.same_top_result else 'icon-error' }}" aria-hidden="true"></span> Top-K-Ergebnisse identisch
+      <span class="local-icon {{ 'icon-check_circle' if benchmark.same_top_result else 'icon-error' }}" aria-hidden="true"></span>
+      {{ 'Top-K-Ergebnisse stimmen überein' if benchmark.same_top_result else 'Top-K-Ergebnisse unterscheiden sich' }}
     </span>
     <span class="muted">Die Zeitmessungen sind illustrative Mikrobenchmarks und keine hardwareunabhängigen Leistungsversprechen.</span>
   </div>

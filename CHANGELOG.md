@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.26
+
+### A&D / Benchmark
+- Top-K-Vergleich zwischen Vollsortierung und Min-Heap bei gleichen Beträgen korrigiert.
+- Beide Verfahren verwenden jetzt dieselbe deterministische Tie-Break-Regel.
+- Statusanzeige unterscheidet jetzt klar zwischen „stimmen überein“ und „unterscheiden sich“.
+
 ## 9.6.0-beta.25
 
 ### Algorithmen & Datenstrukturen / Hausarbeit
