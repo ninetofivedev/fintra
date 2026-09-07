@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.37
+
+### Privacy Mode
+- Privacy Mode auf der Analytics-Seite korrigiert.
+- „Monatliche Entwicklung“, „Gleitender 3-Monats-Durchschnitt“, „Ausgaben nach Kategorie“ und „Fixe und variable Ausgaben“ werden jetzt zuverlässig geblurred.
+- Dashboard- und Analytics-Diagramme verwenden damit wieder einheitliches Privacy-Verhalten.
+
 ## 9.6.0-beta.36
 
 ### Demo-Profil

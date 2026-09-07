@@ -1649,8 +1649,13 @@ html[data-theme="dark"] .error-badge{color:#f87171}
 
 /* Finanzdiagramme würden sonst Beträge und Größenverhältnisse verraten. */
 .privacy-mode .dashboard-charts canvas,
-.privacy-mode #slidingChart{
+.privacy-mode #slidingChart,
+.privacy-mode #monthlyFinanceChart,
+.privacy-mode #rollingChart,
+.privacy-mode #categoryChart,
+.privacy-mode #expenseSplitChart{
   filter:blur(8px);
+  user-select:none;
   transition:filter .15s ease;
 }
 
@@ -1693,8 +1698,13 @@ html[data-theme="dark"] .error-badge{color:#f87171}
 
 /* Diagramme bleiben verborgen, ohne das umgebende Layout zu beeinflussen. */
 .privacy-mode .dashboard-charts canvas,
-.privacy-mode #slidingChart{
+.privacy-mode #slidingChart,
+.privacy-mode #monthlyFinanceChart,
+.privacy-mode #rollingChart,
+.privacy-mode #categoryChart,
+.privacy-mode #expenseSplitChart{
   filter:blur(8px);
+  user-select:none;
 }
 
 
