@@ -7,6 +7,16 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.34
+
+### Analytics & Benchmark
+- Analytics-Diagramme bieten jetzt Drill-down-Navigation zu Monaten und gefilterten Transaktionen.
+- Die größten Einzelbuchungen lassen sich direkt zum jeweiligen Monat öffnen.
+- Performance-Messungen verwenden fünf Durchläufe und den Median statt eines einzelnen Messwerts.
+- Die vollständige Benchmark-Messreihe steht zusätzlich als CSV-Export zur Verfügung.
+
+---
+
 ## 9.6.0-beta.33
 
 ### Kategorien-Diagramm

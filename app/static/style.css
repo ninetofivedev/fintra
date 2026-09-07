@@ -3252,3 +3252,56 @@ html[data-theme="dark"] .study-topic-number{color:#a5b4fc}
     height:300px;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.34 – Analytics drill-down & Benchmarks
+   ========================================================= */
+.analysis-list-link{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
+  color:inherit;
+  text-decoration:none;
+}
+
+.analysis-list-link:last-child{
+  border-bottom:0;
+}
+
+.analysis-list-link:hover{
+  background:color-mix(in srgb,var(--card) 92%,var(--border));
+}
+
+.analysis-list-link>span{
+  min-width:0;
+}
+
+.analysis-list-link strong,
+.analysis-list-link small{
+  display:block;
+}
+
+.analysis-list-link small{
+  color:var(--muted);
+  margin-top:3px;
+  overflow-wrap:anywhere;
+}
+
+.analysis-list-link b{
+  white-space:nowrap;
+}
+
+.benchmark-export-button{
+  white-space:nowrap;
+  align-self:flex-start;
+}
+
+@media(max-width:700px){
+  .benchmark-export-button{
+    width:auto;
+  }
+}

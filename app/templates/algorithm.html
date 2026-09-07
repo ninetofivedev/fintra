@@ -68,8 +68,11 @@
     <div>
       <span class="algo-label">Experiment</span>
       <h2>Synthetischer Performance-Test</h2>
-      <p class="muted">Vergleich der Verfahren mit reproduzierbar erzeugten Testdaten im Arbeitsspeicher. Die Datensatzgröße kann verändert werden; für den Top-K-Vergleich wird bewusst ein festes k = 5 verwendet, damit die Messreihen untereinander vergleichbar bleiben.</p>
+      <p class="muted">Vergleich der Verfahren mit reproduzierbar erzeugten Testdaten im Arbeitsspeicher. Jede Messung wird {{benchmark_runs}}-mal ausgeführt; angezeigt wird der Median. Für den Top-K-Vergleich bleibt k = 5 fest, damit die Messreihen vergleichbar bleiben.</p>
     </div>
+    <a class="secondary-button benchmark-export-button" href="/algorithm/benchmark.csv">
+      CSV exportieren
+    </a>
   </div>
 
   <form method="get" action="/algorithm" class="benchmark-controls">
@@ -85,7 +88,7 @@
   <div class="benchmark-grid">
     <article>
       <h3>Lineare Suche</h3>
-      <div class="benchmark-number">{{'%.1f'|format(benchmark.linear_us)}} µs</div>
+      <div class="benchmark-number">{{'%.1f'|format(benchmark.linear_us)}} µs</div><small>Median aus {{benchmark_runs}} Läufen</small>
       <code>O(n)</code>
     </article>
     <article>
@@ -93,16 +96,16 @@
       <div class="benchmark-number">{{'%.1f'|format(benchmark.hash_lookup_us)}} µs</div>
       <span>Lookup</span>
       <code>Ø O(1)</code>
-      <small>Indexaufbau: {{'%.1f'|format(benchmark.hash_build_us)}} µs</small>
+      <small>Indexaufbau: {{'%.1f'|format(benchmark.hash_build_us)}} µs · Median aus {{benchmark_runs}} Läufen</small>
     </article>
     <article>
       <h3>Vollständige Sortierung</h3>
-      <div class="benchmark-number">{{'%.1f'|format(benchmark.sort_us)}} µs</div>
+      <div class="benchmark-number">{{'%.1f'|format(benchmark.sort_us)}} µs</div><small>Median aus {{benchmark_runs}} Läufen</small>
       <code>O(n log n)</code>
     </article>
     <article>
       <h3>Min-Heap Top 5</h3>
-      <div class="benchmark-number">{{'%.1f'|format(benchmark.heap_us)}} µs</div>
+      <div class="benchmark-number">{{'%.1f'|format(benchmark.heap_us)}} µs</div><small>Median aus {{benchmark_runs}} Läufen</small>
       <code>O(n log k)</code>
     </article>
   </div>
@@ -125,7 +128,7 @@
     <div>
       <span class="algo-label">Laufzeitmessung</span>
       <h2>Skalierung</h2>
-      <p class="muted">Messreihe für fünf Datensatzgrößen mit identischem Zufalls-Seed.</p>
+      <p class="muted">Messreihe für fünf Datensatzgrößen mit identischem Zufalls-Seed. Jeder Tabellenwert ist der Median aus {{benchmark_runs}} Läufen.</p>
     </div>
     <code>1.000 → 100.000</code>
   </div>

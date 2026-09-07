@@ -1049,11 +1049,17 @@ def analysis(
     by_cat = {}
     for row in rows:
         if row['type'] == 'expense':
-            by_cat[row['category']] = by_cat.get(row['category'], 0) + row['amount_cents']
-    category_totals = sorted(
-        ((name, total) for name, total in by_cat.items()),
-        key=lambda item: (-item[1], item[0].lower())
+            key = (row['category_id'], row['category'])
+            by_cat[key] = by_cat.get(key, 0) + row['amount_cents']
+
+    category_chart = sorted(
+        (
+            {'id': category_id, 'name': name, 'total': total}
+            for (category_id, name), total in by_cat.items()
+        ),
+        key=lambda item: (-item['total'], item['name'].lower())
     )
+    category_totals = [(item['name'], item['total']) for item in category_chart]
     top_categories = category_totals if top_limit is None else category_totals[:top_limit]
 
     # Ausreißererkennung über variable Einzelbuchungen.
@@ -1123,6 +1129,7 @@ def analysis(
         'rolling': rolling,
         'top_categories': top_categories,
         'category_totals': category_totals,
+        'category_chart': category_chart,
         'variable_expense_total': sum(variable_expense),
         'fixed_expense_total': sum(fixed_expense),
         'outliers': outliers,
@@ -1286,116 +1293,146 @@ def backup_database():
     )
 
 
+
+BENCHMARK_RUNS = 5
+BENCHMARK_K = 5
+BENCHMARK_SIZES = [1000, 5000, 10000, 50000, 100000]
+
+
+def synthetic_benchmark_data(size: int):
+    rng = random.Random(42)
+    return [
+        (rng.randrange(1, 21), rng.randrange(100, 100000))
+        for _ in range(size)
+    ]
+
+
+def measure_synthetic_benchmark(data, k: int = BENCHMARK_K, runs: int = BENCHMARK_RUNS):
+    target_category = 7
+    timings = {
+        'linear_us': [],
+        'hash_build_us': [],
+        'hash_lookup_us': [],
+        'sort_us': [],
+        'heap_us': [],
+    }
+
+    linear_matches = hash_matches = 0
+    sorted_top = []
+    heap_top = []
+    heap_ops = 0
+
+    for _ in range(runs):
+        start_ns = time.perf_counter_ns()
+        linear_matches = sum(1 for cid, _amount in data if cid == target_category)
+        timings['linear_us'].append((time.perf_counter_ns() - start_ns) / 1000)
+
+        start_ns = time.perf_counter_ns()
+        index = {}
+        for pos, (cid, _amount) in enumerate(data):
+            index.setdefault(cid, []).append(pos)
+        timings['hash_build_us'].append((time.perf_counter_ns() - start_ns) / 1000)
+
+        start_ns = time.perf_counter_ns()
+        hash_matches = len(index.get(target_category, []))
+        timings['hash_lookup_us'].append((time.perf_counter_ns() - start_ns) / 1000)
+
+        start_ns = time.perf_counter_ns()
+        sorted_top = sorted(
+            enumerate(data),
+            key=lambda item: (-item[1][1], item[0])
+        )[:k]
+        timings['sort_us'].append((time.perf_counter_ns() - start_ns) / 1000)
+
+        start_ns = time.perf_counter_ns()
+        heap = []
+        heap_ops = 0
+        for pos, (_cid, amount) in enumerate(data):
+            item = (amount, -pos, pos)
+            if len(heap) < k:
+                heapq.heappush(heap, item)
+                heap_ops += 1
+            elif item > heap[0]:
+                heapq.heapreplace(heap, item)
+                heap_ops += 1
+        heap_top = sorted(heap, reverse=True)
+        timings['heap_us'].append((time.perf_counter_ns() - start_ns) / 1000)
+
+    return {
+        'n': len(data),
+        'k': k,
+        'runs': runs,
+        'linear_matches': linear_matches,
+        'hash_matches': hash_matches,
+        'linear_us': statistics.median(timings['linear_us']),
+        'hash_build_us': statistics.median(timings['hash_build_us']),
+        'hash_lookup_us': statistics.median(timings['hash_lookup_us']),
+        'sort_us': statistics.median(timings['sort_us']),
+        'heap_us': statistics.median(timings['heap_us']),
+        'heap_ops': heap_ops,
+        'same_search_result': linear_matches == hash_matches,
+        'same_top_result': (
+            {pos for pos, _row in sorted_top}
+            == {pos for _amount, _neg, pos in heap_top}
+        ),
+    }
+
+
+def build_benchmark_series():
+    series = []
+    for size in BENCHMARK_SIZES:
+        result = measure_synthetic_benchmark(synthetic_benchmark_data(size))
+        series.append({
+            'n': size,
+            'linear_us': round(result['linear_us'], 2),
+            'hash_build_us': round(result['hash_build_us'], 2),
+            'hash_lookup_us': round(result['hash_lookup_us'], 2),
+            'sort_us': round(result['sort_us'], 2),
+            'heap_us': round(result['heap_us'], 2),
+        })
+    return series
+
+
 @app.get('/algorithm')
 def algorithm(request: Request, n: int = 10000):
     n = max(100, min(int(n), 100000))
-    k = 5
-    synthetic_categories = 20
-    target_category = 7
-
-    rng = random.Random(42)
-    synthetic = [
-        (rng.randrange(1, synthetic_categories + 1), rng.randrange(100, 100000))
-        for _ in range(n)
-    ]
-
-    start_ns = time.perf_counter_ns()
-    linear_matches = sum(1 for cid, _amount in synthetic if cid == target_category)
-    linear_us = (time.perf_counter_ns() - start_ns) / 1000
-
-    start_ns = time.perf_counter_ns()
-    index = {}
-    for pos, (cid, _amount) in enumerate(synthetic):
-        index.setdefault(cid, []).append(pos)
-    hash_build_us = (time.perf_counter_ns() - start_ns) / 1000
-
-    start_ns = time.perf_counter_ns()
-    hash_matches = len(index.get(target_category, []))
-    hash_lookup_us = (time.perf_counter_ns() - start_ns) / 1000
-
-    start_ns = time.perf_counter_ns()
-    sorted_top = sorted(
-        enumerate(synthetic),
-        key=lambda item: (-item[1][1], item[0])
-    )[:k]
-    sort_us = (time.perf_counter_ns() - start_ns) / 1000
-
-    start_ns = time.perf_counter_ns()
-    heap = []
-    heap_ops = 0
-    for pos, (_cid, amount) in enumerate(synthetic):
-        item = (amount, -pos, pos)
-        if len(heap) < k:
-            heapq.heappush(heap, item)
-            heap_ops += 1
-        elif item > heap[0]:
-            heapq.heapreplace(heap, item)
-            heap_ops += 1
-    heap_top = sorted(heap, reverse=True)
-    heap_us = (time.perf_counter_ns() - start_ns) / 1000
-
-    benchmark = {
-        'n': n,
-        'k': k,
-        'linear_matches': linear_matches,
-        'hash_matches': hash_matches,
-        'linear_us': linear_us,
-        'hash_build_us': hash_build_us,
-        'hash_lookup_us': hash_lookup_us,
-        'sort_us': sort_us,
-        'heap_us': heap_us,
-        'heap_ops': heap_ops,
-        'same_search_result': linear_matches == hash_matches,
-        'same_top_result': {pos for pos, _row in sorted_top} == {pos for _amount, _neg, pos in heap_top},
-    }
-
-    benchmark_series = []
-    for size in [1000, 5000, 10000, 50000, 100000]:
-        series_rng = random.Random(42)
-        data = [
-            (series_rng.randrange(1, synthetic_categories + 1), series_rng.randrange(100, 100000))
-            for _ in range(size)
-        ]
-
-        start_ns = time.perf_counter_ns()
-        sum(1 for cid, _amount in data if cid == target_category)
-        series_linear_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        series_index = {}
-        for pos, (cid, _amount) in enumerate(data):
-            series_index.setdefault(cid, []).append(pos)
-        series_build_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        len(series_index.get(target_category, []))
-        series_lookup_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        sorted(data, key=lambda item: item[1], reverse=True)[:k]
-        series_sort_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        series_heap = []
-        for pos, (_cid, amount) in enumerate(data):
-            item = (amount, pos)
-            if len(series_heap) < k:
-                heapq.heappush(series_heap, item)
-            elif item > series_heap[0]:
-                heapq.heapreplace(series_heap, item)
-        series_heap_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        benchmark_series.append({
-            'n': size,
-            'linear_us': round(series_linear_us, 2),
-            'hash_build_us': round(series_build_us, 2),
-            'hash_lookup_us': round(series_lookup_us, 2),
-            'sort_us': round(series_sort_us, 2),
-            'heap_us': round(series_heap_us, 2),
-        })
+    benchmark = measure_synthetic_benchmark(synthetic_benchmark_data(n))
+    benchmark_series = build_benchmark_series()
 
     return templates.TemplateResponse('algorithm.html', {
         'request': request,
         'benchmark': benchmark,
         'benchmark_series': benchmark_series,
+        'benchmark_runs': BENCHMARK_RUNS,
     })
+
+
+@app.get('/algorithm/benchmark.csv')
+def algorithm_benchmark_csv():
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=';')
+    writer.writerow([
+        'Transaktionen',
+        'Lineare Suche Median (µs)',
+        'Hash-Aufbau Median (µs)',
+        'Hash-Lookup Median (µs)',
+        'Sortierung Median (µs)',
+        'Min-Heap Median (µs)',
+        'Durchläufe',
+    ])
+    for row in build_benchmark_series():
+        writer.writerow([
+            row['n'],
+            f"{row['linear_us']:.2f}".replace('.', ','),
+            f"{row['hash_build_us']:.2f}".replace('.', ','),
+            f"{row['hash_lookup_us']:.2f}".replace('.', ','),
+            f"{row['sort_us']:.2f}".replace('.', ','),
+            f"{row['heap_us']:.2f}".replace('.', ','),
+            BENCHMARK_RUNS,
+        ])
+
+    return Response(
+        content='\ufeff' + output.getvalue(),
+        media_type='text/csv; charset=utf-8',
+        headers={'Content-Disposition': 'attachment; filename="fintra-benchmark.csv"'},
+    )

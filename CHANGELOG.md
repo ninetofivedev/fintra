@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.6.0-beta.34
+
+### Analytics & Benchmark
+- Monatsdiagramm auf Analytics ist klickbar und öffnet den gewählten Monat.
+- Kategorien-Diagramm ist klickbar und öffnet die Transaktionsübersicht mit Kategorie- und Jahresfilter.
+- Größte Einzelbuchungen verlinken direkt auf den zugehörigen Monat.
+- Synthetische Benchmarks werden fünfmal ausgeführt; angezeigt wird der Median.
+- Benchmark-Messreihe kann als CSV exportiert werden.
+- CSV enthält Datensatzgröße sowie Median-Laufzeiten für lineare Suche, Hash-Aufbau, Hash-Lookup, Sortierung und Min-Heap.
+
 ## 9.6.0-beta.33
 
 ### Analytics
