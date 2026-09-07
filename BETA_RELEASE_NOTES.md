@@ -5,7 +5,7 @@ Diese Version ist für den ersten GitHub/GHCR/TrueNAS-Beta-Workflow vorbereitet.
 Wichtig vor dem ersten Push:
 1. Prüfe README.md.
 2. Ersetze Platzhalter in `deploy/truenas-compose.yaml`.
-3. Committe niemals `data/haushaltsbuch.db`.
+3. Committe niemals `data/database.db`.
 4. Erstelle nach dem ersten Push den Tag `v9.6.0-beta.1`.
 5. Stelle das GHCR-Paket öffentlich oder hinterlege Registry-Credentials in TrueNAS.
 

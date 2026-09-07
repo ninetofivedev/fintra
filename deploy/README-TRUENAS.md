@@ -11,7 +11,7 @@
 ```text
 /mnt/POOL/apps/fintra/
 └── data/
-    ├── haushaltsbuch.db
+    ├── database.db
     └── .session_secret
 ```
 
@@ -30,7 +30,7 @@ beobachten kann, während GitHub bei jedem expliziten Fintra-Release dessen Dige
 Fintra veröffentlicht `latest` nur bei einem Git-Tag wie:
 
 ```text
-v9.6.0-beta.34
+v9.6.0-beta.35
 ```
 
 Dadurch ist ein einfacher Push auf `main` noch kein Server-Update.
@@ -51,3 +51,8 @@ FINTRA_HTTPS_ONLY: "1"
 ```
 
 Bei reinem HTTP im privaten LAN bleibt der Wert `0`.
+
+
+### Datenbank-Dateiname
+
+Seit Fintra 9.6.0-beta.35 lautet der Standard-Dateiname `database.db`. Liegt im eingebundenen `/app/data`-Verzeichnis noch die historische `haushaltsbuch.db`, wird sie beim ersten Start automatisch in `database.db` umbenannt. Ein explizit gesetzter `DB_PATH` bleibt unverändert.

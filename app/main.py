@@ -12,8 +12,27 @@ from fastapi.staticfiles import StaticFiles
 from .version import __version__
 
 BASE = Path(__file__).resolve().parent
-DB = Path(os.getenv('DB_PATH', '/app/data/haushaltsbuch.db'))
+
+_configured_db_path = os.getenv('DB_PATH')
+DB = Path(_configured_db_path or '/app/data/database.db')
 DB.parent.mkdir(parents=True, exist_ok=True)
+
+# Einmalige Migration des historischen Standard-Dateinamens.
+# Ein explizit gesetzter DB_PATH wird dabei niemals verändert.
+if not _configured_db_path:
+    legacy_db = DB.parent / 'haushaltsbuch.db'
+    if not DB.exists() and legacy_db.exists():
+        try:
+            legacy_db.replace(DB)
+            for suffix in ('-wal', '-shm'):
+                legacy_sidecar = Path(str(legacy_db) + suffix)
+                new_sidecar = Path(str(DB) + suffix)
+                if legacy_sidecar.exists():
+                    legacy_sidecar.replace(new_sidecar)
+        except OSError as exc:
+            raise RuntimeError(
+                f'Datenbank konnte nicht von {legacy_db} nach {DB} umbenannt werden.'
+            ) from exc
 
 def session_secret() -> str:
     configured = os.getenv('FINTRA_SECRET_KEY')

@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.35
+
+### Neuer Datenbank-Dateiname
+- Die Fintra-Datenbank heißt standardmäßig jetzt `database.db`.
+- Eine bestehende `haushaltsbuch.db` im Standard-Datenverzeichnis wird beim ersten Start automatisch und ohne Datenverlust umbenannt.
+- Benutzerdefinierte `DB_PATH`-Konfigurationen bleiben unverändert.
+
+---
+
 ## 9.6.0-beta.34
 
 ### Analytics & Benchmark

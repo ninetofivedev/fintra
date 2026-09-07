@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.6.0-beta.35
+
+### Datenbank
+- Standard-Dateiname der SQLite-Datenbank von `haushaltsbuch.db` auf `database.db` geändert.
+- Bestehende Installationen mit dem historischen Dateinamen werden beim ersten Start automatisch migriert.
+- Zugehörige SQLite-Dateien `-wal` und `-shm` werden bei Bedarf ebenfalls umbenannt.
+- Ein explizit gesetzter `DB_PATH` wird nicht verändert.
+- README und TrueNAS-Dokumentation auf den neuen Dateinamen aktualisiert.
+
 ## 9.6.0-beta.34
 
 ### Analytics & Benchmark

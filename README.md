@@ -13,7 +13,7 @@ It provides yearly and monthly overviews, recurring income and expenses, budgets
 financial analysis and visualizations while keeping your financial data on your own server.
 
 > **Beta:** Fintra is currently under active development.  
-> The current release is `9.6.0-beta.34`.
+> The current release is `9.6.0-beta.35`.
 
 
 ## Screenshots
@@ -165,7 +165,9 @@ Fintra stores its persistent application data in:
 This includes:
 
 ```text
-haushaltsbuch.db
+database.db
+
+> **Legacy database filename:** When using the default `/app/data` path, Fintra automatically renames an existing `haushaltsbuch.db` to `database.db` on first startup. An explicitly configured `DB_PATH` is never changed.
 .session_secret
 ```
 
@@ -209,7 +211,7 @@ A healthy instance responds with:
 ```json
 {
   "status": "ok",
-  "version": "9.6.0-beta.34"
+  "version": "9.6.0-beta.35"
 }
 ```
 
