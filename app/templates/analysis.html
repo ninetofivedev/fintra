@@ -265,14 +265,6 @@
   let categoryChart=null;
   let expenseSplitChart=null;
 
-  function compactCategoryData(){
-    const sorted=[...categoryTotals].sort((a,b)=>b[1]-a[1]);
-    if(sorted.length<=7) return sorted;
-    const top=sorted.slice(0,7);
-    const rest=sorted.slice(7).reduce((sum,item)=>sum+item[1],0);
-    return [...top,['Sonstiges',rest]];
-  }
-
   function buildAnalysisCharts(){
     const mobile=mobileChartQuery.matches;
 
@@ -376,8 +368,15 @@
     const categoryCtx=document.getElementById('categoryChart');
     if(categoryCtx && categoryTotals.length){
       const categoryView=mobile?'bar':desktopCategoryView;
-      const displayed=categoryView==='bar'?compactCategoryData():categoryTotals;
+      const displayed=categoryTotals;
       const horizontalBars=categoryView==='bar';
+
+      const categoryWrap=categoryCtx.closest('.category-analysis-chart');
+      if(categoryWrap){
+        categoryWrap.style.height=horizontalBars
+          ? `${Math.max(300, displayed.length * (mobile ? 34 : 38) + 70)}px`
+          : '';
+      }
 
       categoryChartButtons.forEach(button=>{
         const active=!mobile && button.dataset.analysisChartView===categoryView;

@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.33
+
+### Kategorien-Diagramm
+- Die Balkenansicht zeigt jetzt sämtliche Kategorien mit Ausgaben einzeln.
+- Es werden keine Kategorien mehr zu einer Sammelposition zusammengefasst.
+- Bei vielen Kategorien wächst das Diagramm automatisch in der Höhe.
+
+---
+
 ## 9.6.0-beta.32
 
 ### Kategorien-Diagramm

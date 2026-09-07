@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.33
+
+### Analytics
+- Balkendiagramm „Ausgaben nach Kategorie“ zeigt jetzt alle Kategorien mit Ausgaben.
+- Die bisherige Zusammenfassung auf Top 7 + Sammelkategorie wurde entfernt.
+- Die Höhe des horizontalen Balkendiagramms passt sich dynamisch an die Anzahl der Kategorien an.
+
 ## 9.6.0-beta.32
 
 ### Analytics
