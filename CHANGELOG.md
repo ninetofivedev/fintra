@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.6.0-beta.29
+
+### Analytics UI
+- Analytics-Seite sprachlich und visuell sachlicher gestaltet.
+- Hausarbeits-/Präsentationsformulierungen entfernt.
+- Nummerierte Themenkarten durch eine kompakte technische Verfahrensübersicht ersetzt.
+- Benchmark-Beschreibungen gekürzt und neutral formuliert.
+- Funktionen, Messungen und Pseudocode bleiben vollständig erhalten.
+
 ## 9.6.0-beta.28
 
 ### UI-Konsistenz

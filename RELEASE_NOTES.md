@@ -7,6 +7,16 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.29
+
+### Analytics Cleanup
+- Die Analytics-Seite wirkt jetzt stärker wie eine technische Analyseansicht.
+- Erklärtexte wurden gekürzt und neutraler formuliert.
+- Die auffällige Hausarbeits-Perspektive und nummerierte Präsentationskarten wurden entfernt.
+- Algorithmen, Benchmarks, Komplexitäten und Pseudocode bleiben erhalten.
+
+---
+
 ## 9.6.0-beta.28
 
 ### Einheitliche Seitenköpfe
