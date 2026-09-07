@@ -972,101 +972,92 @@ def delete_category(request: Request, cat_id:int, csrf_token:str=Form('')):
 def analysis(
     request: Request,
     year: int | None = None,
-    category_id: int | None = None,
-    n: int = 10000,
-    k: int = 5
+    month: int | None = None,
+    top: str = '5'
 ):
     y = year or date.today().year
-    n = max(100, min(int(n), 100000))
-    k = max(1, min(int(k), 20))
+    selected_month = month if month and 1 <= month <= 12 else (
+        date.today().month if y == date.today().year else 1
+    )
+
+    if str(top).lower() == 'all':
+        top_limit = None
+        top_value = 'all'
+    else:
+        try:
+            top_limit = max(1, min(int(top), 50))
+        except (TypeError, ValueError):
+            top_limit = 5
+        top_value = str(top_limit)
 
     c = db()
     rows = fetch_year_month_transactions(c, y)
-    cats = c.execute('SELECT * FROM categories WHERE active=1 ORDER BY type,name').fetchall()
     years = available_years(c, y)
+    fixed = c.execute(
+        'SELECT * FROM fixed_items WHERE year=? ORDER BY type,name,id',
+        (y,)
+    ).fetchall()
+
+    budgets = c.execute(
+        'SELECT b.*,c.name FROM budgets b JOIN categories c ON c.id=b.category_id '
+        'WHERE b.year=? AND b.month=? ORDER BY c.name',
+        (y, selected_month)
+    ).fetchall()
     c.close()
 
-    # Die Analyse echter Fintra-Daten bezieht sich vollständig auf das gewählte Jahr.
     idx = TransactionIndex(rows)
 
-    # ---------------------------------------------------------
-    # 1) Hash Map vs. lineare Suche – echte Fintra-Daten
-    # ---------------------------------------------------------
-    if cats:
-        selected_cat = next((cat for cat in cats if cat['id'] == category_id), cats[0])
-        selected_category_id = selected_cat['id']
-        selected_category_name = selected_cat['name']
-    else:
-        selected_category_id = None
-        selected_category_name = 'Keine Kategorie'
+    # Variable Buchungen pro Monat.
+    variable_income = [0] * 12
+    variable_expense = [0] * 12
+    for row in rows:
+        month_no = int(row['tx_date'][5:7]) - 1
+        if row['type'] == 'income':
+            variable_income[month_no] += row['amount_cents']
+        else:
+            variable_expense[month_no] += row['amount_cents']
 
-    linear_comparisons = 0
-    linear_matches = 0
-    if selected_category_id is not None:
-        for row in rows:
-            linear_comparisons += 1
-            if row['category_id'] == selected_category_id:
-                linear_matches += 1
-        hash_matches = idx.category_count(selected_category_id)
-    else:
-        hash_matches = 0
+    # Fixe Positionen pro Monat.
+    fixed_income = [0] * 12
+    fixed_expense = [0] * 12
+    for item in fixed:
+        target = fixed_income if item['type'] == 'income' else fixed_expense
+        for i, col in enumerate(COLS):
+            target[i] += item[col] or 0
 
-    # ---------------------------------------------------------
-    # 2) Sliding Window – O(n)
-    # ---------------------------------------------------------
-    monthly = []
-    for month_no in range(1, 13):
-        total = sum(
-            r['amount_cents']
-            for r in rows
-            if r['type'] == 'expense' and int(r['tx_date'][5:7]) == month_no
-        )
-        monthly.append(total)
+    monthly_income = [variable_income[i] + fixed_income[i] for i in range(12)]
+    monthly_expense = [variable_expense[i] + fixed_expense[i] for i in range(12)]
+    monthly_balance = [monthly_income[i] - monthly_expense[i] for i in range(12)]
 
+    annual_income = sum(monthly_income)
+    annual_expense = sum(monthly_expense)
+    annual_balance = annual_income - annual_expense
+    savings_rate = round((annual_balance / annual_income) * 100, 1) if annual_income else None
+
+    # Gleitender 3-Monats-Durchschnitt der Gesamtausgaben.
     rolling = []
-    window_size = 3
     running_sum = 0
-    for i, value in enumerate(monthly):
+    window_size = 3
+    for i, value in enumerate(monthly_expense):
         running_sum += value
         if i >= window_size:
-            running_sum -= monthly[i - window_size]
-        current_size = min(i + 1, window_size)
-        rolling.append(round(running_sum / current_size) if current_size else 0)
+            running_sum -= monthly_expense[i - window_size]
+        size = min(i + 1, window_size)
+        rolling.append(round(running_sum / size) if size else 0)
 
-    # ---------------------------------------------------------
-    # 3) Top-K mit Min-Heap – O(n log k)
-    # ---------------------------------------------------------
+    # Ausgaben nach Kategorie (variable Buchungen).
     by_cat = {}
     for row in rows:
         if row['type'] == 'expense':
             by_cat[row['category']] = by_cat.get(row['category'], 0) + row['amount_cents']
-
-    heap = []
-    heap_operations = 0
-    for name, total in by_cat.items():
-        item = (total, name)
-        if len(heap) < k:
-            heapq.heappush(heap, item)
-            heap_operations += 1
-        elif total > heap[0][0]:
-            heapq.heapreplace(heap, item)
-            heap_operations += 1
-
-    top = sorted(heap, reverse=True)
-
-    # Vergleich: vollständige Sortierung aller aggregierten Kategorien.
-    sorted_top = sorted(
-        ((total, name) for name, total in by_cat.items()),
-        reverse=True
-    )[:k]
-
-    # ---------------------------------------------------------
-    # 4) IQR-Ausreißer – O(n log n)
-    # ---------------------------------------------------------
-    expense_amounts = sorted(
-        r['amount_cents'] for r in rows if r['type'] == 'expense'
+    category_totals = sorted(
+        ((name, total) for name, total in by_cat.items()),
+        key=lambda item: (-item[1], item[0].lower())
     )
+    top_categories = category_totals if top_limit is None else category_totals[:top_limit]
 
+    # Ausreißererkennung über variable Einzelbuchungen.
+    expense_amounts = sorted(r['amount_cents'] for r in rows if r['type'] == 'expense')
     q1 = q3 = iqr = upper = 0
     outliers = []
     if len(expense_amounts) >= 4:
@@ -1076,173 +1067,25 @@ def analysis(
         q3 = statistics.median(upper_half)
         iqr = q3 - q1
         upper = q3 + 1.5 * iqr
-        outliers = [
-            r for r in rows
-            if r['type'] == 'expense' and r['amount_cents'] > upper
-        ][:8]
+        outliers = sorted(
+            (
+                r for r in rows
+                if r['type'] == 'expense' and r['amount_cents'] > upper
+            ),
+            key=lambda r: r['amount_cents'],
+            reverse=True
+        )[:8]
 
-    # ---------------------------------------------------------
-    # 5) Synthetischer Benchmark – nur RAM, niemals Datenbank
-    # ---------------------------------------------------------
-    rng = random.Random(42)
-    synthetic_categories = 20
-    synthetic = [
-        (rng.randrange(1, synthetic_categories + 1), rng.randrange(100, 100000))
-        for _ in range(n)
-    ]
-    target_category = 7
+    largest_expenses = sorted(
+        (r for r in rows if r['type'] == 'expense'),
+        key=lambda r: r['amount_cents'],
+        reverse=True
+    )[:5]
 
-    # Lineare Suche
-    start_ns = time.perf_counter_ns()
-    synthetic_linear_matches = 0
-    synthetic_linear_comparisons = 0
-    for cid, _amount in synthetic:
-        synthetic_linear_comparisons += 1
-        if cid == target_category:
-            synthetic_linear_matches += 1
-    linear_ns = time.perf_counter_ns() - start_ns
-
-    # Hash-Index: Aufbau O(n), Lookup durchschnittlich O(1)
-    start_ns = time.perf_counter_ns()
-    synthetic_index = {}
-    for pos, (cid, _amount) in enumerate(synthetic):
-        synthetic_index.setdefault(cid, []).append(pos)
-    hash_build_ns = time.perf_counter_ns() - start_ns
-
-    start_ns = time.perf_counter_ns()
-    synthetic_hash_matches = len(synthetic_index.get(target_category, []))
-    hash_lookup_ns = time.perf_counter_ns() - start_ns
-
-    # Top-K-Vergleich über alle n synthetischen Transaktionen.
-    # Damit beziehen sich Messung und Big-O-Angabe tatsächlich auf denselben Datenumfang.
-    start_ns = time.perf_counter_ns()
-    # Bei gleichen Beträgen entscheidet die ursprüngliche Position aufsteigend.
-    # Dadurch verwenden Vollsortierung und Heap exakt dieselbe Tie-Break-Regel.
-    synthetic_sorted_top = sorted(
-        enumerate(synthetic),
-        key=lambda item: (-item[1][1], item[0])
-    )[:k]
-    sort_ns = time.perf_counter_ns() - start_ns
-
-    start_ns = time.perf_counter_ns()
-    synthetic_heap = []
-    synthetic_heap_ops = 0
-    for pos, (_cid, amount) in enumerate(synthetic):
-        # Im Min-Heap ist bei gleichem Betrag die größere Position das
-        # "schlechtere" Element. So entspricht die Auswahl exakt der
-        # Tie-Break-Regel der Vollsortierung.
-        item = (amount, -pos, pos)
-        if len(synthetic_heap) < k:
-            heapq.heappush(synthetic_heap, item)
-            synthetic_heap_ops += 1
-        elif item > synthetic_heap[0]:
-            heapq.heapreplace(synthetic_heap, item)
-            synthetic_heap_ops += 1
-    synthetic_heap_top = sorted(synthetic_heap, reverse=True)
-    heap_ns = time.perf_counter_ns() - start_ns
-
-    # Grobe theoretische Operationsgrößen zur Veranschaulichung der Skalierung.
-    sort_work = round(n * math.log2(max(n, 2)))
-    heap_work = round(n * math.log2(max(k, 2)))
-
-    sorted_ids = {pos for pos, _row in synthetic_sorted_top}
-    heap_ids = {pos for _amount, _neg_pos, pos in synthetic_heap_top}
-
-    benchmark = {
-        'n': n,
-        'k': k,
-        'linear_matches': synthetic_linear_matches,
-        'hash_matches': synthetic_hash_matches,
-        'linear_comparisons': synthetic_linear_comparisons,
-        'linear_us': linear_ns / 1000,
-        'hash_build_us': hash_build_ns / 1000,
-        'hash_lookup_us': hash_lookup_ns / 1000,
-        'sort_us': sort_ns / 1000,
-        'heap_us': heap_ns / 1000,
-        'heap_ops': synthetic_heap_ops,
-        'sort_work': sort_work,
-        'heap_work': heap_work,
-        'same_search_result': synthetic_linear_matches == synthetic_hash_matches,
-        'same_top_result': sorted_ids == heap_ids,
-    }
-
-    # ---------------------------------------------------------
-    # 6) Skalierungs-Messreihe für die Hausarbeit
-    # ---------------------------------------------------------
-    # Jede Messgröße basiert auf deterministischen synthetischen Daten.
-    # Die Messreihe ist bewusst unabhängig von der gewählten Einzelgröße n,
-    # damit die Kurven über mehrere Datenmengen direkt vergleichbar bleiben.
-    benchmark_sizes = [1000, 5000, 10000, 50000, 100000]
-    benchmark_series = []
-    for size in benchmark_sizes:
-        series_rng = random.Random(42)
-        series_data = [
-            (series_rng.randrange(1, synthetic_categories + 1), series_rng.randrange(100, 100000))
-            for _ in range(size)
-        ]
-
-        start_ns = time.perf_counter_ns()
-        series_linear_matches = sum(1 for cid, _amount in series_data if cid == target_category)
-        series_linear_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        series_index = {}
-        for pos, (cid, _amount) in enumerate(series_data):
-            series_index.setdefault(cid, []).append(pos)
-        series_build_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        series_hash_matches = len(series_index.get(target_category, []))
-        series_lookup_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        sorted(series_data, key=lambda item: item[1], reverse=True)[:k]
-        series_sort_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        start_ns = time.perf_counter_ns()
-        series_heap = []
-        for pos, (_cid, amount) in enumerate(series_data):
-            item = (amount, pos)
-            if len(series_heap) < k:
-                heapq.heappush(series_heap, item)
-            elif amount > series_heap[0][0]:
-                heapq.heapreplace(series_heap, item)
-        series_heap_us = (time.perf_counter_ns() - start_ns) / 1000
-
-        benchmark_series.append({
-            'n': size,
-            'linear_us': round(series_linear_us, 2),
-            'hash_build_us': round(series_build_us, 2),
-            'hash_lookup_us': round(series_lookup_us, 2),
-            'sort_us': round(series_sort_us, 2),
-            'heap_us': round(series_heap_us, 2),
-            'same_search_result': series_linear_matches == series_hash_matches,
-        })
-
-    # Sliding-Window-Schritte als konkrete, nachvollziehbare Demonstration.
-    window_steps = []
-    for end_idx in range(2, len(monthly)):
-        start_idx = end_idx - 2
-        values = monthly[start_idx:end_idx + 1]
-        window_steps.append({
-            'months': MONTHS[start_idx:end_idx + 1],
-            'values': values,
-            'average': round(sum(values) / 3),
-        })
-
-    # Budgetstatus wie bisher.
-    current_month = date.today().month if y == date.today().year else 1
-    c = db()
-    budgets = c.execute(
-        'SELECT b.*,c.name FROM budgets b JOIN categories c ON c.id=b.category_id '
-        'WHERE b.year=? AND b.month=? ORDER BY c.name',
-        (y, current_month)
-    ).fetchall()
-    c.close()
-
+    # Budgetstatus für frei wählbaren Monat.
     spent_by = {}
     for row in rows:
-        if row['type'] == 'expense' and int(row['tx_date'][5:7]) == current_month:
+        if row['type'] == 'expense' and int(row['tx_date'][5:7]) == selected_month:
             spent_by[row['category']] = spent_by.get(row['category'], 0) + row['amount_cents']
 
     budget_rows = [
@@ -1256,38 +1099,42 @@ def analysis(
         for b in budgets
     ]
 
+    best_month_index = max(range(12), key=lambda i: monthly_balance[i]) if monthly_balance else 0
+    highest_expense_month_index = max(range(12), key=lambda i: monthly_expense[i]) if monthly_expense else 0
+
     return templates.TemplateResponse('analysis.html', {
         'request': request,
         'year': y,
         'years': years,
         'months_full': MONTHS,
-        'monthly': monthly,
+        'months_short': MONTHS_SHORT,
+        'selected_month': selected_month,
+        'selected_month_name': MONTHS[selected_month - 1],
+        'top_value': top_value,
+        'transaction_count': len(rows),
+        'index_categories': len(idx.by_category),
+        'annual_income': annual_income,
+        'annual_expense': annual_expense,
+        'annual_balance': annual_balance,
+        'savings_rate': savings_rate,
+        'monthly_income': monthly_income,
+        'monthly_expense': monthly_expense,
+        'monthly_balance': monthly_balance,
         'rolling': rolling,
-        'top': top,
-        'sorted_top': sorted_top,
-        'heap_operations': heap_operations,
+        'top_categories': top_categories,
+        'category_totals': category_totals,
+        'variable_expense_total': sum(variable_expense),
+        'fixed_expense_total': sum(fixed_expense),
         'outliers': outliers,
-        'q1': q1,
-        'q3': q3,
-        'iqr': iqr,
         'upper': upper,
+        'largest_expenses': largest_expenses,
+        'budget_rows': budget_rows,
+        'best_month_name': MONTHS[best_month_index],
+        'best_month_balance': monthly_balance[best_month_index],
+        'highest_expense_month_name': MONTHS[highest_expense_month_index],
+        'highest_expense_month_total': monthly_expense[highest_expense_month_index],
         'euros': euros,
         'date_de': date_de,
-        'budget_rows': budget_rows,
-        'current_month_name': MONTHS[current_month - 1],
-        'index_categories': len(idx.by_category),
-        'transaction_count': len(rows),
-        'cats': cats,
-        'selected_category_id': selected_category_id,
-        'selected_category_name': selected_category_name,
-        'linear_comparisons': linear_comparisons,
-        'linear_matches': linear_matches,
-        'hash_matches': hash_matches,
-        'benchmark': benchmark,
-        'benchmark_series': benchmark_series,
-        'window_steps': window_steps,
-        'expense_count': sum(1 for row in rows if row['type'] == 'expense'),
-        'k': k,
     })
 
 
@@ -1440,5 +1287,115 @@ def backup_database():
 
 
 @app.get('/algorithm')
-def algorithm(request:Request):
-    return templates.TemplateResponse('algorithm.html',{'request':request})
+def algorithm(request: Request, n: int = 10000, k: int = 5):
+    n = max(100, min(int(n), 100000))
+    k = max(1, min(int(k), 20))
+    synthetic_categories = 20
+    target_category = 7
+
+    rng = random.Random(42)
+    synthetic = [
+        (rng.randrange(1, synthetic_categories + 1), rng.randrange(100, 100000))
+        for _ in range(n)
+    ]
+
+    start_ns = time.perf_counter_ns()
+    linear_matches = sum(1 for cid, _amount in synthetic if cid == target_category)
+    linear_us = (time.perf_counter_ns() - start_ns) / 1000
+
+    start_ns = time.perf_counter_ns()
+    index = {}
+    for pos, (cid, _amount) in enumerate(synthetic):
+        index.setdefault(cid, []).append(pos)
+    hash_build_us = (time.perf_counter_ns() - start_ns) / 1000
+
+    start_ns = time.perf_counter_ns()
+    hash_matches = len(index.get(target_category, []))
+    hash_lookup_us = (time.perf_counter_ns() - start_ns) / 1000
+
+    start_ns = time.perf_counter_ns()
+    sorted_top = sorted(
+        enumerate(synthetic),
+        key=lambda item: (-item[1][1], item[0])
+    )[:k]
+    sort_us = (time.perf_counter_ns() - start_ns) / 1000
+
+    start_ns = time.perf_counter_ns()
+    heap = []
+    heap_ops = 0
+    for pos, (_cid, amount) in enumerate(synthetic):
+        item = (amount, -pos, pos)
+        if len(heap) < k:
+            heapq.heappush(heap, item)
+            heap_ops += 1
+        elif item > heap[0]:
+            heapq.heapreplace(heap, item)
+            heap_ops += 1
+    heap_top = sorted(heap, reverse=True)
+    heap_us = (time.perf_counter_ns() - start_ns) / 1000
+
+    benchmark = {
+        'n': n,
+        'k': k,
+        'linear_matches': linear_matches,
+        'hash_matches': hash_matches,
+        'linear_us': linear_us,
+        'hash_build_us': hash_build_us,
+        'hash_lookup_us': hash_lookup_us,
+        'sort_us': sort_us,
+        'heap_us': heap_us,
+        'heap_ops': heap_ops,
+        'same_search_result': linear_matches == hash_matches,
+        'same_top_result': {pos for pos, _row in sorted_top} == {pos for _amount, _neg, pos in heap_top},
+    }
+
+    benchmark_series = []
+    for size in [1000, 5000, 10000, 50000, 100000]:
+        series_rng = random.Random(42)
+        data = [
+            (series_rng.randrange(1, synthetic_categories + 1), series_rng.randrange(100, 100000))
+            for _ in range(size)
+        ]
+
+        start_ns = time.perf_counter_ns()
+        sum(1 for cid, _amount in data if cid == target_category)
+        series_linear_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        series_index = {}
+        for pos, (cid, _amount) in enumerate(data):
+            series_index.setdefault(cid, []).append(pos)
+        series_build_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        len(series_index.get(target_category, []))
+        series_lookup_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        sorted(data, key=lambda item: item[1], reverse=True)[:k]
+        series_sort_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        start_ns = time.perf_counter_ns()
+        series_heap = []
+        for pos, (_cid, amount) in enumerate(data):
+            item = (amount, pos)
+            if len(series_heap) < k:
+                heapq.heappush(series_heap, item)
+            elif item > series_heap[0]:
+                heapq.heapreplace(series_heap, item)
+        series_heap_us = (time.perf_counter_ns() - start_ns) / 1000
+
+        benchmark_series.append({
+            'n': size,
+            'linear_us': round(series_linear_us, 2),
+            'hash_build_us': round(series_build_us, 2),
+            'hash_lookup_us': round(series_lookup_us, 2),
+            'sort_us': round(series_sort_us, 2),
+            'heap_us': round(series_heap_us, 2),
+        })
+
+    return templates.TemplateResponse('algorithm.html', {
+        'request': request,
+        'benchmark': benchmark,
+        'benchmark_series': benchmark_series,
+    })

@@ -3034,3 +3034,189 @@ html[data-theme="dark"] .study-topic-number{color:#a5b4fc}
     grid-template-columns:1fr;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.30 – Financial Analytics
+   ========================================================= */
+.finance-analysis-kpis{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+
+.finance-main-chart{
+  height:330px;
+}
+
+.category-analysis-chart{
+  height:320px;
+}
+
+.split-chart{
+  height:230px;
+  margin-top:14px;
+}
+
+.analysis-inline-select{
+  flex:0 0 auto;
+}
+
+.analysis-inline-select select{
+  width:auto;
+  min-width:110px;
+}
+
+.split-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.split-summary>div,
+.finance-facts>div{
+  background:var(--input);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:13px 14px;
+}
+
+.split-summary span,
+.finance-facts span{
+  display:block;
+  color:var(--muted);
+  font-size:.78rem;
+  margin-bottom:5px;
+}
+
+.split-summary strong,
+.finance-facts strong{
+  display:block;
+  font-size:1.05rem;
+}
+
+.finance-facts{
+  display:grid;
+  gap:10px;
+}
+
+.finance-facts small{
+  display:block;
+  margin-top:5px;
+  font-weight:700;
+}
+
+.budget-analysis-head{
+  align-items:end;
+}
+
+.budget-analysis-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.budget-analysis-item{
+  padding:13px 14px;
+  background:var(--input);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
+.budget-analysis-item>div:first-child{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+}
+
+.budget-analysis-item small{
+  display:block;
+  margin-top:7px;
+  color:var(--muted);
+}
+
+.budget-progress{
+  height:7px;
+  overflow:hidden;
+  background:var(--border);
+  border-radius:999px;
+  margin-top:9px;
+}
+
+.budget-progress>span{
+  display:block;
+  height:100%;
+  background:currentColor;
+  border-radius:inherit;
+}
+
+.analysis-list{
+  display:grid;
+  gap:8px;
+}
+
+.analysis-list>div{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.analysis-list>div:last-child{
+  border-bottom:0;
+}
+
+.analysis-list>div>span{
+  min-width:0;
+}
+
+.analysis-list strong,
+.analysis-list small{
+  display:block;
+}
+
+.analysis-list small{
+  color:var(--muted);
+  margin-top:3px;
+  overflow-wrap:anywhere;
+}
+
+.analysis-list b{
+  white-space:nowrap;
+}
+
+@media(max-width:1100px){
+  .finance-analysis-kpis{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:760px){
+  .finance-analysis-kpis{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .budget-analysis-grid{
+    grid-template-columns:1fr;
+  }
+
+  .finance-main-chart,
+  .category-analysis-chart{
+    height:280px;
+  }
+}
+
+@media(max-width:520px){
+  .finance-analysis-kpis{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .budget-analysis-head{
+    align-items:flex-start;
+  }
+
+  .analysis-list>div{
+    gap:10px;
+  }
+}

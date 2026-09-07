@@ -7,524 +7,310 @@
 {% block content %}
 <header>
   <div>
-<h1>Fintra Analytics · {{year}}</h1>
-    <p class="muted">Finanzanalyse und interaktive Demonstration der verwendeten Algorithmen und Datenstrukturen.</p>
+    <h1>Fintra Analytics · {{year}}</h1>
+    <p class="muted">Finanzielle Entwicklung und Auswertung des ausgewählten Jahres.</p>
   </div>
   <div class="yearnav" aria-label="Jahr auswählen">
-    <a href="/analysis?year={{year-1}}&k={{k}}&n={{benchmark.n}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
+    <a href="/analysis?year={{year-1}}&month={{selected_month}}&top={{top_value}}" aria-label="Vorheriges Jahr"><span class="local-icon icon-chevron_left" aria-hidden="true"></span></a>
     <label class="year-select-label">
       <span class="sr-only">Jahr</span>
-      <select
-        class="year-select"
-        data-analysis-year-jump
-        aria-label="Jahr auswählen"
-      >
+      <select class="year-select" data-analysis-year-jump aria-label="Jahr auswählen">
         {% for y in years %}
-          <option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>
+        <option value="{{y}}" {% if y==year %}selected{% endif %}>{{y}}</option>
         {% endfor %}
       </select>
     </label>
-    <a href="/analysis?year={{year+1}}&k={{k}}&n={{benchmark.n}}" aria-label="Nächstes Jahr"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
+    <a href="/analysis?year={{year+1}}&month={{selected_month}}&top={{top_value}}" aria-label="Nächstes Jahr"><span class="local-icon icon-chevron_right" aria-hidden="true"></span></a>
   </div>
 </header>
 
-<section class="analysis-kpis">
+<section class="analysis-kpis finance-analysis-kpis">
   <div><span>Transaktionen</span><strong>{{transaction_count}}</strong></div>
   <div><span>Kategorie-Indizes</span><strong>{{index_categories}}</strong></div>
-  <div><span>Top-K</span><strong>{{k}}</strong></div>
-  <div><span>Testdatensatz</span><strong>{{"{:,}".format(benchmark.n).replace(",", ".")}}</strong></div>
+  <div><span>Einnahmen</span><strong class="amount-positive">{{euros(annual_income)}}</strong></div>
+  <div><span>Ausgaben</span><strong class="amount-negative">{{euros(annual_expense)}}</strong></div>
+  <div><span>Jahresüberschuss</span><strong class="{{'amount-positive' if annual_balance >= 0 else 'amount-negative'}}">{{euros(annual_balance)}}</strong></div>
 </section>
 
-<section class="analysis-card analysis-wide analysis-overview">
-  <div class="analysis-card-head">
-    <div>
-      <span class="algo-label">Überblick</span>
-      <h2>Verwendete Verfahren</h2>
-      <p class="muted">Algorithmen und Datenstrukturen, die auf dieser Seite untersucht werden.</p>
+<section class="analysis-hero-grid finance-chart-grid">
+  <article class="analysis-card">
+    <div class="analysis-card-head">
+      <div>
+        <h2>Monatliche Entwicklung</h2>
+        <p class="muted">Einnahmen und Ausgaben inklusive fixer Positionen.</p>
+      </div>
     </div>
-    <span class="study-dataset-badge">{{transaction_count}} echte · max. 100.000 synthetische Transaktionen</span>
-  </div>
+    <div class="chart-container finance-main-chart"><canvas id="monthlyFinanceChart"></canvas></div>
+  </article>
 
-  <div class="analysis-method-grid">
-    <div><strong>Lineare Suche / Hash Map</strong><code>O(n) / Ø O(1)</code></div>
-    <div><strong>Top-K / Min-Heap</strong><code>O(n log k)</code></div>
-    <div><strong>Sliding Window</strong><code>O(n)</code></div>
-    <div><strong>IQR</strong><code>O(n log n)</code></div>
-  </div>
+  <article class="analysis-card">
+    <div class="analysis-card-head">
+      <div>
+        <h2>Gleitender 3-Monats-Durchschnitt</h2>
+        <p class="muted">Entwicklung der Ausgaben über das Jahr.</p>
+      </div>
+    </div>
+    <div class="chart-container finance-main-chart"><canvas id="rollingChart"></canvas></div>
+  </article>
 </section>
 
 <section class="analysis-hero-grid">
   <article class="analysis-card">
     <div class="analysis-card-head">
       <div>
-        <span class="algo-label">Datenstruktur</span>
-        <h2>Hash Map vs. lineare Suche</h2>
-      </div>
-      <code>Ø O(1) vs. O(n)</code>
-    </div>
-
-    <form method="get" action="/analysis" class="analysis-control-row">
-      <input type="hidden" name="year" value="{{year}}">
-      <input type="hidden" name="n" value="{{benchmark.n}}">
-      <input type="hidden" name="k" value="{{k}}">
-      <label>Kategorie
-        <select name="category_id" onchange="this.form.submit()">
-          {% for c in cats %}
-          <option value="{{c.id}}" {% if c.id==selected_category_id %}selected{% endif %}>{{c.name}} · {{'Einnahme' if c.type=='income' else 'Ausgabe'}}</option>
-          {% endfor %}
-        </select>
-      </label>
-    </form>
-
-    <div class="comparison-grid">
-      <div class="comparison-box">
-        <span>Lineare Suche</span>
-        <strong>{{linear_comparisons}}</strong>
-        <small>geprüfte Einträge</small>
-        <code>O(n)</code>
-      </div>
-      <div class="comparison-arrow"><span class="local-icon icon-arrow_forward" aria-hidden="true"></span></div>
-      <div class="comparison-box comparison-highlight">
-        <span>Hash-Index</span>
-        <strong>1</strong>
-        <small>Indexzugriff</small>
-        <code>Ø O(1)</code>
+        <h2>Ausgaben nach Kategorie</h2>
+        <p class="muted">Verteilung der variablen Ausgaben im Jahr {{year}}.</p>
       </div>
     </div>
-
-    <p class="analysis-result">
-      Ergebnis für <b>{{selected_category_name}}</b>:
-      <strong>{{hash_matches}}</strong> Transaktionen.
-      {% if linear_matches == hash_matches %}
-        <span class="check-badge"><span class="local-icon icon-check_circle" aria-hidden="true"></span> identisches Ergebnis</span>
-      {% endif %}
-    </p>
-
-    <div class="index-visual">
-      <span class="index-key">{{selected_category_name}}</span>
-      <span><span class="local-icon icon-arrow_forward inline-material-icon" aria-hidden="true"></span></span>
-      <span class="index-bucket">[ {{hash_matches}} Transaktions-IDs ]</span>
-    </div>
-
-    <div class="theory-practice-grid">
-      <div><span>Einsatz</span><p>Alle Transaktionen einer Kategorie finden, ohne den gesamten Jahresdatensatz für jede Abfrage erneut zu durchsuchen.</p></div>
-      <div><span>Datenstruktur</span><p><code>dict</code> / Hash Map: <code>category_id → Liste von Transaktionen</code>. Aufbau <code>O(n)</code>, Lookup durchschnittlich <code>O(1)</code>, Speicher <code>O(n)</code>.</p></div>
-    </div>
-    <details class="pseudo-block">
-      <summary>Pseudocode anzeigen</summary>
-      <pre><code>index = leere HashMap
-für transaktion in transaktionen:
-    index[transaktion.kategorie].anhängen(transaktion)
-
-ergebnis = index[gesuchte_kategorie]</code></pre>
-    </details>
+    {% if category_totals %}
+    <div class="chart-container category-analysis-chart"><canvas id="categoryChart"></canvas></div>
+    {% else %}
+    <div class="empty-state compact"><strong>Keine Ausgaben vorhanden</strong><span>Für {{year}} sind noch keine variablen Ausgaben erfasst.</span></div>
+    {% endif %}
   </article>
 
   <article class="analysis-card">
     <div class="analysis-card-head">
       <div>
-        <span class="algo-label">Algorithmus</span>
-        <h2>Top-K mit Min-Heap</h2>
+        <h2>Top-Kategorien</h2>
+        <p class="muted">Kategorien mit den höchsten variablen Ausgaben.</p>
       </div>
-      <code>O(n log k)</code>
+      <form method="get" action="/analysis" class="analysis-inline-select">
+        <input type="hidden" name="year" value="{{year}}">
+        <input type="hidden" name="month" value="{{selected_month}}">
+        <label>
+          <span class="sr-only">Anzahl Kategorien</span>
+          <select name="top" onchange="this.form.submit()" aria-label="Anzahl Kategorien">
+            {% for value in ['3','5','8','10'] %}
+            <option value="{{value}}" {% if top_value==value %}selected{% endif %}>Top {{value}}</option>
+            {% endfor %}
+            <option value="all" {% if top_value=='all' %}selected{% endif %}>Alle</option>
+          </select>
+        </label>
+      </form>
     </div>
-
-    <form method="get" action="/analysis" class="analysis-control-row">
-      <input type="hidden" name="year" value="{{year}}">
-      <input type="hidden" name="n" value="{{benchmark.n}}">
-      {% if selected_category_id %}<input type="hidden" name="category_id" value="{{selected_category_id}}">{% endif %}
-      <label>k
-        <select name="k" onchange="this.form.submit()">
-          {% for value in [3,5,8,10] %}
-          <option value="{{value}}" {% if value==k %}selected{% endif %}>Top {{value}}</option>
-          {% endfor %}
-        </select>
-      </label>
-    </form>
-
     <ol class="top-k-list">
-      {% for total,name in top %}
+      {% for name,total in top_categories %}
       <li>
         <span class="rank-number">{{loop.index}}</span>
         <span>{{name}}</span>
-        <b>{{euros(total)}}</b>
+        <b class="amount-negative">{{euros(total)}}</b>
       </li>
       {% else %}
       <li class="muted">Noch keine Ausgaben vorhanden.</li>
       {% endfor %}
     </ol>
-
-    <div class="heap-demo">
-      <div class="heap-node heap-root">{{top[-1][1] if top else '—'}}</div>
-      <div class="heap-children">
-        {% if top|length > 1 %}<div class="heap-node">{{top[-2][1]}}</div>{% endif %}
-        {% if top|length > 2 %}<div class="heap-node">{{top[-3][1]}}</div>{% endif %}
-      </div>
-    </div>
-
-    <p class="muted">Heap-Operationen auf den aggregierten Kategorien: <b>{{heap_operations}}</b>. Eine vollständige Sortierung müsste alle Kategorien sortieren.</p>
-    <div class="theory-practice-grid">
-      <div><span>Einsatz</span><p>Nur die {{k}} größten Ausgabenkategorien ermitteln, ohne alle Kategorien vollständig zu sortieren.</p></div>
-      <div><span>Datenstruktur</span><p>Min-Heap mit höchstens <code>k</code> Elementen. Zeit <code>O(n log k)</code>, zusätzlicher Speicher <code>O(k)</code>.</p></div>
-    </div>
-    <details class="pseudo-block">
-      <summary>Pseudocode anzeigen</summary>
-      <pre><code>heap = leer
-für kandidat in daten:
-    wenn größe(heap) &lt; k: einfügen(kandidat)
-    sonst wenn kandidat &gt; minimum(heap):
-        minimum ersetzen
-
-gib heap zurück</code></pre>
-    </details>
   </article>
-</section>
-
-<section class="analysis-card analysis-wide">
-  <div class="analysis-card-head">
-    <div>
-      <span class="algo-label">Sliding Window</span>
-      <h2>Gleitender 3-Monats-Durchschnitt</h2>
-    </div>
-    <code>O(n)</code>
-  </div>
-
-  <div class="sliding-layout">
-    <div class="chart-container analysis-chart">
-      <canvas id="slidingChart"></canvas>
-    </div>
-
-    <div class="sliding-explainer">
-      <div class="window-example">
-        <span>Fenstergröße</span>
-        <strong>3 Monate</strong>
-      </div>
-      <p>Beim Verschieben des Fensters wird der neue Monatswert addiert und der älteste entfernt. Dadurch muss die Summe nicht jedes Mal neu berechnet werden.</p>
-      <div class="complexity-line"><span>Naiver Ansatz</span><code>O(n · k)</code></div>
-      <div class="complexity-line"><span>Sliding Window</span><code>O(n)</code></div>
-      {% if window_steps %}
-      <div class="window-step-demo">
-        <span class="window-step-label">Beispiel</span>
-        {% for step in window_steps[:3] %}
-        <div><strong>{{step.months|join(' + ')}}</strong><span>→ {{euros(step.average)}} Ø</span></div>
-        {% endfor %}
-      </div>
-      {% endif %}
-      <details class="pseudo-block">
-        <summary>Pseudocode anzeigen</summary>
-        <pre><code>summe = 0
-für i von 0 bis n-1:
-    summe += wert[i]
-    wenn i ≥ fenstergröße:
-        summe -= wert[i-fenstergröße]
-    mittelwert = summe / aktuelle_fenstergröße</code></pre>
-      </details>
-    </div>
-  </div>
 </section>
 
 <section class="analysis-hero-grid">
   <article class="analysis-card">
     <div class="analysis-card-head">
       <div>
-        <span class="algo-label">Statistischer Algorithmus</span>
-        <h2>IQR-Ausreißererkennung</h2>
+        <h2>Fixe und variable Ausgaben</h2>
+        <p class="muted">Aufteilung der Jahresausgaben.</p>
       </div>
-      <code>O(n log n)</code>
     </div>
-
-    <div class="quartile-track">
-      <div class="quartile-point"><span>Q1</span><b>{{euros(q1|round|int)}}</b></div>
-      <div class="quartile-line"></div>
-      <div class="quartile-point"><span>Q3</span><b>{{euros(q3|round|int)}}</b></div>
-      <div class="quartile-line warning-line"></div>
-      <div class="quartile-point danger"><span>Schwelle</span><b>{{euros(upper|round|int)}}</b></div>
+    <div class="split-summary">
+      <div><span>Fix</span><strong class="amount-negative">{{euros(fixed_expense_total)}}</strong></div>
+      <div><span>Variabel</span><strong class="amount-negative">{{euros(variable_expense_total)}}</strong></div>
     </div>
-
-    <div class="iqr-formula">
-      <code>IQR = Q3 − Q1 = {{euros(iqr|round|int)}}</code>
-      <code>Schwelle = Q3 + 1,5 × IQR</code>
-    </div>
-
-    {% if outliers %}
-    <div class="outlier-list">
-      {% for r in outliers %}
-      <div>
-        <span><span class="local-icon icon-warning inline-material-icon warning-material-icon" aria-hidden="true"></span> {{ date_de(r.tx_date) }} · {{r.category}}</span>
-        <b>{{euros(r.amount_cents)}}</b>
-        {% if r.comment %}<small>{{r.comment}}</small>{% endif %}
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <p class="muted">Für {{year}} wurden keine statistisch auffälligen Ausgaben erkannt.</p>
+    {% if fixed_expense_total or variable_expense_total %}
+    <div class="chart-container split-chart"><canvas id="expenseSplitChart"></canvas></div>
     {% endif %}
-    <div class="theory-practice-grid single-row">
-      <div><span>Theorie</span><p>Die Ausgaben werden sortiert, Quartile bestimmt und Werte oberhalb von <code>Q3 + 1,5 × IQR</code> markiert. Der dominante Schritt ist die Sortierung mit <code>O(n log n)</code>.</p></div>
-    </div>
-    <details class="pseudo-block">
-      <summary>Pseudocode anzeigen</summary>
-      <pre><code>werte sortieren
-Q1 = erstes Quartil
-Q3 = drittes Quartil
-IQR = Q3 - Q1
-grenze = Q3 + 1.5 * IQR
-ausreißer = werte über grenze</code></pre>
-    </details>
   </article>
 
   <article class="analysis-card">
     <div class="analysis-card-head">
       <div>
-        <span class="algo-label">Praxisbezug</span>
-        <h2>Budgetstatus · {{current_month_name}}</h2>
+        <h2>Jahreskennzahlen</h2>
+        <p class="muted">Zusätzliche Kennzahlen für {{year}}.</p>
       </div>
-      <code>Aggregation</code>
     </div>
-
-    {% if budget_rows %}
-    <div class="analysis-budget-list">
-      {% for b in budget_rows %}
+    <div class="finance-facts">
       <div>
-        <div><span>{{b.name}}</span><b>{{b.pct}} %</b></div>
-        <div class="mini-progress"><i style="width:{{100 if b.pct>100 else b.pct}}%" class="{{'over' if b.pct>100 else 'warn' if b.pct>=80 else ''}}"></i></div>
-        <small>{{euros(b.spent)}} / {{euros(b.budget)}}</small>
+        <span>Sparquote</span>
+        <strong>{% if savings_rate is not none %}{{'%.1f'|format(savings_rate)}} %{% else %}–{% endif %}</strong>
+      </div>
+      <div>
+        <span>Bester Monat</span>
+        <strong>{{best_month_name}}</strong>
+        <small class="{{'amount-positive' if best_month_balance >= 0 else 'amount-negative'}}">{{euros(best_month_balance)}}</small>
+      </div>
+      <div>
+        <span>Höchste Monatsausgaben</span>
+        <strong>{{highest_expense_month_name}}</strong>
+        <small class="amount-negative">{{euros(highest_expense_month_total)}}</small>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section class="analysis-card analysis-wide">
+  <div class="analysis-card-head budget-analysis-head">
+    <div>
+      <h2>Budgetstatus · {{selected_month_name}}</h2>
+      <p class="muted">Verbrauch der hinterlegten Monatsbudgets.</p>
+    </div>
+    <form method="get" action="/analysis" class="analysis-inline-select">
+      <input type="hidden" name="year" value="{{year}}">
+      <input type="hidden" name="top" value="{{top_value}}">
+      <label>
+        <span class="sr-only">Monat auswählen</span>
+        <select name="month" onchange="this.form.submit()" aria-label="Monat auswählen">
+          {% for name in months_full %}
+          <option value="{{loop.index}}" {% if selected_month==loop.index %}selected{% endif %}>{{name}}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </form>
+  </div>
+
+  {% if budget_rows %}
+  <div class="budget-analysis-grid">
+    {% for b in budget_rows %}
+    <div class="budget-analysis-item">
+      <div><strong>{{b.name}}</strong><span>{{b.pct}} %</span></div>
+      <div class="budget-progress"><span style="width:{{ [b.pct,100]|min }}%"></span></div>
+      <small><b class="amount-negative">{{euros(b.spent)}}</b> von <b class="table-amount-neutral">{{euros(b.budget)}}</b></small>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state compact"><strong>Keine Budgets vorhanden</strong><span>Für {{selected_month_name}} {{year}} wurden keine Budgets angelegt.</span></div>
+  {% endif %}
+</section>
+
+<section class="analysis-hero-grid">
+  <article class="analysis-card">
+    <div class="analysis-card-head">
+      <div>
+        <h2>Ausreißererkennung</h2>
+        <p class="muted">Ungewöhnlich hohe variable Einzelbuchungen.</p>
+      </div>
+    </div>
+    {% if outliers %}
+    <div class="analysis-list">
+      {% for r in outliers %}
+      <div>
+        <span><strong>{{r.category}}</strong><small>{{date_de(r.tx_date)}}{% if r.comment %} · {{r.comment}}{% endif %}</small></span>
+        <b class="amount-negative">{{euros(r.amount_cents)}}</b>
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <p class="muted">Für diesen Zeitraum sind noch keine Budgets definiert.</p>
-    <a class="btn" href="/budgets?year={{year}}">Budgets anlegen</a>
+    <div class="empty-state compact"><strong>Keine auffälligen Buchungen</strong><span>Im ausgewählten Jahr wurden keine deutlichen Ausreißer erkannt.</span></div>
     {% endif %}
   </article>
-</section>
 
-<section class="analysis-card analysis-wide synthetic-section">
-  <div class="analysis-card-head">
-    <div>
-      <span class="algo-label">Experiment</span>
-      <h2>Synthetischer Performance-Test</h2>
-      <p class="muted">Die Testdaten werden ausschließlich im RAM erzeugt und niemals in deine Finanzdatenbank geschrieben.</p>
+  <article class="analysis-card">
+    <div class="analysis-card-head">
+      <div>
+        <h2>Größte Einzelbuchungen</h2>
+        <p class="muted">Die fünf höchsten variablen Ausgaben des Jahres.</p>
+      </div>
     </div>
-    <code>reproduzierbar · Seed 42</code>
-  </div>
-
-  <form method="get" action="/analysis" class="benchmark-controls">
-    <input type="hidden" name="year" value="{{year}}">
-    <input type="hidden" name="k" value="{{k}}">
-    {% if selected_category_id %}<input type="hidden" name="category_id" value="{{selected_category_id}}">{% endif %}
-    <label>Datensatzgröße
-      <select name="n" onchange="this.form.submit()">
-        {% for value in [100,1000,10000,50000,100000] %}
-        <option value="{{value}}" {% if value==benchmark.n %}selected{% endif %}>{{"{:,}".format(value).replace(",", ".")}} Transaktionen</option>
-        {% endfor %}
-      </select>
-    </label>
-  </form>
-
-  <div class="benchmark-grid">
-    <article>
-      <h3>Lineare Suche</h3>
-      <div class="benchmark-number">{{"{:,}".format(benchmark.linear_comparisons).replace(",", ".")}}</div>
-      <span>Vergleiche</span>
-      <code>O(n)</code>
-      <small>Messung: {{'%.1f'|format(benchmark.linear_us)}} µs</small>
-    </article>
-
-    <article>
-      <h3>Hash-Map Lookup</h3>
-      <div class="benchmark-number">1</div>
-      <span>Lookup nach Indexaufbau</span>
-      <code>Ø O(1)</code>
-      <small>Aufbau: {{'%.1f'|format(benchmark.hash_build_us)}} µs · Lookup: {{'%.1f'|format(benchmark.hash_lookup_us)}} µs</small>
-    </article>
-
-    <article>
-      <h3>Vollständige Sortierung</h3>
-      <div class="benchmark-number">{{"{:,}".format(benchmark.sort_work).replace(",", ".")}}</div>
-      <span>theoretische Arbeit ~ n log₂ n</span>
-      <code>O(n log n)</code>
-      <small>Messung: {{'%.1f'|format(benchmark.sort_us)}} µs</small>
-    </article>
-
-    <article>
-      <h3>Min-Heap Top {{k}}</h3>
-      <div class="benchmark-number">{{"{:,}".format(benchmark.heap_work).replace(",", ".")}}</div>
-      <span>theoretische Arbeit ~ n log₂ k</span>
-      <code>O(n log k)</code>
-      <small>Messung: {{'%.1f'|format(benchmark.heap_us)}} µs</small>
-    </article>
-  </div>
-
-  <div class="benchmark-notes">
-    <span class="{{'check-badge' if benchmark.same_search_result else 'error-badge'}}">
-      <span class="local-icon {{ 'icon-check_circle' if benchmark.same_search_result else 'icon-error' }}" aria-hidden="true"></span> Suchergebnisse identisch
-    </span>
-    <span class="{{'check-badge' if benchmark.same_top_result else 'error-badge'}}">
-      <span class="local-icon {{ 'icon-check_circle' if benchmark.same_top_result else 'icon-error' }}" aria-hidden="true"></span>
-      {{ 'Top-K-Ergebnisse stimmen überein' if benchmark.same_top_result else 'Top-K-Ergebnisse unterscheiden sich' }}
-    </span>
-    <span class="muted">Die Messwerte hängen von der verwendeten Hardware und Laufzeitumgebung ab.</span>
-  </div>
-</section>
-
-<section class="analysis-card analysis-wide benchmark-series-section">
-  <div class="analysis-card-head">
-    <div>
-      <span class="algo-label">Laufzeitmessung</span>
-      <h2>Skalierung</h2>
-      <p class="muted">Messwerte für fünf Datensatzgrößen mit identisch erzeugten Testdaten.</p>
+    {% if largest_expenses %}
+    <div class="analysis-list">
+      {% for r in largest_expenses %}
+      <div>
+        <span><strong>{{r.category}}</strong><small>{{date_de(r.tx_date)}}{% if r.comment %} · {{r.comment}}{% endif %}</small></span>
+        <b class="amount-negative">{{euros(r.amount_cents)}}</b>
+      </div>
+      {% endfor %}
     </div>
-    <code>1.000 → 100.000</code>
-  </div>
-
-  <div class="benchmark-series-layout">
-    <div class="chart-container benchmark-series-chart"><canvas id="benchmarkChart"></canvas></div>
-    <div class="theory-measure-boxes">
-      <div><span>Lineare Suche</span><strong>O(n)</strong><small>Prüft den Datenbestand sequenziell.</small></div>
-      <div><span>Hash-Lookup</span><strong>Ø O(1)</strong><small>Direkter Zugriff über den aufgebauten Index.</small></div>
-      <div><span>Indexaufbau</span><strong>O(n)</strong><small>Der Index wird einmal über den Datenbestand aufgebaut.</small></div>
-      <div><span>Top-K</span><strong>O(n log k)</strong><small>Es werden nur k Elemente im Heap gehalten.</small></div>
-    </div>
-  </div>
-
-  <div class="complexity-table-wrap benchmark-table-wrap">
-    <table class="complexity-table benchmark-series-table">
-      <thead><tr><th>n</th><th>Linear</th><th>Hash-Aufbau</th><th>Hash-Lookup</th><th>Sortierung</th><th>Min-Heap</th></tr></thead>
-      <tbody>
-        {% for row in benchmark_series %}
-        <tr>
-          <td>{{"{:,}".format(row.n).replace(",", ".")}}</td>
-          <td>{{'%.1f'|format(row.linear_us)}} µs</td>
-          <td>{{'%.1f'|format(row.hash_build_us)}} µs</td>
-          <td>{{'%.1f'|format(row.hash_lookup_us)}} µs</td>
-          <td>{{'%.1f'|format(row.sort_us)}} µs</td>
-          <td>{{'%.1f'|format(row.heap_us)}} µs</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <div class="research-note">
-    <strong>Hinweis:</strong> Der Hash-Index verursacht beim Aufbau <code>O(n)</code>. Einzelne Abfragen erfolgen anschließend durchschnittlich in <code>O(1)</code>.
-  </div>
-</section>
-
-<section class="analysis-card analysis-wide">
-  <div class="analysis-card-head">
-    <div>
-      <span class="algo-label">Komplexitätsübersicht</span>
-      <h2>Komplexitäten</h2>
-    </div>
-    <a class="btn" href="/algorithm">Details</a>
-  </div>
-
-  <div class="complexity-table-wrap">
-    <table class="complexity-table">
-      <thead>
-        <tr><th>Problem</th><th>Datenstruktur / Algorithmus</th><th>Zeit</th><th>Zusatzspeicher</th><th>Warum?</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Kategorie finden</td><td>Hash Map</td><td><code>Ø O(1)</code></td><td><code>O(n)</code></td><td>Direkter Zugriff über Kategorie-ID.</td></tr>
-        <tr><td>Top-K Kategorien</td><td>Min-Heap</td><td><code>O(n log k)</code></td><td><code>O(k)</code></td><td>Nur k Kandidaten bleiben im Heap.</td></tr>
-        <tr><td>Gleitender Mittelwert</td><td>Sliding Window</td><td><code>O(n)</code></td><td><code>O(1)</code></td><td>Alten Wert entfernen, neuen addieren.</td></tr>
-        <tr><td>Ausreißer erkennen</td><td>Sortierung + IQR</td><td><code>O(n log n)</code></td><td><code>O(n)</code></td><td>Quartile benötigen geordnete Werte.</td></tr>
-        <tr><td>Historische DB-Suche</td><td>SQLite B-Tree Index</td><td><code>O(log n)</code></td><td><code>O(n)</code></td><td>Index auf Datum und Kategorie.</td></tr>
-      </tbody>
-    </table>
-  </div>
+    {% else %}
+    <div class="empty-state compact"><strong>Keine Ausgaben vorhanden</strong><span>Für {{year}} wurden noch keine variablen Ausgaben erfasst.</span></div>
+    {% endif %}
+  </article>
 </section>
 {% endblock %}
 
 {% block scripts %}
 <script>
-const monthly={{monthly|tojson}};
-const rolling={{rolling|tojson}};
-const labels={{months_full|tojson}};
-const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(v/100);
-const benchmarkSeries={{benchmark_series|tojson}};
-
-const ctx=document.getElementById('slidingChart');
-if(ctx){
-  new Chart(ctx,{
-    type:'line',
-    data:{
-      labels,
-      datasets:[
-        {
-          label:'Monatliche Ausgaben',
-          data:monthly,
-          borderColor:'#dc2626',
-          backgroundColor:'rgba(220,38,38,.10)',
-          tension:.28,
-          fill:true,
-          pointRadius:3
-        },
-        {
-          label:'3-Monats-Durchschnitt',
-          data:rolling,
-          borderColor:'#4f46e5',
-          backgroundColor:'rgba(79,70,229,.08)',
-          tension:.28,
-          borderWidth:3,
-          pointRadius:4
-        }
-      ]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},
-      scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}}}
-    }
-  });
-}
-
-const benchmarkCtx=document.getElementById('benchmarkChart');
-if(benchmarkCtx){
-  new Chart(benchmarkCtx,{
-    type:'line',
-    data:{
-      labels:benchmarkSeries.map(r=>new Intl.NumberFormat('de-DE').format(r.n)),
-      datasets:[
-        {label:'Lineare Suche',data:benchmarkSeries.map(r=>r.linear_us),tension:.25,pointRadius:3},
-        {label:'Hash-Index Aufbau',data:benchmarkSeries.map(r=>r.hash_build_us),tension:.25,pointRadius:3},
-        {label:'Hash-Lookup',data:benchmarkSeries.map(r=>r.hash_lookup_us),tension:.25,pointRadius:3},
-        {label:'Vollständige Sortierung',data:benchmarkSeries.map(r=>r.sort_us),tension:.25,pointRadius:3},
-        {label:'Min-Heap Top-K',data:benchmarkSeries.map(r=>r.heap_us),tension:.25,pointRadius:3}
-      ]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${Number(c.raw).toLocaleString('de-DE',{maximumFractionDigits:1})} µs`}}},
-      scales:{
-        x:{title:{display:true,text:'Anzahl synthetischer Transaktionen n'}},
-        y:{beginAtZero:true,title:{display:true,text:'Laufzeit in µs'}}
-      }
-    }
-  });
-}
-</script>
-
-<script>
 (() => {
-  const yearSelect = document.querySelector('[data-analysis-year-jump]');
-  if (!yearSelect) return;
+  const labels={{months_short|tojson}};
+  const monthlyIncome={{monthly_income|tojson}};
+  const monthlyExpense={{monthly_expense|tojson}};
+  const monthlyBalance={{monthly_balance|tojson}};
+  const rolling={{rolling|tojson}};
+  const categoryTotals={{category_totals|tojson}};
+  const fixedExpense={{fixed_expense_total}};
+  const variableExpense={{variable_expense_total}};
+  const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(Number(v)/100);
 
-  yearSelect.addEventListener('change', () => {
-    const params = new URLSearchParams(window.location.search);
-    params.set('year', yearSelect.value);
-    params.set('k', '{{k}}');
-    params.set('n', '{{benchmark.n}}');
-    {% if selected_category_id %}
-    params.set('category_id', '{{selected_category_id}}');
-    {% endif %}
-    window.location.href = `/analysis?${params.toString()}`;
-  });
+  const commonOptions={
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},
+    scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}}}
+  };
+
+  const monthlyCtx=document.getElementById('monthlyFinanceChart');
+  if(monthlyCtx){
+    new Chart(monthlyCtx,{
+      type:'bar',
+      data:{labels,datasets:[
+        {label:'Einnahmen',data:monthlyIncome},
+        {label:'Ausgaben',data:monthlyExpense},
+        {label:'Saldo',data:monthlyBalance,type:'line',tension:.28,pointRadius:3}
+      ]},
+      options:commonOptions
+    });
+  }
+
+  const rollingCtx=document.getElementById('rollingChart');
+  if(rollingCtx){
+    new Chart(rollingCtx,{
+      type:'line',
+      data:{labels,datasets:[
+        {label:'Ausgaben',data:monthlyExpense,tension:.28,pointRadius:3},
+        {label:'3-Monats-Durchschnitt',data:rolling,tension:.28,pointRadius:4,borderWidth:3}
+      ]},
+      options:commonOptions
+    });
+  }
+
+  const categoryCtx=document.getElementById('categoryChart');
+  if(categoryCtx && categoryTotals.length){
+    new Chart(categoryCtx,{
+      type:'doughnut',
+      data:{
+        labels:categoryTotals.map(x=>x[0]),
+        datasets:[{label:'Ausgaben',data:categoryTotals.map(x=>x[1])}]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}}
+      }
+    });
+  }
+
+  const splitCtx=document.getElementById('expenseSplitChart');
+  if(splitCtx && (fixedExpense || variableExpense)){
+    new Chart(splitCtx,{
+      type:'doughnut',
+      data:{labels:['Fix','Variabel'],datasets:[{label:'Ausgaben',data:[fixedExpense,variableExpense]}]},
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}}
+      }
+    });
+  }
+
+  const yearSelect=document.querySelector('[data-analysis-year-jump]');
+  if(yearSelect){
+    yearSelect.addEventListener('change',()=>{
+      const params=new URLSearchParams(window.location.search);
+      params.set('year',yearSelect.value);
+      params.set('month','{{selected_month}}');
+      params.set('top','{{top_value}}');
+      window.location.href=`/analysis?${params.toString()}`;
+    });
+  }
 })();
 </script>
 {% endblock %}

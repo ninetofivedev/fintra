@@ -1,5 +1,16 @@
 # Changelog
 
+## 9.6.0-beta.30
+
+### Financial Analytics Redesign
+- Analytics ist jetzt eine reine Finanz-Auswertungsseite ohne technische Benchmark- und Komplexitätsblöcke.
+- KPI-Bereich auf Transaktionen, Kategorie-Indizes, Einnahmen, Ausgaben und Jahresüberschuss fokussiert.
+- Top-Kategorien mit Auswahl Top 3, 5, 8, 10 oder Alle.
+- Gleitender 3-Monats-Durchschnitt und Ausreißererkennung sprachlich vereinfacht.
+- Budgetstatus erhält eine frei wählbare Monatsauswahl.
+- Neue Finanzansichten: monatliche Entwicklung, Ausgaben nach Kategorie, fix vs. variabel, Sparquote, bester Monat, höchste Monatsausgaben und größte Einzelbuchungen.
+- Performance-Test, Skalierung und Komplexitätsübersicht auf die Seite Algorithmen & Datenstrukturen verschoben.
+
 ## 9.6.0-beta.29
 
 ### Analytics UI

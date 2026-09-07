@@ -7,6 +7,16 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.30
+
+### Financial Analytics Redesign
+- Fintra Analytics konzentriert sich jetzt ausschließlich auf die finanzielle Auswertung des gewählten Jahres.
+- Technische Tests und Komplexitätsdarstellungen wurden vollständig auf „Algorithmen & Datenstrukturen“ verlagert.
+- Neu sind Jahreskennzahlen, monatliche Entwicklung, Kategorienverteilung, fixe/variable Ausgaben, Monatsauswahl beim Budgetstatus und größte Einzelbuchungen.
+- Top-Kategorien unterstützt jetzt zusätzlich die Auswahl „Alle“.
+
+---
+
 ## 9.6.0-beta.29
 
 ### Analytics Cleanup
