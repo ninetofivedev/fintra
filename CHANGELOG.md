@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0-beta.32
+
+### Analytics
+- Untertitel bei „Ausgaben nach Kategorie“ an die Startseite angeglichen: „Variable Ausgaben {Jahr}“.
+- Diagramm-Umschalter für Torten- und Balkendiagramm wie auf der Startseite ergänzt.
+- Gewählte Desktop-Ansicht wird in localStorage gespeichert.
+- Mobile Ansicht bleibt automatisch beim horizontalen Balkendiagramm.
+
 ## 9.6.0-beta.31
 
 ### Analytics & Algorithmen

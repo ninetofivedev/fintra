@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.32
+
+### Kategorien-Diagramm
+- „Ausgaben nach Kategorie“ verwendet jetzt denselben Untertitel und denselben Diagramm-Umschalter wie auf der Startseite.
+- Auf dem Desktop kann zwischen Torten- und Balkendiagramm gewechselt werden.
+- Die Auswahl wird gespeichert; auf Smartphones bleibt die kompakte Balkendarstellung aktiv.
+
+---
+
 ## 9.6.0-beta.31
 
 ### Analytics & Algorithmus-Seite

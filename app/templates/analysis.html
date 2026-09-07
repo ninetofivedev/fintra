@@ -55,12 +55,22 @@
 </section>
 
 <section class="analysis-hero-grid">
-  <article class="analysis-card">
-    <div class="analysis-card-head">
+  <article class="analysis-card category-chart-card">
+    <div class="analysis-card-head chart-title-with-actions">
       <div>
         <h2>Ausgaben nach Kategorie</h2>
-        <p class="muted">Verteilung der variablen Ausgaben im Jahr {{year}}.</p>
+        <p class="muted">Variable Ausgaben {{year}}</p>
       </div>
+      {% if category_totals %}
+      <div class="chart-view-toggle" id="analysisCategoryChartToggle" role="group" aria-label="Diagrammansicht wählen">
+        <button type="button" class="chart-view-button" data-analysis-chart-view="doughnut" aria-label="Tortendiagramm" title="Tortendiagramm" aria-pressed="true">
+          <span class="local-icon icon-pie_chart" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="chart-view-button" data-analysis-chart-view="bar" aria-label="Balkendiagramm" title="Balkendiagramm" aria-pressed="false">
+          <span class="local-icon icon-bar_chart" aria-hidden="true"></span>
+        </button>
+      </div>
+      {% endif %}
     </div>
     {% if category_totals %}
     <div class="chart-container category-analysis-chart"><canvas id="categoryChart"></canvas></div>
@@ -240,6 +250,15 @@
   const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(Number(v)/100);
   const mobileChartQuery=window.matchMedia('(max-width: 700px)');
   const palette=['#4f46e5','#16a34a','#f59e0b','#e11d48','#0ea5e9','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16'];
+  const categoryChartToggle=document.getElementById('analysisCategoryChartToggle');
+  const categoryChartButtons=[...(categoryChartToggle?.querySelectorAll('[data-analysis-chart-view]') || [])];
+  const categoryChartPreferenceKey='fintra-analysis-category-chart-view';
+  let desktopCategoryView='doughnut';
+
+  try{
+    const savedView=localStorage.getItem(categoryChartPreferenceKey);
+    if(savedView==='doughnut' || savedView==='bar') desktopCategoryView=savedView;
+  }catch(e){}
 
   let monthlyChart=null;
   let rollingChart=null;
@@ -356,20 +375,29 @@
 
     const categoryCtx=document.getElementById('categoryChart');
     if(categoryCtx && categoryTotals.length){
-      const displayed=mobile?compactCategoryData():categoryTotals;
+      const categoryView=mobile?'bar':desktopCategoryView;
+      const displayed=categoryView==='bar'?compactCategoryData():categoryTotals;
+      const horizontalBars=categoryView==='bar';
+
+      categoryChartButtons.forEach(button=>{
+        const active=!mobile && button.dataset.analysisChartView===categoryView;
+        button.setAttribute('aria-pressed',active?'true':'false');
+        button.classList.toggle('is-active',active);
+      });
+
       categoryChart=new Chart(categoryCtx,{
-        type:mobile?'bar':'doughnut',
+        type:horizontalBars?'bar':'doughnut',
         data:{
           labels:displayed.map(x=>x[0]),
           datasets:[{
             data:displayed.map(x=>x[1]),
             backgroundColor:palette,
             borderWidth:0,
-            hoverOffset:mobile?0:10,
-            borderRadius:mobile?5:0
+            hoverOffset:horizontalBars?0:10,
+            borderRadius:horizontalBars?5:0
           }]
         },
-        options:mobile?{
+        options:horizontalBars?{
           responsive:true,
           maintainAspectRatio:false,
           indexAxis:'y',
@@ -378,8 +406,8 @@
             tooltip:{callbacks:{label:c=>money(c.raw)}}
           },
           scales:{
-            x:{beginAtZero:true,ticks:{maxTicksLimit:5,callback:v=>money(v),font:{size:10}}},
-            y:{grid:{display:false},ticks:{autoSkip:false,font:{size:11}}}
+            x:{beginAtZero:true,ticks:{maxTicksLimit:mobile?5:6,callback:v=>money(v),font:{size:mobile?10:11}}},
+            y:{grid:{display:false},ticks:{autoSkip:false,font:{size:mobile?11:12}}}
           }
         }:{
           responsive:true,
@@ -418,6 +446,17 @@
       });
     }
   }
+
+  categoryChartButtons.forEach(button=>{
+    button.addEventListener('click',()=>{
+      if(mobileChartQuery.matches) return;
+      const view=button.dataset.analysisChartView;
+      if(view!=='doughnut' && view!=='bar') return;
+      desktopCategoryView=view;
+      try{localStorage.setItem(categoryChartPreferenceKey,view)}catch(e){}
+      buildAnalysisCharts();
+    });
+  });
 
   buildAnalysisCharts();
   mobileChartQuery.addEventListener?.('change',buildAnalysisCharts);
