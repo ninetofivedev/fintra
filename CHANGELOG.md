@@ -1,5 +1,16 @@
 # Changelog
 
+## 9.6.0-beta.36
+
+### Demo-Profil
+- Separates Präsentationsprofil `demo` mit vollständig fiktiven Finanzdaten ergänzt.
+- Demo-Daten liegen isoliert in `/app/data/demo.db`; private Daten bleiben in `database.db`.
+- Demo-Datenbank enthält realistische Kategorien, Transaktionen, Fixkosten, Budgets und Daten für 2025/2026.
+- Demo-Daten werden bei jeder Anmeldung als `demo` deterministisch zurückgesetzt.
+- Demo-Modus ist in der Oberfläche eindeutig gekennzeichnet.
+- Standardzugang: `demo` / `demo`; Passwort kann über `FINTRA_DEMO_PASSWORD` geändert werden.
+- Demo-Profil kann über `FINTRA_DEMO_MODE=0` deaktiviert werden.
+
 ## 9.6.0-beta.35
 
 ### Datenbank

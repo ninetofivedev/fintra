@@ -52,6 +52,10 @@
 
     <div class="topnav-actions">
 
+      {% if request.session.get('demo_mode') %}
+      <span class="demo-mode-badge" title="Fiktive Präsentationsdaten">Demo</span>
+      {% endif %}
+
       <a class="topnav-overview{% if current_path == '/' %} is-active{% endif %}" href="/"{% if current_path == '/' %} aria-current="page"{% endif %}>
         Übersicht
       </a>
@@ -109,7 +113,7 @@
 
             <a href="/profile" class="burger-profile-link{% if current_path.startswith('/profile') %} is-active{% endif %}"{% if current_path.startswith('/profile') %} aria-current="page"{% endif %}>
               <span class="local-icon icon-account_circle burger-icon" aria-hidden="true"></span>
-              <span>{{ request.session.get("username", "") }}</span>
+              <span>{{ request.session.get("username", "") }}{% if request.session.get('demo_mode') %} · Demo{% endif %}</span>
             </a>
           </div>
 

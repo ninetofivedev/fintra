@@ -1,4 +1,5 @@
 import os, sqlite3, statistics, heapq, hashlib, hmac, secrets, csv, io, tempfile, random, time, math
+from contextvars import ContextVar
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from urllib.parse import quote, urlencode
@@ -16,6 +17,12 @@ BASE = Path(__file__).resolve().parent
 _configured_db_path = os.getenv('DB_PATH')
 DB = Path(_configured_db_path or '/app/data/database.db')
 DB.parent.mkdir(parents=True, exist_ok=True)
+
+DEMO_ENABLED = os.getenv('FINTRA_DEMO_MODE', '1') == '1'
+DEMO_USERNAME = 'demo'
+DEMO_PASSWORD = os.getenv('FINTRA_DEMO_PASSWORD', 'demo')
+DEMO_DB = DB.parent / 'demo.db'
+_active_db_path = ContextVar('fintra_active_db_path', default=DB)
 
 # Einmalige Migration des historischen Standard-Dateinamens.
 # Ein explizit gesetzter DB_PATH wird dabei niemals verändert.
@@ -87,8 +94,9 @@ class TransactionIndex:
         return len(self.by_category.get(category_id, []))
 
 
-def db():
-    c = sqlite3.connect(DB, timeout=10)
+def db(path: Path | None = None):
+    target = Path(path) if path is not None else _active_db_path.get()
+    c = sqlite3.connect(target, timeout=10)
     c.row_factory = sqlite3.Row
     c.execute('PRAGMA foreign_keys=ON')
     c.execute('PRAGMA busy_timeout=10000')
@@ -171,6 +179,197 @@ def cents(s, *, positive=False):
     return int(value * 100)
 
 
+
+def reset_demo_database():
+    """Create a clean, deterministic demo database with fictional finance data."""
+    if not DEMO_ENABLED:
+        return
+
+    for suffix in ('', '-wal', '-shm'):
+        path = Path(str(DEMO_DB) + suffix)
+        try:
+            if path.exists():
+                path.unlink()
+        except OSError:
+            pass
+
+    c = db(DEMO_DB)
+    c.executescript("""
+    CREATE TABLE IF NOT EXISTS users(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS categories(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('income','expense')),
+      active INTEGER NOT NULL DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS transactions(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tx_date TEXT NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('income','expense')),
+      category_id INTEGER NOT NULL,
+      amount_cents INTEGER NOT NULL,
+      comment TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(category_id) REFERENCES categories(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(tx_date);
+    CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category_id);
+    CREATE TABLE IF NOT EXISTS budgets(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      year INTEGER NOT NULL,
+      month INTEGER NOT NULL,
+      category_id INTEGER NOT NULL,
+      amount_cents INTEGER NOT NULL DEFAULT 0,
+      UNIQUE(year, month, category_id),
+      FOREIGN KEY(category_id) REFERENCES categories(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_budgets_period ON budgets(year, month);
+    CREATE TABLE IF NOT EXISTS fixed_items(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      year INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('income','expense')),
+      jan INTEGER NOT NULL DEFAULT 0, feb INTEGER NOT NULL DEFAULT 0,
+      mar INTEGER NOT NULL DEFAULT 0, apr INTEGER NOT NULL DEFAULT 0,
+      may INTEGER NOT NULL DEFAULT 0, jun INTEGER NOT NULL DEFAULT 0,
+      jul INTEGER NOT NULL DEFAULT 0, aug INTEGER NOT NULL DEFAULT 0,
+      sep INTEGER NOT NULL DEFAULT 0, oct INTEGER NOT NULL DEFAULT 0,
+      nov INTEGER NOT NULL DEFAULT 0, dec INTEGER NOT NULL DEFAULT 0
+    );
+    """)
+
+    categories = [
+        ('Bonus & Nebenjob', 'income'),
+        ('Rückerstattung', 'income'),
+        ('Verkauf', 'income'),
+        ('Zinsen', 'income'),
+        ('Lebensmittel', 'expense'),
+        ('Auswärtsessen', 'expense'),
+        ('Mobilität', 'expense'),
+        ('Freizeit', 'expense'),
+        ('Kleidung', 'expense'),
+        ('Gesundheit', 'expense'),
+        ('Haushalt', 'expense'),
+        ('Urlaub', 'expense'),
+        ('Geschenke', 'expense'),
+        ('Bildung', 'expense'),
+        ('Technik', 'expense'),
+    ]
+    c.executemany('INSERT INTO categories(name,type) VALUES(?,?)', categories)
+    category_ids = {
+        row['name']: row['id']
+        for row in c.execute('SELECT id,name FROM categories').fetchall()
+    }
+
+    fixed_rows = [
+        ('Gehalt', 'income', 328000),
+        ('Miete', 'expense', 104500),
+        ('Strom', 'expense', 7200),
+        ('Internet', 'expense', 3990),
+        ('Versicherungen', 'expense', 9650),
+        ('Mobilfunk', 'expense', 2490),
+        ('Streaming & Cloud', 'expense', 2790),
+    ]
+    for year in (2025, 2026):
+        for name, typ, monthly in fixed_rows:
+            values = [monthly] * 12
+            c.execute(
+                'INSERT INTO fixed_items(year,name,type,' + ','.join(COLS) + ') '
+                'VALUES(?,?,?,' + ','.join('?' for _ in COLS) + ')',
+                (year, name, typ, *values)
+            )
+
+    budget_limits = {
+        'Lebensmittel': 43000,
+        'Auswärtsessen': 18000,
+        'Mobilität': 16000,
+        'Freizeit': 22000,
+        'Kleidung': 12000,
+        'Gesundheit': 9000,
+        'Haushalt': 10000,
+        'Urlaub': 25000,
+        'Geschenke': 10000,
+        'Bildung': 8000,
+        'Technik': 12000,
+    }
+    for year in (2025, 2026):
+        for month in range(1, 13):
+            for name, amount in budget_limits.items():
+                c.execute(
+                    'INSERT INTO budgets(year,month,category_id,amount_cents) VALUES(?,?,?,?)',
+                    (year, month, category_ids[name], amount)
+                )
+
+    rng = random.Random(960036)
+    expense_patterns = {
+        'Lebensmittel': (4, 5500, 11500, ['Supermarkt', 'Wocheneinkauf', 'Drogerie & Lebensmittel']),
+        'Auswärtsessen': (2, 1800, 6500, ['Restaurant', 'Café', 'Mittagessen']),
+        'Mobilität': (2, 2500, 9500, ['Tanken', 'ÖPNV', 'Parken & Mobilität']),
+        'Freizeit': (2, 1800, 9000, ['Kino & Freizeit', 'Hobby', 'Ausflug']),
+        'Kleidung': (1, 2500, 12000, ['Kleidung', 'Schuhe']),
+        'Gesundheit': (1, 1200, 7500, ['Apotheke', 'Gesundheit']),
+        'Haushalt': (1, 1800, 9500, ['Haushalt', 'Baumarkt']),
+        'Geschenke': (1, 1800, 10000, ['Geschenk']),
+        'Bildung': (1, 1500, 8500, ['Fachbuch', 'Kurs']),
+        'Technik': (1, 2500, 18000, ['Zubehör', 'Software', 'Technik']),
+    }
+
+    def add_tx(year, month, day, typ, category, amount, comment):
+        c.execute(
+            'INSERT INTO transactions(tx_date,type,category_id,amount_cents,comment) VALUES(?,?,?,?,?)',
+            (f'{year:04d}-{month:02d}-{day:02d}', typ, category_ids[category], amount, comment)
+        )
+
+    for year, max_month in ((2025, 12), (2026, 9)):
+        for month in range(1, max_month + 1):
+            for category, (count, low, high, comments) in expense_patterns.items():
+                effective_count = count
+                if category in {'Kleidung', 'Gesundheit', 'Haushalt', 'Geschenke', 'Bildung', 'Technik'}:
+                    effective_count = 1 if rng.random() < 0.58 else 0
+                for _ in range(effective_count):
+                    add_tx(
+                        year, month, rng.randint(2, 27), 'expense', category,
+                        rng.randrange(low, high + 1, 50), rng.choice(comments)
+                    )
+
+            if month in ({5, 7, 8, 12} if year == 2025 else {2, 6, 8}):
+                add_tx(
+                    year, month, rng.randint(4, 24), 'expense', 'Urlaub',
+                    rng.randrange(28000, 98000, 100),
+                    rng.choice(['Hotel', 'Reise', 'Ferienwohnung', 'Bahn & Unterkunft'])
+                )
+
+            if month in {3, 6, 9, 12}:
+                add_tx(
+                    year, month, rng.randint(5, 22), 'income', 'Bonus & Nebenjob',
+                    rng.randrange(18000, 48000, 100), 'Nebenprojekt'
+                )
+            if rng.random() < 0.35:
+                add_tx(
+                    year, month, rng.randint(4, 25), 'income', 'Rückerstattung',
+                    rng.randrange(2500, 12000, 100), 'Erstattung'
+                )
+            if rng.random() < 0.20:
+                add_tx(
+                    year, month, rng.randint(4, 25), 'income', 'Verkauf',
+                    rng.randrange(4000, 18000, 100), 'Privatverkauf'
+                )
+
+        interest_month = 12 if year == 2025 else 9
+        add_tx(year, interest_month, 1, 'income', 'Zinsen', 1840 if year == 2025 else 1320, 'Tagesgeld')
+
+    add_tx(2026, 4, 18, 'expense', 'Technik', 129900, 'Notebook')
+    add_tx(2025, 8, 11, 'expense', 'Urlaub', 118000, 'Sommerurlaub')
+
+    c.commit()
+    c.close()
+
+
 def init():
     c = db()
     c.executescript('''
@@ -240,6 +439,8 @@ def init():
     c.commit(); c.close()
 
 init()
+if DEMO_ENABLED:
+    reset_demo_database()
 
 
 @app.middleware('http')
@@ -247,13 +448,22 @@ async def require_login(request: Request, call_next):
     public = request.url.path in {'/login', '/setup', '/health'} or request.url.path.startswith('/static/')
     if public:
         return await call_next(request)
-    if user_count() == 0:
+    is_demo = DEMO_ENABLED and bool(request.session.get('demo_mode'))
+    if not is_demo and user_count() == 0:
         return RedirectResponse('/setup', 303)
     if not request.session.get('user_id'):
         next_url = quote(request.url.path + (('?' + request.url.query) if request.url.query else ''), safe='')
         return RedirectResponse('/login?next=' + next_url, 303)
+
     request.session.setdefault('csrf_token', secrets.token_urlsafe(32))
-    return await call_next(request)
+    token = None
+    if is_demo:
+        token = _active_db_path.set(DEMO_DB)
+    try:
+        return await call_next(request)
+    finally:
+        if token is not None:
+            _active_db_path.reset(token)
 
 
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, session_cookie='fintra_session', max_age=60 * 60 * 24 * 30, same_site='lax', https_only=SESSION_HTTPS_ONLY)
@@ -277,15 +487,33 @@ def health():
 def login_page(request: Request, next: str = '/'):
     if request.session.get('user_id'):
         return RedirectResponse(validate_next(next), 303)
-    return templates.TemplateResponse('login.html', {'request': request, 'next': validate_next(next), 'error': None})
+    return templates.TemplateResponse('login.html', {'request': request, 'next': validate_next(next), 'error': None, 'demo_enabled': DEMO_ENABLED})
 
 
 @app.post('/login', response_class=HTMLResponse)
 def login(request: Request, username: str = Form(...), password: str = Form(...), next: str = Form('/')):
-    c = db(); user = c.execute('SELECT * FROM users WHERE username=?', (username.strip(),)).fetchone(); c.close()
+    login_name = username.strip()
+
+    if DEMO_ENABLED and login_name == DEMO_USERNAME and hmac.compare_digest(password, DEMO_PASSWORD):
+        reset_demo_database()
+        request.session.clear()
+        request.session['user_id'] = -1
+        request.session['username'] = DEMO_USERNAME
+        request.session['demo_mode'] = True
+        return RedirectResponse(validate_next(next), 303)
+
+    c = db()
+    user = c.execute('SELECT * FROM users WHERE username=?', (login_name,)).fetchone()
+    c.close()
     if not user or not verify_password(password, user['password_hash']):
-        return templates.TemplateResponse('login.html', {'request': request, 'next': validate_next(next), 'error': 'Benutzername oder Passwort ist falsch.'}, status_code=401)
-    request.session.clear(); request.session['user_id'] = user['id']; request.session['username'] = user['username']
+        return templates.TemplateResponse(
+            'login.html',
+            {'request': request, 'next': validate_next(next), 'error': 'Benutzername oder Passwort ist falsch.', 'demo_enabled': DEMO_ENABLED},
+            status_code=401
+        )
+    request.session.clear()
+    request.session['user_id'] = user['id']
+    request.session['username'] = user['username']
     return RedirectResponse(validate_next(next), 303)
 
 
@@ -299,6 +527,15 @@ def logout(request: Request, csrf_token: str = Form(...)):
 
 @app.get('/profile', response_class=HTMLResponse)
 def profile_page(request: Request, changed: int = 0):
+    if request.session.get('demo_mode'):
+        return templates.TemplateResponse('profile.html', {
+            'request': request,
+            'user': {'id': -1, 'username': DEMO_USERNAME, 'created_at': 'Demo'},
+            'error': None,
+            'success': None,
+            'is_demo': True,
+        })
+
     c = db()
     user = c.execute(
         'SELECT id,username,created_at FROM users WHERE id=?',
@@ -315,6 +552,7 @@ def profile_page(request: Request, changed: int = 0):
         'user': user,
         'error': None,
         'success': 'Passwort erfolgreich geändert.' if changed else None,
+        'is_demo': False,
     })
 
 
@@ -328,6 +566,8 @@ def change_profile_password(
 ):
     if not check_csrf(request, csrf_token):
         return HTMLResponse('Ungültige Anfrage (CSRF-Schutz).', status_code=403)
+    if request.session.get('demo_mode'):
+        return HTMLResponse('Das Passwort des Demo-Kontos kann nicht geändert werden.', status_code=403)
 
     c = db()
     user = c.execute(

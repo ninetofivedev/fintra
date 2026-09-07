@@ -17,10 +17,25 @@
     <div>
       <span class="muted">Benutzerkonto</span>
       <h2>{{ user.username }}</h2>
-      <p class="muted">Fintra-Administrator</p>
+      <p class="muted">{% if is_demo %}Demo-Profil · fiktive Daten{% else %}Fintra-Administrator{% endif %}</p>
     </div>
   </article>
 
+  {% if is_demo %}
+  <article class="profile-card">
+    <div class="profile-card-head">
+      <div>
+        <h2>Demo-Modus</h2>
+        <p class="muted">Dieses Profil verwendet ausschließlich die separate Demo-Datenbank.</p>
+      </div>
+      <span class="local-icon icon-lock profile-section-icon" aria-hidden="true"></span>
+    </div>
+    <div class="profile-message profile-message-success">
+      <span class="local-icon icon-check_circle" aria-hidden="true"></span>
+      <span>Private Finanzdaten werden in diesem Profil nicht verwendet. Die Demo-Daten werden bei jeder Demo-Anmeldung zurückgesetzt.</span>
+    </div>
+  </article>
+  {% else %}
   <article class="profile-card">
     <div class="profile-card-head">
       <div>
@@ -85,5 +100,6 @@
       </div>
     </form>
   </article>
+  {% endif %}
 </section>
 {% endblock %}

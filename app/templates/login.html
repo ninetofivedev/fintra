@@ -21,6 +21,13 @@
     <h1 id="login-title">Willkommen zurück</h1>
     <p class="muted">Melde dich an, um deine Finanzdaten zu verwalten.</p>
     {% if error %}<div class="auth-error" role="alert">{{ error }}</div>{% endif %}
+    {% if demo_enabled %}
+    <div class="demo-login-hint">
+      <strong>Demo-Zugang</strong>
+      <span>Benutzername <code>demo</code> · Passwort <code>demo</code></span>
+      <small>Verwendet ausschließlich fiktive Präsentationsdaten.</small>
+    </div>
+    {% endif %}
     <form method="post" action="/login" class="auth-form">
       <input type="hidden" name="next" value="{{ next }}">
       <label>Benutzername<input name="username" autocomplete="username" required autofocus></label>

@@ -30,7 +30,7 @@ beobachten kann, während GitHub bei jedem expliziten Fintra-Release dessen Dige
 Fintra veröffentlicht `latest` nur bei einem Git-Tag wie:
 
 ```text
-v9.6.0-beta.35
+v9.6.0-beta.36
 ```
 
 Dadurch ist ein einfacher Push auf `main` noch kein Server-Update.
@@ -56,3 +56,21 @@ Bei reinem HTTP im privaten LAN bleibt der Wert `0`.
 ### Datenbank-Dateiname
 
 Seit Fintra 9.6.0-beta.35 lautet der Standard-Dateiname `database.db`. Liegt im eingebundenen `/app/data`-Verzeichnis noch die historische `haushaltsbuch.db`, wird sie beim ersten Start automatisch in `database.db` umbenannt. Ein explizit gesetzter `DB_PATH` bleibt unverändert.
+
+### Demo-Profil
+
+Fintra enthält für Präsentationen ein separates Demo-Profil. Standardmäßig ist es aktiviert:
+
+- Benutzername: `demo`
+- Passwort: `demo`
+- Datenbank: `/app/data/demo.db`
+- Die Demo-Daten sind vollständig fiktiv und werden bei jeder Demo-Anmeldung auf den Ausgangszustand zurückgesetzt.
+- Das private Profil verwendet weiterhin ausschließlich `/app/data/database.db`.
+
+Optional kann das Demo-Profil deaktiviert oder das Passwort geändert werden:
+
+```yaml
+environment:
+  FINTRA_DEMO_MODE: "0"
+  # FINTRA_DEMO_PASSWORD: "eigenes-demo-passwort"
+```

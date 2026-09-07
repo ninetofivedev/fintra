@@ -7,6 +7,17 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.36
+
+### Präsentationsmodus
+- Neues Demo-Profil mit separater, vollständig fiktiver SQLite-Datenbank.
+- Anmeldung über `demo` / `demo`.
+- Private Finanzdaten und Demo-Daten sind technisch voneinander getrennt.
+- Dashboard, Monatsansichten, Budgets, Fixkosten, Transaktionen und Analytics sind mit realistischen Beispieldaten gefüllt.
+- Die Demo-Datenbank wird bei jeder Demo-Anmeldung zurückgesetzt und kann daher während einer Präsentation gefahrlos verändert werden.
+
+---
+
 ## 9.6.0-beta.35
 
 ### Neuer Datenbank-Dateiname

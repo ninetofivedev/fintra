@@ -13,7 +13,7 @@ It provides yearly and monthly overviews, recurring income and expenses, budgets
 financial analysis and visualizations while keeping your financial data on your own server.
 
 > **Beta:** Fintra is currently under active development.  
-> The current release is `9.6.0-beta.35`.
+> The current release is `9.6.0-beta.36`.
 
 
 ## Screenshots
@@ -211,7 +211,7 @@ A healthy instance responds with:
 ```json
 {
   "status": "ok",
-  "version": "9.6.0-beta.35"
+  "version": "9.6.0-beta.36"
 }
 ```
 
@@ -305,3 +305,17 @@ If you encounter a bug or have an idea for improvement, feel free to open an iss
 Fintra is open-source software licensed under the MIT License.
 
 See [LICENSE](LICENSE) for details.
+
+## Demo profile
+
+Fintra includes an isolated presentation profile with fictional data.
+
+- Username: `demo`
+- Default password: `demo`
+- Private data stays in `/app/data/database.db`.
+- Demo data is stored separately in `/app/data/demo.db`.
+- The demo database is reset to its deterministic sample dataset on every demo login.
+- Set `FINTRA_DEMO_MODE=0` to disable the demo profile.
+- Set `FINTRA_DEMO_PASSWORD` to override the default demo password.
+
+The demo dataset contains fictional transactions, categories, fixed income/expenses, budgets and two years of history for presentation purposes.
