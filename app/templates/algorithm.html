@@ -11,40 +11,55 @@
   </div>
 </header>
 
-<div class="algorithm-grid">
+<div class="algorithm-grid algorithm-detail-grid">
   <article>
     <span class="algo-label">Datenstruktur</span>
     <h2>Hash Map</h2>
-    <p><code>category_id → [transaction_id, …]</code></p>
-    <p>Transaktionen werden nach Kategorie indiziert. Aufbau: <code>O(n)</code>, Lookup durchschnittlich <code>O(1)</code>.</p>
+    <p>Fintra verwendet eine Hash Map, um Transaktionen nach ihrer Kategorie zu gruppieren. Vereinfacht entsteht dabei eine Zuordnung wie <code>category_id → [transaction_id, …]</code>.</p>
+    <h3>Einsatz in Fintra</h3>
+    <p>Bei Auswertungen muss so nicht für jede Abfrage erneut die komplette Transaktionsliste durchsucht werden. Nach dem Aufbau des Index kann direkt auf die Einträge einer Kategorie zugegriffen werden.</p>
+    <h3>Ablauf</h3>
+    <p>Beim einmaligen Durchlaufen der Transaktionen wird für jede Kategorie eine Liste angelegt beziehungsweise erweitert. Der Aufbau benötigt <code>O(n)</code> Zeit und <code>O(n)</code> zusätzlichen Speicher. Ein einzelner Zugriff über einen vorhandenen Schlüssel liegt im Durchschnitt bei <code>O(1)</code>.</p>
   </article>
 
   <article>
     <span class="algo-label">Priority Queue</span>
     <h2>Min-Heap</h2>
-    <p>Für Top-K werden nur die aktuell besten <code>k</code> Elemente im Heap gehalten.</p>
-    <p><code>O(n log k)</code> statt vollständiger Sortierung mit <code>O(n log n)</code>.</p>
+    <p>Ein Min-Heap eignet sich, wenn nur die größten <code>k</code> Werte eines größeren Datenbestands benötigt werden. Das kleinste Element der aktuell besten Treffer liegt dabei immer an der Wurzel.</p>
+    <h3>Einsatz in Fintra</h3>
+    <p>Das Verfahren kann für Ranglisten wie die größten Ausgaben oder Top-Kategorien eingesetzt werden. Statt alle Elemente vollständig zu sortieren, hält der Heap nur die aktuell relevanten Kandidaten.</p>
+    <h3>Ablauf</h3>
+    <p>Solange der Heap weniger als <code>k</code> Elemente enthält, werden Werte eingefügt. Danach ersetzt ein neuer Wert nur dann das Minimum, wenn er größer ist. Dadurch entsteht eine Laufzeit von <code>O(n log k)</code> bei <code>O(k)</code> zusätzlichem Speicher.</p>
   </article>
 
   <article>
     <span class="algo-label">Sequenzalgorithmus</span>
     <h2>Sliding Window</h2>
-    <p>Beim gleitenden Mittel wird der neue Monatswert addiert und der älteste Wert des Fensters entfernt.</p>
-    <p>Zeit: <code>O(n)</code>, zusätzlicher Speicher: <code>O(1)</code>.</p>
+    <p>Das Sliding-Window-Verfahren verarbeitet fortlaufende Bereiche einer Sequenz, ohne jeden Bereich erneut vollständig zu berechnen.</p>
+    <h3>Einsatz in Fintra</h3>
+    <p>Auf der Analyse-Seite wird damit der gleitende 3-Monats-Durchschnitt der Ausgaben berechnet. So lassen sich kurzfristige Schwankungen glätten und Entwicklungen leichter erkennen.</p>
+    <h3>Ablauf</h3>
+    <p>Beim Verschieben des Fensters wird der neu hinzukommende Monatswert addiert und der herausfallende Monatswert abgezogen. Dadurch wird jeder Wert nur wenige Male verarbeitet. Die Laufzeit beträgt <code>O(n)</code>, der zusätzliche Speicher bleibt bei <code>O(1)</code>.</p>
   </article>
 
   <article>
     <span class="algo-label">Statistik</span>
     <h2>Quartile &amp; IQR</h2>
-    <p>Ausgaben werden sortiert, Q1 und Q3 bestimmt und daraus der Interquartilsabstand berechnet.</p>
-    <p>Dominanter Schritt: Sortierung mit <code>O(n log n)</code>.</p>
+    <p>Der Interquartilsabstand beschreibt die Streuung der mittleren 50&nbsp;% einer sortierten Datenmenge. Er ergibt sich aus <code>IQR = Q3 − Q1</code>.</p>
+    <h3>Einsatz in Fintra</h3>
+    <p>Fintra nutzt diese Methode zur Erkennung ungewöhnlich hoher Einzelbuchungen. Eine Ausgabe gilt als auffällig, wenn sie oberhalb von <code>Q3 + 1,5 × IQR</code> liegt.</p>
+    <h3>Ablauf</h3>
+    <p>Zuerst werden die Ausgaben sortiert, anschließend werden das untere und obere Quartil bestimmt. Die Sortierung dominiert die Laufzeit mit <code>O(n log n)</code>. Für die sortierte Werteliste wird <code>O(n)</code> Speicher benötigt.</p>
   </article>
 
   <article>
     <span class="algo-label">Persistenz</span>
     <h2>SQLite B-Tree-Indizes</h2>
-    <p>Fintra verwendet Indizes auf Transaktionsdatum und Kategorie für schnellere Datenbankabfragen.</p>
-    <p>Typischer Suchaufwand: <code>O(log n)</code>.</p>
+    <p>SQLite verwendet B-Tree-basierte Indizes, um Datensätze nicht ausschließlich über einen vollständigen Table Scan suchen zu müssen.</p>
+    <h3>Einsatz in Fintra</h3>
+    <p>Fintra legt Indizes auf dem Transaktionsdatum und der Kategorie-ID an. Davon profitieren insbesondere Jahres-, Monats- und Kategorieabfragen.</p>
+    <h3>Ablauf</h3>
+    <p>Die sortierte Baumstruktur ermöglicht es, den Suchbereich bei jedem Schritt stark einzugrenzen. Für eine typische Suche wird daher näherungsweise <code>O(log n)</code> angenommen. Der Index benötigt zusätzlichen Speicher und muss bei Schreiboperationen mitgepflegt werden.</p>
   </article>
 </div>
 
@@ -53,7 +68,7 @@
     <div>
       <span class="algo-label">Experiment</span>
       <h2>Synthetischer Performance-Test</h2>
-      <p class="muted">Vergleich der Verfahren mit reproduzierbar erzeugten Testdaten im Arbeitsspeicher.</p>
+      <p class="muted">Vergleich der Verfahren mit reproduzierbar erzeugten Testdaten im Arbeitsspeicher. Die Datensatzgröße kann verändert werden; für den Top-K-Vergleich wird bewusst ein festes k = 5 verwendet, damit die Messreihen untereinander vergleichbar bleiben.</p>
     </div>
   </div>
 
@@ -62,13 +77,6 @@
       <select name="n" onchange="this.form.submit()">
         {% for value in [100,1000,10000,50000,100000] %}
         <option value="{{value}}" {% if value==benchmark.n %}selected{% endif %}>{{"{:,}".format(value).replace(",", ".")}} Transaktionen</option>
-        {% endfor %}
-      </select>
-    </label>
-    <label>Top-K
-      <select name="k" onchange="this.form.submit()">
-        {% for value in [3,5,8,10,20] %}
-        <option value="{{value}}" {% if value==benchmark.k %}selected{% endif %}>{{value}}</option>
         {% endfor %}
       </select>
     </label>
@@ -93,7 +101,7 @@
       <code>O(n log n)</code>
     </article>
     <article>
-      <h3>Min-Heap Top {{benchmark.k}}</h3>
+      <h3>Min-Heap Top 5</h3>
       <div class="benchmark-number">{{'%.1f'|format(benchmark.heap_us)}} µs</div>
       <code>O(n log k)</code>
     </article>

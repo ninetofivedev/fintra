@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.31
+
+### Analytics & Algorithmus-Seite
+- Die Diagramme auf Analytics entsprechen jetzt stärker dem Stil des Start-Dashboards.
+- Der unnötige Top-K-Dropdown im synthetischen Performance-Test wurde entfernt; Top-K wird dort fest mit k = 5 gemessen.
+- Die technischen Erläuterungen auf „Algorithmen & Datenstrukturen“ wurden ausführlicher und strukturierter gestaltet.
+
+---
+
 ## 9.6.0-beta.30
 
 ### Financial Analytics Redesign

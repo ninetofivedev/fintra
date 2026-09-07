@@ -3220,3 +3220,35 @@ html[data-theme="dark"] .study-topic-number{color:#a5b4fc}
     gap:10px;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.31 – Analytics-Charts & Algorithm-Details
+   ========================================================= */
+.algorithm-detail-grid article h3{
+  margin:16px 0 5px;
+  font-size:.84rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.045em;
+}
+
+.algorithm-detail-grid article p{
+  line-height:1.58;
+}
+
+.algorithm-detail-grid article code{
+  white-space:normal;
+}
+
+.finance-chart-grid .analysis-card,
+.analysis-card:has(#categoryChart),
+.analysis-card:has(#expenseSplitChart){
+  overflow:hidden;
+}
+
+@media(max-width:700px){
+  .category-analysis-chart{
+    height:300px;
+  }
+}

@@ -1,5 +1,16 @@
 # Changelog
 
+## 9.6.0-beta.31
+
+### Analytics & Algorithmen
+- Diagramme auf Fintra Analytics optisch an die Startseite angeglichen.
+- Einnahmen/Ausgaben verwenden denselben grünen/roten Balkenstil wie das Dashboard.
+- Kategorien-Diagramm nutzt dieselbe Farbpalette, Doughnut-Darstellung und mobile Balkendarstellung wie die Startseite.
+- Fix/Variabel-Diagramm an den Fintra-Doughnut-Stil angepasst.
+- Gleitender Durchschnitt optisch verfeinert.
+- Top-K-Auswahl aus dem synthetischen Performance-Test entfernt; der Benchmark verwendet fest Top 5 für vergleichbare Messungen.
+- Erklärungen zu Hash Map, Min-Heap, Sliding Window, IQR und SQLite-Indizes deutlich erweitert.
+
 ## 9.6.0-beta.30
 
 ### Financial Analytics Redesign

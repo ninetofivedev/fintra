@@ -238,68 +238,189 @@
   const fixedExpense={{fixed_expense_total}};
   const variableExpense={{variable_expense_total}};
   const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(Number(v)/100);
+  const mobileChartQuery=window.matchMedia('(max-width: 700px)');
+  const palette=['#4f46e5','#16a34a','#f59e0b','#e11d48','#0ea5e9','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16'];
 
-  const commonOptions={
-    responsive:true,
-    maintainAspectRatio:false,
-    interaction:{mode:'index',intersect:false},
-    plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},
-    scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}}}
-  };
+  let monthlyChart=null;
+  let rollingChart=null;
+  let categoryChart=null;
+  let expenseSplitChart=null;
 
-  const monthlyCtx=document.getElementById('monthlyFinanceChart');
-  if(monthlyCtx){
-    new Chart(monthlyCtx,{
-      type:'bar',
-      data:{labels,datasets:[
-        {label:'Einnahmen',data:monthlyIncome},
-        {label:'Ausgaben',data:monthlyExpense},
-        {label:'Saldo',data:monthlyBalance,type:'line',tension:.28,pointRadius:3}
-      ]},
-      options:commonOptions
-    });
+  function compactCategoryData(){
+    const sorted=[...categoryTotals].sort((a,b)=>b[1]-a[1]);
+    if(sorted.length<=7) return sorted;
+    const top=sorted.slice(0,7);
+    const rest=sorted.slice(7).reduce((sum,item)=>sum+item[1],0);
+    return [...top,['Sonstiges',rest]];
   }
 
-  const rollingCtx=document.getElementById('rollingChart');
-  if(rollingCtx){
-    new Chart(rollingCtx,{
-      type:'line',
-      data:{labels,datasets:[
-        {label:'Ausgaben',data:monthlyExpense,tension:.28,pointRadius:3},
-        {label:'3-Monats-Durchschnitt',data:rolling,tension:.28,pointRadius:4,borderWidth:3}
-      ]},
-      options:commonOptions
-    });
+  function buildAnalysisCharts(){
+    const mobile=mobileChartQuery.matches;
+
+    monthlyChart?.destroy();
+    rollingChart?.destroy();
+    categoryChart?.destroy();
+    expenseSplitChart?.destroy();
+
+    const monthlyCtx=document.getElementById('monthlyFinanceChart');
+    if(monthlyCtx){
+      monthlyChart=new Chart(monthlyCtx,{
+        type:'bar',
+        data:{
+          labels,
+          datasets:[
+            {
+              label:'Einnahmen',
+              data:monthlyIncome,
+              backgroundColor:'rgba(22,163,74,.78)',
+              borderRadius:mobile?5:7
+            },
+            {
+              label:'Ausgaben',
+              data:monthlyExpense,
+              backgroundColor:'rgba(220,38,38,.76)',
+              borderRadius:mobile?5:7
+            },
+            {
+              label:'Saldo',
+              data:monthlyBalance,
+              type:'line',
+              borderColor:'#4f46e5',
+              backgroundColor:'rgba(79,70,229,.10)',
+              tension:.28,
+              pointRadius:mobile?2:3,
+              pointHoverRadius:5,
+              borderWidth:2
+            }
+          ]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{position:'top',labels:{boxWidth:mobile?10:12,padding:mobile?10:14}},
+            tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:false,font:{size:mobile?10:12}}},
+            y:{beginAtZero:true,ticks:{maxTicksLimit:mobile?5:8,callback:v=>money(v),font:{size:mobile?10:12}}}
+          }
+        }
+      });
+    }
+
+    const rollingCtx=document.getElementById('rollingChart');
+    if(rollingCtx){
+      rollingChart=new Chart(rollingCtx,{
+        type:'line',
+        data:{
+          labels,
+          datasets:[
+            {
+              label:'Ausgaben',
+              data:monthlyExpense,
+              borderColor:'#dc2626',
+              backgroundColor:'rgba(220,38,38,.09)',
+              tension:.28,
+              pointRadius:mobile?2:3,
+              borderWidth:2,
+              fill:true
+            },
+            {
+              label:'3-Monats-Durchschnitt',
+              data:rolling,
+              borderColor:'#4f46e5',
+              backgroundColor:'rgba(79,70,229,.08)',
+              tension:.28,
+              pointRadius:mobile?3:4,
+              borderWidth:3
+            }
+          ]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{position:'top',labels:{boxWidth:mobile?10:12,padding:mobile?10:14}},
+            tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:false,font:{size:mobile?10:12}}},
+            y:{beginAtZero:true,ticks:{maxTicksLimit:mobile?5:8,callback:v=>money(v),font:{size:mobile?10:12}}}
+          }
+        }
+      });
+    }
+
+    const categoryCtx=document.getElementById('categoryChart');
+    if(categoryCtx && categoryTotals.length){
+      const displayed=mobile?compactCategoryData():categoryTotals;
+      categoryChart=new Chart(categoryCtx,{
+        type:mobile?'bar':'doughnut',
+        data:{
+          labels:displayed.map(x=>x[0]),
+          datasets:[{
+            data:displayed.map(x=>x[1]),
+            backgroundColor:palette,
+            borderWidth:0,
+            hoverOffset:mobile?0:10,
+            borderRadius:mobile?5:0
+          }]
+        },
+        options:mobile?{
+          responsive:true,
+          maintainAspectRatio:false,
+          indexAxis:'y',
+          plugins:{
+            legend:{display:false},
+            tooltip:{callbacks:{label:c=>money(c.raw)}}
+          },
+          scales:{
+            x:{beginAtZero:true,ticks:{maxTicksLimit:5,callback:v=>money(v),font:{size:10}}},
+            y:{grid:{display:false},ticks:{autoSkip:false,font:{size:11}}}
+          }
+        }:{
+          responsive:true,
+          maintainAspectRatio:false,
+          cutout:'58%',
+          plugins:{
+            legend:{position:'bottom'},
+            tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}
+          }
+        }
+      });
+    }
+
+    const splitCtx=document.getElementById('expenseSplitChart');
+    if(splitCtx && (fixedExpense || variableExpense)){
+      expenseSplitChart=new Chart(splitCtx,{
+        type:'doughnut',
+        data:{
+          labels:['Fix','Variabel'],
+          datasets:[{
+            data:[fixedExpense,variableExpense],
+            backgroundColor:['#4f46e5','#16a34a'],
+            borderWidth:0,
+            hoverOffset:10
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          cutout:'58%',
+          plugins:{
+            legend:{position:'bottom'},
+            tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}
+          }
+        }
+      });
+    }
   }
 
-  const categoryCtx=document.getElementById('categoryChart');
-  if(categoryCtx && categoryTotals.length){
-    new Chart(categoryCtx,{
-      type:'doughnut',
-      data:{
-        labels:categoryTotals.map(x=>x[0]),
-        datasets:[{label:'Ausgaben',data:categoryTotals.map(x=>x[1])}]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}}
-      }
-    });
-  }
-
-  const splitCtx=document.getElementById('expenseSplitChart');
-  if(splitCtx && (fixedExpense || variableExpense)){
-    new Chart(splitCtx,{
-      type:'doughnut',
-      data:{labels:['Fix','Variabel'],datasets:[{label:'Ausgaben',data:[fixedExpense,variableExpense]}]},
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}}
-      }
-    });
-  }
+  buildAnalysisCharts();
+  mobileChartQuery.addEventListener?.('change',buildAnalysisCharts);
 
   const yearSelect=document.querySelector('[data-analysis-year-jump]');
   if(yearSelect){

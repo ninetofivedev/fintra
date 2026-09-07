@@ -1287,9 +1287,9 @@ def backup_database():
 
 
 @app.get('/algorithm')
-def algorithm(request: Request, n: int = 10000, k: int = 5):
+def algorithm(request: Request, n: int = 10000):
     n = max(100, min(int(n), 100000))
-    k = max(1, min(int(k), 20))
+    k = 5
     synthetic_categories = 20
     target_category = 7
 
