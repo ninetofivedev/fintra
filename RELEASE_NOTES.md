@@ -7,6 +7,15 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.38
+
+### Lineare Suche
+Die Algorithmus-Seite enthält jetzt zusätzlich eine eigene, ausführliche Beschreibung der linearen Suche. Damit ist auch der im Benchmark verwendete Vergleich zwischen linearer Suche und Hash Map fachlich vollständig dokumentiert.
+
+Release-Archive enthalten ab dieser Version keine Screenshot-Dateien mehr.
+
+---
+
 ## 9.6.0-beta.37
 
 ### Privacy-Mode-Fix

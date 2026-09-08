@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0-beta.38
+
+### Algorithmen & Datenstrukturen
+- Lineare Suche als eigener Suchalgorithmus ausführlich dokumentiert.
+- Einsatz in Fintra, Ablauf, Laufzeit `O(n)`, Speicherbedarf `O(1)` und Abgrenzung zur Hash Map ergänzt.
+- Komplexitätsübersicht um den direkten Vergleich „ohne Index“ vs. „mit Index“ erweitert.
+- Screenshot-Dateien werden nicht mehr in Release-Archive aufgenommen.
+
 ## 9.6.0-beta.37
 
 ### Privacy Mode

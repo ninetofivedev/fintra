@@ -13,6 +13,18 @@
 
 <div class="algorithm-grid algorithm-detail-grid">
   <article>
+    <span class="algo-label">Suchalgorithmus</span>
+    <h2>Lineare Suche</h2>
+    <p>Die lineare Suche verarbeitet die Elemente einer Datenmenge der Reihe nach und prüft jedes Element auf die gesuchte Eigenschaft. Es wird dabei keine zusätzliche Indexstruktur vorausgesetzt.</p>
+    <h3>Einsatz in Fintra</h3>
+    <p>In Fintra dient die lineare Suche vor allem als direkte Vergleichsbasis zur Hash Map. Im synthetischen Performance-Test wird eine Liste von Transaktionen vollständig durchlaufen, um alle Einträge einer Zielkategorie zu zählen.</p>
+    <h3>Ablauf</h3>
+    <p>Bei <code>n</code> Transaktionen wird im Worst Case jedes Element genau einmal betrachtet. Daraus ergibt sich eine Laufzeit von <code>O(n)</code>. Da für die Suche selbst keine zusätzliche Datenstruktur aufgebaut werden muss, beträgt der zusätzliche Speicherbedarf <code>O(1)</code>.</p>
+    <h3>Einordnung</h3>
+    <p>Die Methode ist einfach und benötigt kaum zusätzlichen Speicher. Bei wiederholten Suchanfragen auf größeren Datenmengen ist sie jedoch deutlich weniger effizient als ein zuvor aufgebauter Hash-Index mit durchschnittlich konstantem Lookup.</p>
+  </article>
+
+  <article>
     <span class="algo-label">Datenstruktur</span>
     <h2>Hash Map</h2>
     <p>Fintra verwendet eine Hash Map, um Transaktionen nach ihrer Kategorie zu gruppieren. Vereinfacht entsteht dabei eine Zuordnung wie <code>category_id → [transaction_id, …]</code>.</p>
@@ -165,7 +177,8 @@
     <table class="complexity-table">
       <thead><tr><th>Problem</th><th>Datenstruktur / Algorithmus</th><th>Zeit</th><th>Zusatzspeicher</th></tr></thead>
       <tbody>
-        <tr><td>Kategorie finden</td><td>Hash Map</td><td><code>Ø O(1)</code></td><td><code>O(n)</code></td></tr>
+        <tr><td>Kategorie finden ohne Index</td><td>Lineare Suche</td><td><code>O(n)</code></td><td><code>O(1)</code></td></tr>
+        <tr><td>Kategorie finden mit Index</td><td>Hash Map</td><td><code>Ø O(1)</code></td><td><code>O(n)</code></td></tr>
         <tr><td>Top-K Elemente</td><td>Min-Heap</td><td><code>O(n log k)</code></td><td><code>O(k)</code></td></tr>
         <tr><td>Gleitender Mittelwert</td><td>Sliding Window</td><td><code>O(n)</code></td><td><code>O(1)</code></td></tr>
         <tr><td>Ausreißer erkennen</td><td>Sortierung + IQR</td><td><code>O(n log n)</code></td><td><code>O(n)</code></td></tr>
