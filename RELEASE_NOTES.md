@@ -7,6 +7,13 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.40
+
+### Transaktionskarten 600–700 px
+Die mobile Monatsansicht verwendet jetzt bis 700 px durchgehend das kompakte Transaktionskarten-Layout. Dadurch sehen die Karten auch auf größeren Smartphones und schmalen Tablet-Fenstern konsistent aus.
+
+---
+
 ## 9.6.0-beta.39
 
 ### Mobile Monatsansicht

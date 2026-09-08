@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.6.0-beta.40
+
+### Mobile UI
+- Transaktionskarten in der Monatsansicht zwischen 601 und 700 px korrigiert.
+- Das kompakte Kartenlayout greift jetzt einheitlich im gesamten Mobile-Bereich bis 700 px.
+- Für 601–700 px wurden Abstände, Aktionsspalte und Schriftgrößen leicht an die zusätzliche Breite angepasst.
+- Der abrupte Wechsel auf das ältere zweispaltige Layout bei 601 px entfällt.
+- Screenshot-Dateien bleiben aus den Release-Archiven ausgeschlossen.
+
 ## 9.6.0-beta.39
 
 ### Mobile UI

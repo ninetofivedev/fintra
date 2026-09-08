@@ -2038,9 +2038,10 @@ html[data-theme="dark"] .profile-message-success{
 
 /* =========================================================
    Fintra 9.6.0-beta.3 – kompakte Smartphone-Buchungskarten
+   Fintra 9.6.0-beta.40 – Breakpoint bis 700 px vereinheitlicht
    ========================================================= */
 
-@media(max-width:600px){
+@media(max-width:700px){
 
   .transactions-table tbody{
     gap:9px;
@@ -3396,5 +3397,39 @@ html[data-theme="dark"] .study-topic-number{color:#a5b4fc}
 
   .transactions-wrap > .table-toolbar p{
     margin:5px 0 0;
+  }
+}
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.40 – Tablet-nahe Mobile-Buchungskarten
+   ========================================================= */
+@media(min-width:601px) and (max-width:700px){
+  .transactions-table tr[data-transaction]{
+    grid-template-columns:minmax(0,1fr) auto 82px;
+    column-gap:14px;
+    padding:13px 14px 13px 15px;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(1){
+    font-size:.92rem;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(3){
+    font-size:1.02rem;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(4){
+    font-size:1.04rem;
+  }
+
+  .transactions-table tr[data-transaction] > td:nth-child(5){
+    font-size:.93rem;
+  }
+
+  .transactions-table .transaction-actions .icon-button{
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
   }
 }
