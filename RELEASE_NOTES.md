@@ -7,6 +7,13 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.41
+
+### Monatsansicht 701–1200 px
+Der Tabellenkopf der Buchungsübersicht ist im Tablet-/kleinen-Desktop-Bereich neu abgestimmt. Die sechs Spalten erhalten eine stabile Breitenverteilung; bei besonders schmalen Desktop-Ansichten darf die Filterleiste zusätzlich umbrechen.
+
+---
+
 ## 9.6.0-beta.40
 
 ### Transaktionskarten 600–700 px

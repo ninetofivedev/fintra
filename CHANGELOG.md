@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.6.0-beta.41
+
+### Tablet-/Desktop-Übergang
+- Tabellenkopf der Monatsansicht zwischen 701 und 1200 px korrigiert.
+- Feste, passendere Spaltenverteilung für Datum, Art, Kategorie, Betrag, Kommentar und Aktionen ergänzt.
+- Globale Mindestbreite der ersten Tabellenspalte wird in diesem Bereich gezielt überschrieben.
+- Filterleiste reagiert zwischen 701 und 900 px zweizeilig statt Inhalte zusammenzuquetschen.
+- Screenshot-Dateien bleiben aus den Release-Archiven ausgeschlossen.
+
 ## 9.6.0-beta.40
 
 ### Mobile UI

@@ -3433,3 +3433,106 @@ html[data-theme="dark"] .study-topic-number{color:#a5b4fc}
     min-width:34px !important;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.41 – Monats-Tabelle 701–1200 px
+   ========================================================= */
+@media(min-width:701px) and (max-width:1200px){
+  /*
+   * In diesem Zwischenbereich ist die Desktop-Tabelle bereits aktiv,
+   * hat aber noch nicht die volle Desktop-Breite. Deshalb bekommt sie
+   * eine gezielte, stabile Spaltenverteilung statt der globalen
+   * th:first-child-Regel.
+   */
+  .transactions-wrap{
+    padding:10px;
+  }
+
+  .transactions-wrap .table-toolbar{
+    margin:0 -10px 12px;
+    padding:11px 10px;
+    gap:12px;
+  }
+
+  .transactions-wrap .table-toolbar > div:first-child{
+    min-width:180px;
+    flex:0 0 auto;
+  }
+
+  .transactions-wrap .transaction-filter{
+    justify-content:flex-end;
+    gap:7px;
+    min-width:0;
+  }
+
+  .transactions-wrap .transaction-filter input{
+    width:min(250px,28vw);
+  }
+
+  .transactions-wrap .transaction-filter select{
+    min-width:118px;
+    max-width:155px;
+  }
+
+  .transactions-table{
+    table-layout:fixed;
+    font-size:.82rem;
+  }
+
+  .transactions-wrap .transactions-table th{
+    min-width:0;
+    padding:8px 5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .transactions-wrap .transactions-table th:nth-child(1){width:12%}
+  .transactions-wrap .transactions-table th:nth-child(2){width:13%}
+  .transactions-wrap .transactions-table th:nth-child(3){width:19%}
+  .transactions-wrap .transactions-table th:nth-child(4){width:14%}
+  .transactions-wrap .transactions-table th:nth-child(5){width:27%}
+  .transactions-wrap .transactions-table th:nth-child(6){width:15%}
+
+  .transactions-wrap .transactions-table td{
+    padding-left:5px;
+    padding-right:5px;
+  }
+
+  .transactions-wrap .transactions-table th:first-child,
+  .transactions-wrap .transactions-table td:first-child{
+    min-width:0;
+  }
+
+  .transactions-wrap .transactions-table th:last-child,
+  .transactions-wrap .transactions-table td:last-child{
+    width:auto;
+  }
+}
+
+@media(min-width:701px) and (max-width:900px){
+  .transactions-wrap .table-toolbar{
+    align-items:stretch;
+    flex-direction:column;
+  }
+
+  .transactions-wrap .table-toolbar > div:first-child{
+    min-width:0;
+  }
+
+  .transactions-wrap .transaction-filter{
+    justify-content:flex-start;
+    width:100%;
+  }
+
+  .transactions-wrap .transaction-filter input{
+    width:min(300px,100%);
+    flex:1 1 220px;
+  }
+
+  .transactions-wrap .transaction-filter select{
+    flex:1 1 130px;
+    max-width:none;
+  }
+}
