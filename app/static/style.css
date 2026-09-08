@@ -3369,3 +3369,32 @@ html[data-theme="dark"] .study-topic-number{color:#a5b4fc}
     font-size:.68rem;
   }
 }
+
+
+/* =========================================================
+   Fintra 9.6.0-beta.39 – Mobile Monats-Buchungsheader
+   ========================================================= */
+@media(max-width:700px){
+  /*
+   * Der äußere Buchungscontainer bleibt für die einzelnen Mobile-Karten
+   * transparent. Die Überschrift/Filterleiste erhält deshalb eine eigene
+   * Karte, damit die abgerundete Fintra-Optik erhalten bleibt.
+   */
+  .transactions-wrap > .table-toolbar{
+    margin:0 0 12px;
+    padding:13px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    box-shadow:0 1px 4px var(--shadow);
+    overflow:hidden;
+  }
+
+  .transactions-wrap > .table-toolbar h2{
+    margin:0;
+  }
+
+  .transactions-wrap > .table-toolbar p{
+    margin:5px 0 0;
+  }
+}

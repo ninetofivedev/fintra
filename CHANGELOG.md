@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0-beta.39
+
+### Mobile UI
+- Darstellung des Bereichs „Buchungen“ in der Monatsansicht auf Smartphones korrigiert.
+- Überschrift, Untertitel und Filter sitzen mobil wieder in einer eigenen Fintra-Karte mit Rahmen, Schatten und abgerundeten Ecken.
+- Die einzelnen Transaktionskarten bleiben weiterhin separat und kompakt dargestellt.
+- Screenshot-Dateien bleiben aus den Release-Archiven ausgeschlossen.
+
 ## 9.6.0-beta.38
 
 ### Algorithmen & Datenstrukturen
