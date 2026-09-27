@@ -1653,14 +1653,11 @@ def build_benchmark_series():
 
 
 @app.get('/algorithm')
-def algorithm(request: Request, n: int = 10000):
-    n = max(100, min(int(n), 100000))
-    benchmark = measure_synthetic_benchmark(synthetic_benchmark_data(n))
+def algorithm(request: Request):
     benchmark_series = build_benchmark_series()
 
     return templates.TemplateResponse('algorithm.html', {
         'request': request,
-        'benchmark': benchmark,
         'benchmark_series': benchmark_series,
         'benchmark_runs': BENCHMARK_RUNS,
     })

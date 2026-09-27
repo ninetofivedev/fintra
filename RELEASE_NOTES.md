@@ -7,6 +7,12 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.42
+
+### Algorithmus-Seite vereinfacht
+Der separate interaktive Experiment-Block wurde entfernt. Die darunterliegende Laufzeitmessung mit der festen Skalierungsreihe von 1.000 bis 100.000 Transaktionen bleibt unverändert bestehen. Dadurch zeigt die Seite nur noch eine eindeutige Benchmark-Reihe.
+
+---
 ## 9.6.0-beta.41
 
 ### Monatsansicht 701–1200 px

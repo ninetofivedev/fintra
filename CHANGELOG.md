@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0-beta.42
+
+### Algorithmen & Datenstrukturen
+- Den separaten Bereich „Experiment / Synthetischer Performance-Test“ auf der Algorithmus-Seite entfernt.
+- Die bestehende Laufzeitmessung mit Skalierungsdiagramm und Messwerttabelle bleibt unverändert erhalten.
+- Die Algorithmus-Route führt keine zusätzliche Einzelmessung mehr aus; dadurch gibt es nur noch die eine konsistente Messreihe.
+- CSV-Benchmark-Endpunkt bleibt erhalten.
+
 ## 9.6.0-beta.41
 
 ### Tablet-/Desktop-Übergang
