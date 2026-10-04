@@ -13,7 +13,7 @@ It provides yearly and monthly overviews, recurring income and expenses, budgets
 financial analysis and visualizations while keeping your financial data on your own server.
 
 > **Beta:** Fintra is currently under active development.  
-> The current release is `9.6.0-beta.42`.
+> The current release is `9.6.0-beta.43`.
 
 
 ## Screenshots
@@ -39,7 +39,6 @@ financial analysis and visualizations while keeping your financial data on your 
 - 🗂️ Custom categories
 - 🎯 Monthly budgets
 - 📊 Interactive charts and financial analysis
-- 🔎 Algorithm & data structure demonstrations
 - ✏️ Edit existing transactions
 - 🌓 Light and dark mode
 - 👁️ Privacy mode for hiding financial values
@@ -211,7 +210,7 @@ A healthy instance responds with:
 ```json
 {
   "status": "ok",
-  "version": "9.6.0-beta.42"
+  "version": "9.6.0-beta.43"
 }
 ```
 
@@ -235,22 +234,22 @@ When Fintra is served exclusively through HTTPS, set:
 FINTRA_HTTPS_ONLY=1
 ```
 
-## Algorithms & Data Structures
+## Financial Analysis
 
-Fintra also contains an analysis section demonstrating algorithms and data structures
-using financial data.
+Fintra includes a user-focused analysis dashboard for yearly financial insights.
 
-Currently implemented examples include:
+The analysis view includes:
 
-- Hash Map based transaction indexing
-- linear search comparison
-- Min-Heap based Top-K analysis
-- Sliding Window analysis
-- Interquartile Range (IQR) outlier detection
-- synthetic performance benchmarks with up to 100,000 transactions
+- yearly income, expenses, balance and savings rate
+- monthly income and expense development
+- a smoothed three-month expense trend
+- expense distribution by category
+- monthly budget progress and remaining amounts
+- fixed-cost share and average monthly fixed expenses
+- largest expenses and automatically detected unusually high expenses
 
-This part of the project is also intended to explore practical applications of
-algorithms and data structures in financial software.
+The analysis remains fully local and works directly with the data stored in the
+self-hosted SQLite database.
 
 ## Development
 

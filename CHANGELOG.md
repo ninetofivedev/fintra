@@ -1,5 +1,22 @@
 # Changelog
 
+## 9.6.0-beta.43
+
+### Finanzanalyse
+- Analyseübersicht konsequent auf Endnutzer ausgerichtet.
+- Technische Kennzahlen wie Transaktionszahl und Kategorie-Indizes aus der KPI-Leiste entfernt.
+- Jahres-KPIs auf Einnahmen, Ausgaben, Saldo und Sparquote reduziert.
+- Kategorienansicht und Rangliste sprachlich vereinfacht.
+- Budgetbereich um Gesamtbudget, ausgegebenen und verbleibenden Betrag sowie klare Statusanzeigen erweitert.
+- Fixkostenbereich zeigt Jahressumme, Monatsdurchschnitt und Anteil an den Gesamtausgaben.
+- „Ausreißererkennung“ in „Auffällige Ausgaben“ umbenannt und endnutzerverständlich beschrieben.
+- Größte und auffällige Ausgaben verlinken weiterhin direkt in den jeweiligen Monat.
+
+### Cleanup
+- Seite „Algorithmen & Datenstrukturen“ vollständig entfernt.
+- Route `/algorithm`, Benchmark-CSV, synthetische Benchmark-Funktionen und zugehöriges Template entfernt.
+- Navigationspunkt und nicht mehr benötigtes Algorithmus-Icon entfernt.
+
 ## 9.6.0-beta.42
 
 ### Algorithmen & Datenstrukturen

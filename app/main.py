@@ -1,4 +1,4 @@
-import os, sqlite3, statistics, heapq, hashlib, hmac, secrets, csv, io, tempfile, random, time, math
+import os, sqlite3, statistics, hashlib, hmac, secrets, csv, io, tempfile, random, math
 from contextvars import ContextVar
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
@@ -78,20 +78,6 @@ DEFAULT = [
     ('Kleidung','expense'),('Gesundheit','expense'),('Haushalt','expense'),('Auto','expense'),
     ('Mobilfunk','expense'),('Fitness','expense'),('Sonstiges','expense')
 ]
-
-# A small application-owned index. The database remains the source of truth.
-# category_id -> list of transaction ids. Building it is O(n), lookup is O(1) average.
-class TransactionIndex:
-    def __init__(self, rows):
-        self.by_category = {}
-        self.by_type = {'income': [], 'expense': []}
-        for row in rows:
-            tid = row['id']; cid = row['category_id']; typ = row['type']
-            self.by_category.setdefault(cid, []).append(tid)
-            self.by_type.setdefault(typ, []).append(tid)
-
-    def category_count(self, category_id):
-        return len(self.by_category.get(category_id, []))
 
 
 def db(path: Path | None = None):
@@ -1232,22 +1218,18 @@ def analysis(
     request: Request,
     year: int | None = None,
     month: int | None = None,
-    top: str = '5'
 ):
-    y = year or date.today().year
-    selected_month = month if month and 1 <= month <= 12 else (
-        date.today().month if y == date.today().year else 1
-    )
+    today = date.today()
+    y = year or today.year
 
-    if str(top).lower() == 'all':
-        top_limit = None
-        top_value = 'all'
+    if month and 1 <= month <= 12:
+        selected_month = month
+    elif y == today.year:
+        selected_month = today.month
+    elif y < today.year:
+        selected_month = 12
     else:
-        try:
-            top_limit = max(1, min(int(top), 50))
-        except (TypeError, ValueError):
-            top_limit = 5
-        top_value = str(top_limit)
+        selected_month = 1
 
     c = db()
     rows = fetch_year_month_transactions(c, y)
@@ -1256,15 +1238,12 @@ def analysis(
         'SELECT * FROM fixed_items WHERE year=? ORDER BY type,name,id',
         (y,)
     ).fetchall()
-
     budgets = c.execute(
         'SELECT b.*,c.name FROM budgets b JOIN categories c ON c.id=b.category_id '
         'WHERE b.year=? AND b.month=? ORDER BY c.name',
         (y, selected_month)
     ).fetchall()
     c.close()
-
-    idx = TransactionIndex(rows)
 
     # Variable Buchungen pro Monat.
     variable_income = [0] * 12
@@ -1293,7 +1272,7 @@ def analysis(
     annual_balance = annual_income - annual_expense
     savings_rate = round((annual_balance / annual_income) * 100, 1) if annual_income else None
 
-    # Gleitender 3-Monats-Durchschnitt der Gesamtausgaben.
+    # Gleitender 3-Monats-Trend der Gesamtausgaben.
     rolling = []
     running_sum = 0
     window_size = 3
@@ -1304,7 +1283,7 @@ def analysis(
         size = min(i + 1, window_size)
         rolling.append(round(running_sum / size) if size else 0)
 
-    # Ausgaben nach Kategorie (variable Buchungen).
+    # Variable Ausgaben nach Kategorie.
     by_cat = {}
     for row in rows:
         if row['type'] == 'expense':
@@ -1318,28 +1297,29 @@ def analysis(
         ),
         key=lambda item: (-item['total'], item['name'].lower())
     )
-    category_totals = [(item['name'], item['total']) for item in category_chart]
-    top_categories = category_totals if top_limit is None else category_totals[:top_limit]
+    top_categories = category_chart[:5]
 
-    # Ausreißererkennung über variable Einzelbuchungen.
+    # Ungewöhnlich hohe variable Einzelbuchungen.
     expense_amounts = sorted(r['amount_cents'] for r in rows if r['type'] == 'expense')
-    q1 = q3 = iqr = upper = 0
-    outliers = []
+    unusual_expenses = []
+    unusual_expense_count = 0
     if len(expense_amounts) >= 4:
         lower_half = expense_amounts[:len(expense_amounts)//2]
         upper_half = expense_amounts[(len(expense_amounts)+1)//2:]
         q1 = statistics.median(lower_half)
         q3 = statistics.median(upper_half)
         iqr = q3 - q1
-        upper = q3 + 1.5 * iqr
-        outliers = sorted(
+        unusual_limit = q3 + 1.5 * iqr
+        all_unusual_expenses = sorted(
             (
                 r for r in rows
-                if r['type'] == 'expense' and r['amount_cents'] > upper
+                if r['type'] == 'expense' and r['amount_cents'] > unusual_limit
             ),
             key=lambda r: r['amount_cents'],
             reverse=True
-        )[:8]
+        )
+        unusual_expense_count = len(all_unusual_expenses)
+        unusual_expenses = all_unusual_expenses[:6]
 
     largest_expenses = sorted(
         (r for r in rows if r['type'] == 'expense'),
@@ -1347,25 +1327,65 @@ def analysis(
         reverse=True
     )[:5]
 
-    # Budgetstatus für frei wählbaren Monat.
-    spent_by = {}
+    # Budgetstatus des ausgewählten Monats. Budgets beziehen sich auf variable Kategorien.
+    spent_by_category = {}
     for row in rows:
         if row['type'] == 'expense' and int(row['tx_date'][5:7]) == selected_month:
-            spent_by[row['category']] = spent_by.get(row['category'], 0) + row['amount_cents']
+            category_id = row['category_id']
+            spent_by_category[category_id] = spent_by_category.get(category_id, 0) + row['amount_cents']
 
-    budget_rows = [
-        {
-            'name': b['name'],
-            'budget': b['amount_cents'],
-            'spent': spent_by.get(b['name'], 0),
-            'pct': round(spent_by.get(b['name'], 0) / b['amount_cents'] * 100)
-                   if b['amount_cents'] else 0
-        }
-        for b in budgets
+    budget_rows = []
+    for budget in budgets:
+        budget_amount = budget['amount_cents']
+        spent = spent_by_category.get(budget['category_id'], 0)
+        pct = round(spent / budget_amount * 100) if budget_amount else 0
+        remaining = budget_amount - spent
+        if budget_amount and spent > budget_amount:
+            status = 'over'
+        elif budget_amount and pct >= 80:
+            status = 'warn'
+        else:
+            status = 'ok'
+        budget_rows.append({
+            'name': budget['name'],
+            'budget': budget_amount,
+            'spent': spent,
+            'remaining': remaining,
+            'pct': pct,
+            'status': status,
+        })
+
+    budget_total = sum(item['budget'] for item in budget_rows)
+    budget_spent = sum(item['spent'] for item in budget_rows)
+    budget_remaining = budget_total - budget_spent
+    budget_over_count = sum(1 for item in budget_rows if item['status'] == 'over')
+
+    fixed_expense_total = sum(fixed_expense)
+    variable_expense_total = sum(variable_expense)
+    fixed_expense_share = round((fixed_expense_total / annual_expense) * 100, 1) if annual_expense else None
+    average_fixed_expense = round(fixed_expense_total / 12) if fixed_expense_total else 0
+
+    if y == today.year:
+        eligible_months = range(today.month)
+    else:
+        eligible_months = range(12)
+
+    active_months = [
+        i for i in eligible_months
+        if monthly_income[i] or monthly_expense[i]
     ]
-
-    best_month_index = max(range(12), key=lambda i: monthly_balance[i]) if monthly_balance else 0
-    highest_expense_month_index = max(range(12), key=lambda i: monthly_expense[i]) if monthly_expense else 0
+    if active_months:
+        best_month_index = max(active_months, key=lambda i: monthly_balance[i])
+        highest_expense_month_index = max(active_months, key=lambda i: monthly_expense[i])
+        best_month_name = MONTHS[best_month_index]
+        best_month_balance = monthly_balance[best_month_index]
+        highest_expense_month_name = MONTHS[highest_expense_month_index]
+        highest_expense_month_total = monthly_expense[highest_expense_month_index]
+    else:
+        best_month_name = None
+        best_month_balance = 0
+        highest_expense_month_name = None
+        highest_expense_month_total = 0
 
     return templates.TemplateResponse('analysis.html', {
         'request': request,
@@ -1375,9 +1395,6 @@ def analysis(
         'months_short': MONTHS_SHORT,
         'selected_month': selected_month,
         'selected_month_name': MONTHS[selected_month - 1],
-        'top_value': top_value,
-        'transaction_count': len(rows),
-        'index_categories': len(idx.by_category),
         'annual_income': annual_income,
         'annual_expense': annual_expense,
         'annual_balance': annual_balance,
@@ -1386,19 +1403,24 @@ def analysis(
         'monthly_expense': monthly_expense,
         'monthly_balance': monthly_balance,
         'rolling': rolling,
-        'top_categories': top_categories,
-        'category_totals': category_totals,
         'category_chart': category_chart,
-        'variable_expense_total': sum(variable_expense),
-        'fixed_expense_total': sum(fixed_expense),
-        'outliers': outliers,
-        'upper': upper,
+        'top_categories': top_categories,
+        'fixed_expense_total': fixed_expense_total,
+        'variable_expense_total': variable_expense_total,
+        'fixed_expense_share': fixed_expense_share,
+        'average_fixed_expense': average_fixed_expense,
+        'unusual_expenses': unusual_expenses,
+        'unusual_expense_count': unusual_expense_count,
         'largest_expenses': largest_expenses,
         'budget_rows': budget_rows,
-        'best_month_name': MONTHS[best_month_index],
-        'best_month_balance': monthly_balance[best_month_index],
-        'highest_expense_month_name': MONTHS[highest_expense_month_index],
-        'highest_expense_month_total': monthly_expense[highest_expense_month_index],
+        'budget_total': budget_total,
+        'budget_spent': budget_spent,
+        'budget_remaining': budget_remaining,
+        'budget_over_count': budget_over_count,
+        'best_month_name': best_month_name,
+        'best_month_balance': best_month_balance,
+        'highest_expense_month_name': highest_expense_month_name,
+        'highest_expense_month_total': highest_expense_month_total,
         'euros': euros,
         'date_de': date_de,
     })
@@ -1549,146 +1571,4 @@ def backup_database():
         media_type='application/octet-stream',
         filename=f'fintra-backup-{date.today().isoformat()}.db',
         background=BackgroundTask(lambda: os.path.exists(path) and os.unlink(path)),
-    )
-
-
-
-BENCHMARK_RUNS = 5
-BENCHMARK_K = 5
-BENCHMARK_SIZES = [1000, 5000, 10000, 50000, 100000]
-
-
-def synthetic_benchmark_data(size: int):
-    rng = random.Random(42)
-    return [
-        (rng.randrange(1, 21), rng.randrange(100, 100000))
-        for _ in range(size)
-    ]
-
-
-def measure_synthetic_benchmark(data, k: int = BENCHMARK_K, runs: int = BENCHMARK_RUNS):
-    target_category = 7
-    timings = {
-        'linear_us': [],
-        'hash_build_us': [],
-        'hash_lookup_us': [],
-        'sort_us': [],
-        'heap_us': [],
-    }
-
-    linear_matches = hash_matches = 0
-    sorted_top = []
-    heap_top = []
-    heap_ops = 0
-
-    for _ in range(runs):
-        start_ns = time.perf_counter_ns()
-        linear_matches = sum(1 for cid, _amount in data if cid == target_category)
-        timings['linear_us'].append((time.perf_counter_ns() - start_ns) / 1000)
-
-        start_ns = time.perf_counter_ns()
-        index = {}
-        for pos, (cid, _amount) in enumerate(data):
-            index.setdefault(cid, []).append(pos)
-        timings['hash_build_us'].append((time.perf_counter_ns() - start_ns) / 1000)
-
-        start_ns = time.perf_counter_ns()
-        hash_matches = len(index.get(target_category, []))
-        timings['hash_lookup_us'].append((time.perf_counter_ns() - start_ns) / 1000)
-
-        start_ns = time.perf_counter_ns()
-        sorted_top = sorted(
-            enumerate(data),
-            key=lambda item: (-item[1][1], item[0])
-        )[:k]
-        timings['sort_us'].append((time.perf_counter_ns() - start_ns) / 1000)
-
-        start_ns = time.perf_counter_ns()
-        heap = []
-        heap_ops = 0
-        for pos, (_cid, amount) in enumerate(data):
-            item = (amount, -pos, pos)
-            if len(heap) < k:
-                heapq.heappush(heap, item)
-                heap_ops += 1
-            elif item > heap[0]:
-                heapq.heapreplace(heap, item)
-                heap_ops += 1
-        heap_top = sorted(heap, reverse=True)
-        timings['heap_us'].append((time.perf_counter_ns() - start_ns) / 1000)
-
-    return {
-        'n': len(data),
-        'k': k,
-        'runs': runs,
-        'linear_matches': linear_matches,
-        'hash_matches': hash_matches,
-        'linear_us': statistics.median(timings['linear_us']),
-        'hash_build_us': statistics.median(timings['hash_build_us']),
-        'hash_lookup_us': statistics.median(timings['hash_lookup_us']),
-        'sort_us': statistics.median(timings['sort_us']),
-        'heap_us': statistics.median(timings['heap_us']),
-        'heap_ops': heap_ops,
-        'same_search_result': linear_matches == hash_matches,
-        'same_top_result': (
-            {pos for pos, _row in sorted_top}
-            == {pos for _amount, _neg, pos in heap_top}
-        ),
-    }
-
-
-def build_benchmark_series():
-    series = []
-    for size in BENCHMARK_SIZES:
-        result = measure_synthetic_benchmark(synthetic_benchmark_data(size))
-        series.append({
-            'n': size,
-            'linear_us': round(result['linear_us'], 2),
-            'hash_build_us': round(result['hash_build_us'], 2),
-            'hash_lookup_us': round(result['hash_lookup_us'], 2),
-            'sort_us': round(result['sort_us'], 2),
-            'heap_us': round(result['heap_us'], 2),
-        })
-    return series
-
-
-@app.get('/algorithm')
-def algorithm(request: Request):
-    benchmark_series = build_benchmark_series()
-
-    return templates.TemplateResponse('algorithm.html', {
-        'request': request,
-        'benchmark_series': benchmark_series,
-        'benchmark_runs': BENCHMARK_RUNS,
-    })
-
-
-@app.get('/algorithm/benchmark.csv')
-def algorithm_benchmark_csv():
-    output = io.StringIO()
-    writer = csv.writer(output, delimiter=';')
-    writer.writerow([
-        'Transaktionen',
-        'Lineare Suche Median (µs)',
-        'Hash-Aufbau Median (µs)',
-        'Hash-Lookup Median (µs)',
-        'Sortierung Median (µs)',
-        'Min-Heap Median (µs)',
-        'Durchläufe',
-    ])
-    for row in build_benchmark_series():
-        writer.writerow([
-            row['n'],
-            f"{row['linear_us']:.2f}".replace('.', ','),
-            f"{row['hash_build_us']:.2f}".replace('.', ','),
-            f"{row['hash_lookup_us']:.2f}".replace('.', ','),
-            f"{row['sort_us']:.2f}".replace('.', ','),
-            f"{row['heap_us']:.2f}".replace('.', ','),
-            BENCHMARK_RUNS,
-        ])
-
-    return Response(
-        content='\ufeff' + output.getvalue(),
-        media_type='text/csv; charset=utf-8',
-        headers={'Content-Disposition': 'attachment; filename="fintra-benchmark.csv"'},
     )

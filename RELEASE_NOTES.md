@@ -7,6 +7,14 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.43
+
+### Finanzanalyse für den Endnutzer
+Die Finanzanalyse ist jetzt vollständig auf den normalen Einsatz von Fintra ausgerichtet. Im Mittelpunkt stehen Jahreskennzahlen, Monatsentwicklung, Kategorien, Budgets, Fixkosten sowie größte und auffällige Ausgaben. Technische Begriffe und Präsentationsfunktionen wurden aus der Oberfläche entfernt.
+
+Die bisherige Seite „Algorithmen & Datenstrukturen“ einschließlich Benchmark-Routen und synthetischer Performance-Tests wurde vollständig aus der Anwendung entfernt.
+
+---
 ## 9.6.0-beta.42
 
 ### Algorithmus-Seite vereinfacht
