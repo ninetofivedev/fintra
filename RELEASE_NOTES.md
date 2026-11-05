@@ -1,5 +1,9 @@
 # Fintra – Release Notes
 
+## 9.6.0-beta.45
+
+Beta 45 refines the modern UI introduced in Beta 44: page headings are smaller and lighter, the desktop annual table has more room for complete monetary values, the burger icon is centered, category sections have improved spacing, and the login logo is transparent again.
+
 Diese Datei fasst die bisher separat gepflegten Release Notes der Fintra-V9-Reihe zusammen.
 
 Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen aus den ursprünglichen Notes wurden beibehalten; wiederkehrende „Basis/Grundbasis“-Hinweise wurden entfernt und die Markdown-Struktur vereinheitlicht.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0-beta.45
+
+- Refined page-title typography: smaller, lighter and more neutral.
+- Restored comfortable desktop width for the annual overview table so amounts remain fully readable.
+- Centered the burger-menu glyph inside its button.
+- Added spacing between category section headings and their lists.
+- Restored the transparent Fintra mark on the login page.
+
 ## 9.6.0-beta.44
 
 ### Modern UI Refresh
