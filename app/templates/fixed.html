@@ -76,7 +76,7 @@
   <div class="fixed-desktop-view">
     <section class="tablewrap fixed-tablewrap">
       <table class="fixed-table">
-        <thead><tr><th>Bezeichnung</th>{% for m in months %}<th>{{m}}</th>{% endfor %}<th class="fixed-total-col">Jahr</th><th>Aktionen</th></tr></thead>
+        <thead><tr><th>Bezeichnung</th>{% for m in months %}<th class="fixed-month-col">{{m}}</th>{% endfor %}<th class="fixed-total-col">Jahr</th><th>Aktionen</th></tr></thead>
         <tbody>
         {% for x in items if x.type==typ %}
           <tr data-fixed-item data-fixed-id="{{x.id}}" data-fixed-scope="d">

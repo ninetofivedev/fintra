@@ -1,5 +1,9 @@
 # Fintra – Release Notes
 
+## 9.6.0-beta.47
+
+Die Desktop-Tabelle der Fixkosten wurde weiter verdichtet. Lange Bezeichnungen umbrechen jetzt sauber, die Monats-Spalten sind schmaler und die Monatsüberschriften werden kompakt abgekürzt. Dadurch bleiben alle zwölf Monate auf Desktop besser gleichzeitig sichtbar, ohne die globale Seitenbreite erneut zu verändern.
+
 ## 9.6.0-beta.46
 
 Beta 45 refines the modern UI introduced in Beta 44: page headings are smaller and lighter, the desktop annual table has more room for complete monetary values, the burger icon is centered, category sections have improved spacing, and the login logo is transparent again.

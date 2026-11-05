@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.6.0-beta.47
+
+- Fixkosten-Bezeichnungen dürfen in der Desktop-Tabelle wieder sauber über mehrere Zeilen umbrechen.
+- Monats-Spalten der Fixkosten-Tabelle kompakter verteilt, damit alle zwölf Monate besser nebeneinander passen.
+- Eingabefelder der Monatswerte leicht kompakter abgestimmt, ohne die übrige Seitenbreite zu verändern.
+
 ## 9.6.0-beta.46
 
 - Refined page-title typography: smaller, lighter and more neutral.

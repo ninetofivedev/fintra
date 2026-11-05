@@ -1,5 +1,5 @@
 /* =========================================================
-   Fintra 9.6.0-beta.46 – Wide desktop tables & fixed-cost cleanup
+   Fintra 9.6.0-beta.47 – Fixed-cost desktop table refinement
    Complete stylesheet rewrite
    ========================================================= */
 
@@ -339,17 +339,20 @@ tbody tr:not(.transaction-edit-row):hover td{background:color-mix(in srgb,var(--
 .fixed-section-heading>span{padding:4px 8px;border-radius:999px;background:var(--surface-3);color:var(--muted);font-size:.7rem;font-weight:700}
 .fixed-tablewrap{overflow:hidden}
 .fixed-table{width:100%;min-width:0;table-layout:fixed;font-size:.78rem}
-.fixed-table th,.fixed-table td{padding:8px 4px;white-space:nowrap;overflow:visible;text-overflow:clip}
-.fixed-table th{font-size:.66rem}
-.fixed-table th:first-child,.fixed-table td:first-child{width:170px;min-width:0}
-.fixed-table th:nth-last-child(2),.fixed-table td:nth-last-child(2){width:90px}
-.fixed-table th:last-child,.fixed-table td:last-child{width:92px;text-align:center}
-.fixed-name{font-weight:690;color:var(--text-strong)}
+.fixed-table th,.fixed-table td{padding:7px 2px;white-space:nowrap;overflow:visible;text-overflow:clip;vertical-align:middle}
+.fixed-table th{font-size:.64rem}
+.fixed-table th:first-child,.fixed-table td:first-child{width:18%;min-width:0}
+.fixed-table th:nth-child(n+2):nth-child(-n+13),.fixed-table td:nth-child(n+2):nth-child(-n+13){width:5.1%}
+.fixed-table th:nth-last-child(2),.fixed-table td:nth-last-child(2){width:8.5%}
+.fixed-table th:last-child,.fixed-table td:last-child{width:10%;text-align:center}
+.fixed-name{font-weight:690;color:var(--text-strong);white-space:normal!important;overflow-wrap:anywhere;word-break:break-word;line-height:1.25}
+.fixed-description{display:block;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
 .fixed-table .money{width:100%;min-width:0}
-.fixed-month-input{padding:6px 3px;min-height:34px;font-size:.75rem;text-align:right}
+.fixed-month-input{padding:6px 1px;min-height:34px;font-size:.69rem;text-align:right;font-variant-numeric:tabular-nums}
 .fixed-annual-total{font-size:.76rem}
 .fixed-actions{text-align:center;overflow:visible}
 .fixed-actions-inner{display:flex;align-items:center;justify-content:center;gap:2px}
+.fixed-actions .icon-button{width:30px;height:30px;min-width:30px;padding:0}
 .fixed-actions form{display:inline-flex;margin:0}
 .fixed-edit-form{display:flex;align-items:center;gap:7px}
 .fixed-edit-form[hidden]{display:none!important}
