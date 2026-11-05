@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.6.0-beta.45
+## 9.6.0-beta.46
 
 - Refined page-title typography: smaller, lighter and more neutral.
 - Restored comfortable desktop width for the annual overview table so amounts remain fully readable.

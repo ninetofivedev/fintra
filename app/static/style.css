@@ -1,5 +1,5 @@
 /* =========================================================
-   Fintra 9.6.0-beta.45 – Modern UI refinement
+   Fintra 9.6.0-beta.46 – Wide desktop tables & fixed-cost cleanup
    Complete stylesheet rewrite
    ========================================================= */
 
@@ -40,7 +40,7 @@
   --radius-md:14px;
   --radius-lg:20px;
   --radius-xl:26px;
-  --content-width:1540px;
+  --content-width:1880px;
 }
 
 html[data-theme="dark"]{
@@ -86,7 +86,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 img{max-width:100%;height:auto}
 
-main{width:min(var(--content-width),100%);margin:0 auto;padding:32px 24px 56px;min-width:0}
+main{width:min(var(--content-width),100%);margin:0 auto;padding:32px clamp(10px,1vw,18px) 56px;min-width:0}
 header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin:0 0 24px}
 header>div:first-child{min-width:0}
 h1,h2,h3{color:var(--text-strong)}
@@ -137,7 +137,7 @@ code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-size
 /* ---------- navigation ---------- */
 .topnav{position:sticky;top:0;z-index:1000;background:rgba(15,23,42,.94);color:var(--nav-text);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(3,8,18,.12);backdrop-filter:saturate(155%) blur(18px)}
 html[data-theme="dark"] .topnav{background:rgba(8,13,20,.92)}
-.topnav-inner{width:min(var(--content-width),100%);min-height:68px;margin:0 auto;padding:9px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px}
+.topnav-inner{width:min(var(--content-width),100%);min-height:68px;margin:0 auto;padding:9px clamp(12px,1.1vw,20px);display:flex;align-items:center;justify-content:space-between;gap:22px}
 .brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none;min-width:0}
 .brand-mark{width:31px;height:auto;filter:drop-shadow(0 4px 9px rgba(14,120,213,.22))}
 .brand-copy{display:grid;line-height:1.02;gap:4px}
@@ -266,11 +266,13 @@ tbody tr:not(.transaction-edit-row):hover td{background:color-mix(in srgb,var(--
 
 /* ---------- dashboard ---------- */
 .year-overview-mobile{display:none}
-.year-overview-table{overflow-x:auto}
-.year-overview-table table{min-width:1480px;table-layout:auto}
-.year-overview-table th,.year-overview-table td{overflow:visible;text-overflow:clip}
-.year-overview-table th:first-child{width:190px;min-width:190px}
-.year-overview-table th:not(:first-child),.year-overview-table td:not(:first-child){min-width:92px}
+.year-overview-table{overflow:visible}
+.year-overview-table table{width:100%;min-width:0;table-layout:fixed}
+.year-overview-table th,.year-overview-table td{padding:10px 5px;overflow:visible;text-overflow:clip;font-size:.77rem}
+.year-overview-table th{font-size:.68rem}
+.year-overview-table th:first-child{width:160px;min-width:0}
+.year-overview-table th:not(:first-child),.year-overview-table td:not(:first-child){min-width:0}
+.year-overview-table td:last-child,.year-overview-table th:last-child{font-weight:780}
 .year-overview-table a{text-decoration:none}
 .year-overview-table a:hover{text-decoration:underline;text-underline-offset:3px}
 .year-month-row{color:inherit;text-decoration:none}
@@ -335,20 +337,23 @@ tbody tr:not(.transaction-edit-row):hover td{background:color-mix(in srgb,var(--
 .fixed-section{margin:26px 0}
 .fixed-section-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 10px}
 .fixed-section-heading>span{padding:4px 8px;border-radius:999px;background:var(--surface-3);color:var(--muted);font-size:.7rem;font-weight:700}
-.fixed-tablewrap{overflow-x:auto}
-.fixed-table{min-width:1560px;table-layout:auto}
-.fixed-table th,.fixed-table td{white-space:nowrap;overflow:visible}
-.fixed-table th:first-child{width:230px;min-width:230px}
-.fixed-table th:not(:first-child):not(:last-child){min-width:100px}
-.fixed-table th:last-child{width:102px;min-width:102px;text-align:center}
+.fixed-tablewrap{overflow:hidden}
+.fixed-table{width:100%;min-width:0;table-layout:fixed;font-size:.78rem}
+.fixed-table th,.fixed-table td{padding:8px 4px;white-space:nowrap;overflow:visible;text-overflow:clip}
+.fixed-table th{font-size:.66rem}
+.fixed-table th:first-child,.fixed-table td:first-child{width:170px;min-width:0}
+.fixed-table th:nth-last-child(2),.fixed-table td:nth-last-child(2){width:90px}
+.fixed-table th:last-child,.fixed-table td:last-child{width:92px;text-align:center}
 .fixed-name{font-weight:690;color:var(--text-strong)}
-.fixed-table .money{width:96px}
-.fixed-month-input{padding:7px 8px;min-height:36px}
+.fixed-table .money{width:100%;min-width:0}
+.fixed-month-input{padding:6px 3px;min-height:34px;font-size:.75rem;text-align:right}
+.fixed-annual-total{font-size:.76rem}
 .fixed-actions{text-align:center;overflow:visible}
-.fixed-actions-inner{display:flex;align-items:center;justify-content:center;gap:3px}
+.fixed-actions-inner{display:flex;align-items:center;justify-content:center;gap:2px}
 .fixed-actions form{display:inline-flex;margin:0}
-.fixed-edit-form{display:flex!important;align-items:center;gap:7px}
-.fixed-edit-form input{min-width:125px}
+.fixed-edit-form{display:flex;align-items:center;gap:7px}
+.fixed-edit-form[hidden]{display:none!important}
+.fixed-edit-form input{width:100%;min-width:0}
 .fixed-table tr.is-editing td{background:color-mix(in srgb,var(--surface) 87%,var(--accent-soft))}
 .fixed-annual-total{font-weight:780}
 .fixed-mobile-view{display:none}
@@ -510,6 +515,13 @@ html[data-theme="dark"] .auth-page{background:radial-gradient(circle at 18% 8%,r
   .transactions-table th,.transactions-table td{padding-left:7px;padding-right:7px}
 }
 
+@media(max-width:1240px){
+  .year-overview-table{display:none}
+  .year-overview-mobile{display:grid;gap:8px;padding:10px}
+  .fixed-desktop-view{display:none}
+  .fixed-mobile-view{display:grid;gap:8px}
+}
+
 @media(max-width:900px){
   header{align-items:flex-start;flex-direction:column}
   header .yearnav{align-self:flex-start}
@@ -615,7 +627,8 @@ html[data-theme="dark"] .auth-page{background:radial-gradient(circle at 18% 8%,r
   .fixed-mobile-footer>div:first-child{display:grid;gap:1px}
   .fixed-mobile-footer>div:first-child span{color:var(--muted);font-size:.66rem}
   .fixed-mobile-card .fixed-actions-inner{display:flex;gap:4px}
-  .fixed-mobile-card .fixed-edit-form{display:grid!important;grid-template-columns:1fr;gap:7px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(--border)}
+  .fixed-mobile-card .fixed-edit-form{display:grid;grid-template-columns:1fr;gap:7px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(--border)}
+  .fixed-mobile-card .fixed-edit-form[hidden]{display:none!important}
   .fixed-mobile-card.is-editing{border-color:var(--accent)}
 
   .analysis-page-header{align-items:flex-start}
