@@ -1,5 +1,12 @@
 # Fintra – Release Notes
 
+## 9.6.0-beta.48
+
+- Fixkostentabelle auf Desktop optisch ausgewogener verteilt.
+- Bezeichnungsspalte verbreitert und mit mehr Innenabstand versehen.
+- Aktionsspalte auf die tatsächliche Buttonbreite reduziert und zentriert.
+- Monats- und Jahresspalten neu ausbalanciert, ohne die globale Seitenbreite zu verändern.
+
 ## 9.6.0-beta.47
 
 Die Desktop-Tabelle der Fixkosten wurde weiter verdichtet. Lange Bezeichnungen umbrechen jetzt sauber, die Monats-Spalten sind schmaler und die Monatsüberschriften werden kompakt abgekürzt. Dadurch bleiben alle zwölf Monate auf Desktop besser gleichzeitig sichtbar, ohne die globale Seitenbreite erneut zu verändern.

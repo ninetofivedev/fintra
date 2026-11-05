@@ -1,10 +1,8 @@
-# Fintra 9.6.0-beta.47
+# Fintra 9.6.0-beta.48
 
-Diese Testversion verfeinert gezielt die Desktop-Darstellung der Fixkosten.
+Beta 48 verfeinert ausschließlich die Desktop-Darstellung der Fixkostentabelle.
 
-## Änderungen
-
-- Lange Bezeichnungen brechen in der ersten Spalte sauber um und laufen nicht mehr in die Monatsfelder.
-- Die zwölf Monats-Spalten sind schmaler und gleichmäßiger verteilt.
-- Monatsbeträge verwenden etwas kompaktere Eingabefelder, damit die gesamte Tabelle besser ohne horizontales Scrollen auskommt.
-- Die allgemeine Seitenbreite und die übrigen Ansichten aus Beta 46 bleiben unverändert.
+- Die Bezeichnungsspalte nutzt mehr Platz und erhält einen ausgewogeneren Innenabstand.
+- Die Aktionsbuttons sitzen mittig in einer schmaleren Aktionsspalte.
+- Der frei werdende Platz wird über die gesamte Tabellenbreite sinnvoller verteilt.
+- Die kompakte Darstellung aller zwölf Monate aus Beta 47 bleibt erhalten.

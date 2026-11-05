@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.6.0-beta.48
+
+- Fixkostentabelle auf Desktop optisch ausgewogener verteilt.
+- Bezeichnungsspalte verbreitert und mit mehr Innenabstand versehen.
+- Aktionsspalte auf die tatsächliche Buttonbreite reduziert und zentriert.
+- Monats- und Jahresspalten neu ausbalanciert, ohne die globale Seitenbreite zu verändern.
+
 ## 9.6.0-beta.47
 
 - Fixkosten-Bezeichnungen dürfen in der Desktop-Tabelle wieder sauber über mehrere Zeilen umbrechen.
