@@ -1,5 +1,16 @@
 # Changelog
 
+## 9.6.0-beta.44
+
+### Modern UI Refresh
+- Gesamtes Stylesheet von Grund auf neu strukturiert und modernisiert.
+- Neues Fintech-orientiertes Farbsystem mit konsistentem Light- und Dark-Mode.
+- Navigation, Karten, Tabellen, Formulare, Buttons, Dialoge und Diagrammcontainer vereinheitlicht.
+- Dashboard und Finanzanalyse visuell ruhiger und klarer hierarchisiert.
+- Mobile Darstellungen für Buchungen, Fixkosten, Jahresübersicht und Filter neu abgestimmt.
+- Einheitliche Focus-, Hover-, Empty-State- und Statusdarstellungen ergänzt.
+- Bestehende Templates und Funktionen bleiben unverändert; die Version dient bewusst als UI-Test.
+
 ## 9.6.0-beta.43
 
 ### Finanzanalyse

@@ -7,6 +7,12 @@ Die Einträge sind **absteigend nach Version** sortiert. Inhaltliche Aussagen au
 > **Hinweis:** Für Versionen, zu denen keine separate Notes-Datei vorlag, wurde kein Eintrag ergänzt. Dadurch bleibt die Historie auf die tatsächlich dokumentierten Änderungen beschränkt.
 
 ---
+## 9.6.0-beta.44
+
+### Modern UI Refresh
+Das komplette Stylesheet wurde neu aufgebaut. Die Anwendung nutzt nun eine modernere Fintech-Optik mit klarerer Informationshierarchie, weicheren Karten, konsistenten Formularen und Tabellen sowie einem abgestimmten Light- und Dark-Mode. Desktop-, Tablet- und Smartphone-Darstellungen wurden gemeinsam überarbeitet. Geschäftslogik und Datenmodell bleiben unverändert.
+
+---
 ## 9.6.0-beta.43
 
 ### Finanzanalyse für den Endnutzer
